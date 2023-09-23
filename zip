@@ -1,0 +1,2 @@
+zip -r sulsulapi.zip ./* \
+    -x ".git*" "secrets*" "venv/*" "*/__pycache__/*" "*/migrations/*" ".DS_Store" "runserver" "zip" "README.md" "LISENCE"
