@@ -5,6 +5,11 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi.staticfiles import StaticFiles
 
 
+# Routers
+from auth.router import auth_router
+app.include_router(auth_router)
+
+
 # Middlewares
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"])
