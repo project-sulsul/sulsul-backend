@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
 from google.oauth2 import id_token
@@ -6,18 +6,18 @@ from google.auth.transport import requests
 
 from .model import GoogleCredentialsModel
 from .secrets import *
+from .config import JWT_COOKIE_OPTIONS
 
 
-auth_router = APIRouter(
+router = APIRouter(
     prefix="/auth",
     tags=["Authentication"],
 )
 
 
-@auth_router.post("/sign-in/google")
+@router.post("/sign-in/google")
 async def sign_in_with_google(
     request: Request,
-    response: Response,
     google_credentials: GoogleCredentialsModel
 ):
     try:
@@ -29,6 +29,10 @@ async def sign_in_with_google(
         # TODO add user to database
         # TODO generate JWT from Google ID Token
 
+        response = JSONResponse(status_code=status.HTTP_200_OK, content={})
+        response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
+        return response
+
     except Exception as e:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -38,3 +42,10 @@ async def sign_in_with_google(
                 "message": str(e),
             }
         )
+    
+
+@router.get("/sign-out")
+async def sign_out(request: Request):
+    response = JSONResponse(status_code=status.HTTP_200_OK, content={})
+    response.delete_cookie(key="access_token")
+    return response

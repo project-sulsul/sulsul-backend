@@ -1,18 +1,32 @@
 from app import app
 
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
+# from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from src.middleware import EnhancedTrustedHostMiddleware
+
 
 # Routers
-from auth.router import auth_router
-app.include_router(auth_router)
+from v1.router import v1_router
+app.include_router(v1_router)
 
 
 # Middlewares
+app.add_middleware(
+    EnhancedTrustedHostMiddleware, 
+    allowed_hosts=[
+        "localhost",
+    ],
+    allowed_cidrs=[
+
+    ],
+)
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"])
+
+
+# Exception handlers
+from src import exception_handler
 
 
 # static path config
