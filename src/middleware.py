@@ -1,9 +1,8 @@
 import typing
 from functools import wraps
 from ipaddress import IPv4Address, IPv4Network
-from typing import Any, Coroutine
 
-from starlette.middleware.base import RequestResponseEndpoint, BaseHTTPMiddleware
+from starlette.middleware.base import RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.datastructures import URL, Headers
 from starlette.responses import PlainTextResponse, RedirectResponse, Response, JSONResponse
