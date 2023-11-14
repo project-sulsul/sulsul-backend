@@ -197,4 +197,6 @@ pyrightconfig.json
 
 # etc.
 *.zip
+secret*
+*/secret*
 .DS_Store

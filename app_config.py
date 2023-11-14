@@ -19,6 +19,7 @@ app.add_middleware(
     EnhancedTrustedHostMiddleware, 
     allowed_hosts=[
         "localhost",
+        "sulsul-api-env.eba-x6kn5sfy.ap-northeast-2.elasticbeanstalk.com",
     ],
     allowed_cidrs=[
 
@@ -30,7 +31,8 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 # Init DB tables
 @app.on_event("startup")
 def on_startup():
-    import db_init_tables
+    print("start startup jobs")
+    # import db_init_tables
 
 
 # Exception handlers
