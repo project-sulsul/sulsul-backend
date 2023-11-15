@@ -1,15 +1,8 @@
-import os
 import peewee
 from contextvars import ContextVar
 from fastapi import Depends
 
-
-DB_NAME = os.environ.get("DB_DBNAME") if os.environ.get("DB_DBNAME") else "airflow"
-DB_HOST = os.environ.get("DB_HOST") if os.environ.get("DB_HOST") else "localhost"
-DB_PORT =os.environ.get("DB_PORT") if os.environ.get("DB_PORT") else 5432
-DB_USER = os.environ.get("DB_USER") if os.environ.get("DB_USER") else "opponent"
-DB_PASSWORD = os.environ.get("DB_PASSWORD") if os.environ.get("DB_HOST") else "opponent"
-DB_SCHEMA = os.environ.get("DB_SCHEMA") if os.environ.get("DB_SCHEMA") else "test"
+from src.config.var_config import DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
 
 
 db_state_default = {"closed": None, "conn": None, "ctx": None, "transactions": None}
