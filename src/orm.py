@@ -2,7 +2,7 @@ import peewee
 from contextvars import ContextVar
 from fastapi import Depends
 
-from src.config.var_config import DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
+from src.config.var_config import IS_PROD, DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
 
 
 db_state_default = {"closed": None, "conn": None, "ctx": None, "transactions": None}
@@ -19,13 +19,23 @@ class PeeweeConnectionState(peewee._ConnectionState):
     def __getattr__(self, name):
         return self._state.get()[name]
 
-db = peewee.PostgresqlDatabase(
-    database=DB_NAME,
-    host=DB_HOST,
-    port=DB_PORT,
-    user=DB_USER,
-    password=DB_PASSWORD,
-)
+if IS_PROD:
+    db = peewee.PostgresqlDatabase(
+        database=DB_NAME,
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD,
+    )
+else:
+    from src.config import secrets
+    db = peewee.PostgresqlDatabase(
+        database=DB_NAME,
+        host=secrets.DB_HOST,
+        port=secrets.DB_PORT,
+        user=secrets.DB_USER,
+        password=secrets.DB_PASSWORD,
+    )
 db._state = PeeweeConnectionState()
 
 async def reset_db_state():
@@ -48,6 +58,7 @@ def transactional(db_state=Depends(reset_db_state)):
             txn.commit()
     except Exception as e:
         txn.rollback()
+        raise e
     finally:
         if not db.is_closed():
             db.close()

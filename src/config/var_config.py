@@ -9,7 +9,7 @@ IS_PROD = True if os.environ.get("PYTHONPATH") == "/var/app/venv/staging-LQM1les
 KST = timezone("Asia/Seoul")
 ALG = "HS256"
 ISSUER = "" # TODO 도메인 연결 후 작성
-TOKEN_DURATION = 60 * 60 * 24
+TOKEN_DURATION = 60 * 60 * 24 * 7
 
 JWT_COOKIE_OPTIONS = {
     "key": "access_token",
@@ -20,9 +20,17 @@ JWT_COOKIE_OPTIONS = {
 }
 
 
-DB_NAME = os.environ.get("DB_DBNAME") if os.environ.get("DB_DBNAME") else "airflow"
-DB_HOST = os.environ.get("DB_HOST") if os.environ.get("DB_HOST") else "localhost"
-DB_PORT =os.environ.get("DB_PORT") if os.environ.get("DB_PORT") else 5432
-DB_USER = os.environ.get("DB_USER") if os.environ.get("DB_USER") else "opponent"
-DB_PASSWORD = os.environ.get("DB_PASSWORD") if os.environ.get("DB_HOST") else "opponent"
-DB_SCHEMA = os.environ.get("DB_SCHEMA") if os.environ.get("DB_SCHEMA") else "test"
+# DB 프라이빗 서브넷으로 옮긴 후엔 아래 사용
+# DB_HOST = os.environ.get("DB_HOST") if IS_PROD else "localhost"
+# DB_PORT =os.environ.get("DB_PORT") if IS_PROD else 5432
+# DB_USER = os.environ.get("DB_USER") if IS_PROD else "opponent"
+# DB_PASSWORD = os.environ.get("DB_PASSWORD") if IS_PROD else "opponent"
+# DB_NAME = "sulsul" if IS_PROD else "airflow"
+# DB_SCHEMA = "sulsul" if IS_PROD else "test"
+
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT =os.environ.get("DB_PORT")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_NAME = "sulsul"
+DB_SCHEMA = "sulsul"
