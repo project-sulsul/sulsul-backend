@@ -43,35 +43,22 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
         User.uid == user_info["email"],
         User.status == "active",
     )
-
-    if user: # 로그인
-        # TODO get user from db
-        token = build_token(
-            
+    if not user:
+        user = User.create(
+            uid=user_info["email"],
+            social_type="google",
         )
 
-        response = JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "token_type": "Bearer",
-                "access_token": token,
-            }
-        )
+    token = build_token(
+        uid=user.uid,
+        social_type=user.socical_type,
+        nickname=user.nickname
+    )
 
-    else: # 회원가입
-        # TODO add user to db
-        token = build_token(
-
-        )
-
-        response = JSONResponse(
-            status_code=status.HTTP_201_CREATED, 
-            content={
-                "token_type": "Bearer",
-                "access_token": token,
-            }
-        )
-    
+    response = JSONResponse(
+        status_code=status.HTTP_201_CREATED, 
+        content={"token_type": "Bearer", "access_token": token},
+    )
     response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
     return response
 
