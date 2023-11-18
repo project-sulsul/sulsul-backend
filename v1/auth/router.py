@@ -77,10 +77,3 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
     print(user_info)
     print(user_info.text)
-
-
-@router.get("/sign-out")
-async def sign_out(request: Request):
-    response = JSONResponse(status_code=status.HTTP_200_OK, content={})
-    response.delete_cookie(key="access_token")
-    return response
