@@ -7,8 +7,10 @@ import requests
 from src.middleware import auth, auth_required
 from src.orm import transactional
 from v1.user.model import User
+from v1.user.model import UserResponseModel
 from v1.user.model import UserNicknameUpdateModel
 from v1.user.model import UserPreferenceUpdateModel
+from v1.user.model import NicknameResponseModel
 from src.config.var_config import USER_NICKNAME_MAX_LENGTH
 
 
@@ -18,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.get("/nickname", dependencies=[Depends(transactional)])
+@router.get("/nickname", dependencies=[Depends(transactional)], response_model=NicknameResponseModel)
 @auth_required
 async def generate_random_nickname(request: Request):
     error_count = 0
@@ -32,10 +34,13 @@ async def generate_random_nickname(request: Request):
         for nickname in nicknames:
             count = User.select().where(User.nickname == nickname).count()
             if count == 0 and not re.compile(r'[!@#$%^&*(),.?":{}|<>]').search(nickname) and len(nickname) <= USER_NICKNAME_MAX_LENGTH:
-                return JSONResponse({"nickname": nickname})
+                return JSONResponse(
+                    status_code=status.HTTP_200_OK,
+                    content=NicknameResponseModel(nickname=nickname).model_dump(),
+                )
 
 
-@router.get("/{user_id}", dependencies=[Depends(transactional)])
+@router.get("/{user_id}", dependencies=[Depends(transactional)], response_model=UserResponseModel)
 @auth
 async def get_user(request: Request, user_id: int):
     user = User.get_or_none(User.id == user_id)
@@ -49,11 +54,11 @@ async def get_user(request: Request, user_id: int):
         )
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=user.dto(),
+        content=user.dto().model_dump(),
     )
 
 
-@router.post("/{user_id}/nickname", dependencies=[Depends(transactional)])
+@router.post("/{user_id}/nickname", dependencies=[Depends(transactional)], response_model=UserResponseModel)
 @auth_required
 async def update_user_nickname(request: Request, user_id: int, form: UserNicknameUpdateModel):
     login_user = User.get_by_id(request.state.user["id"])
@@ -68,11 +73,11 @@ async def update_user_nickname(request: Request, user_id: int, form: UserNicknam
     login_user.save()
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=login_user.dto()
+        content=login_user.dto().model_dump()
     )
 
 
-@router.post("/{user_id}/preference", dependencies=[Depends(transactional)])
+@router.post("/{user_id}/preference", dependencies=[Depends(transactional)], response_model=UserResponseModel)
 @auth_required
 async def update_user_preference(request: Request, user_id: int, form: UserPreferenceUpdateModel):
     login_user = User.get_by_id(request.state.user["id"])
@@ -87,5 +92,5 @@ async def update_user_preference(request: Request, user_id: int, form: UserPrefe
     login_user.save()
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=login_user.dto()
+        content=login_user.dto().model_dump()
     )

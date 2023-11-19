@@ -10,6 +10,26 @@ from src.orm import db
 from src.config.var_config import KST, DB_SCHEMA
 
 
+class NicknameResponseModel(BaseModel):
+    nickname: str
+
+
+class UserNicknameUpdateModel(BaseModel):
+    nickname: str
+
+
+class UserPreferenceUpdateModel(BaseModel):
+    preference: Dict[str, List]
+
+
+class UserResponseModel(BaseModel):
+    id: int
+    uid: str
+    nickname: str
+    preference: Dict[str, List]
+    status: str
+
+
 class User(Model):
 
     id = peewee.AutoField(primary_key=True)
@@ -33,25 +53,17 @@ class User(Model):
     def __setitem__(self, key, value):
         self.__data__[key] = value
 
-    def dto(self):
-        return {
-            "id": self.id,
-            "uid": self.uid,
-            "nickname": self.nickname,
-            "preference": self.preference,
-            "status": self.status,
-        }
+    def dto(self) -> UserResponseModel:
+        return UserResponseModel(
+            id=self.id,
+            uid=self.uid,
+            nickname=self.nickname,
+            preference=self.preference,
+            status=self.status
+        )
 
 
 @pre_save(sender=User)
 def pre_save(model_class, instance: User, created):
     if not created:
         instance.updated_at = datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
-
-
-class UserNicknameUpdateModel(BaseModel):
-    nickname: str
-
-
-class UserPreferenceUpdateModel(BaseModel):
-    preference: Dict[str, List]

@@ -7,7 +7,7 @@ from google.auth import transport
 
 from src.orm import transactional
 from v1.user.model import User
-from v1.auth.model import GoogleCredentialsModel, KakaoCredentialsModel, AuthenticationResponse
+from v1.auth.model import GoogleCredentialsModel, KakaoCredentialsModel, AuthenticationResponseModel
 from src.jwt import build_token
 from src.config.var_config import JWT_COOKIE_OPTIONS
 
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.post("/sign-in/google", dependencies=[Depends(transactional)], response_model=AuthenticationResponse)
+@router.post("/sign-in/google", dependencies=[Depends(transactional)], response_model=AuthenticationResponseModel)
 async def sign_in_with_google(request: Request, google_credentials: GoogleCredentialsModel):
     form = google_credentials.model_dump()
     try:
@@ -54,13 +54,13 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
 
     response = JSONResponse(
         status_code=status_code,
-        content=AuthenticationResponse(access_token=token).model_dump()
+        content=AuthenticationResponseModel(access_token=token).model_dump()
     )
     response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
     return response
 
 
-@router.post("/sign-in/kakao", response_model=AuthenticationResponse)
+@router.post("/sign-in/kakao", response_model=AuthenticationResponseModel)
 async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentialsModel):
     form = kakao_credentials.model_dump()
     oauth_response = requests.get(
@@ -99,5 +99,5 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
     return JSONResponse(
         status_code=status_code,
-        content=AuthenticationResponse(access_token=token).model_dump()
+        content=AuthenticationResponseModel(access_token=token).model_dump()
     )
