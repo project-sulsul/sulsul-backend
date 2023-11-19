@@ -2,11 +2,16 @@ import typing
 from functools import wraps
 from ipaddress import IPv4Address, IPv4Network
 
+from fastapi import status
 from starlette.middleware.base import RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.datastructures import URL, Headers
 from starlette.responses import PlainTextResponse, RedirectResponse, Response, JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
+
+from src.orm import db
+from src.jwt import get_login_user
+from v1.user.model import User
 
 
 ENFORCE_DOMAIN_WILDCARD = "Domain wildcard patterns must be like '*.example.com'."
@@ -93,14 +98,46 @@ def auth(call_next: RequestResponseEndpoint):
     @wraps(call_next)
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
-        # TODO get access token
+        auth_header = request.headers.get("Authorization")
 
+        token_type, token = auth_header.split(" ")
+
+        if token_type != "Bearer":
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={"message": "Invalid token type"},
+            )
+        
         try:
-            # TODO get login user
-            pass
-
+            request.state.user = get_login_user(token)
         except Exception as e:
             request.state.user = None
+
+        return await call_next(*args, **kwargs)
+    return wrapper
+
+
+def auth_required(call_next: RequestResponseEndpoint):
+    @wraps(call_next)
+    async def wrapper(*args, **kwargs):
+        request: Request = kwargs["request"]
+        auth_header = request.headers.get("Authorization")
+
+        token_type, token = auth_header.split(" ")
+
+        if token_type != "Bearer":
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={"message": "Invalid token type"},
+            )
+        
+        try:
+            request.state.user = get_login_user(token)
+        except Exception as e:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content={"message": "Unauthorized user cannot access"}
+            )
 
         return await call_next(*args, **kwargs)
     return wrapper

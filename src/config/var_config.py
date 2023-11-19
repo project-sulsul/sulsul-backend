@@ -20,6 +20,9 @@ JWT_COOKIE_OPTIONS = {
 }
 
 
+USER_NICKNAME_MAX_LENGTH = 10
+
+
 # DB 프라이빗 서브넷으로 옮긴 후엔 아래 사용
 # DB_HOST = os.environ.get("DB_HOST") if IS_PROD else "localhost"
 # DB_PORT =os.environ.get("DB_PORT") if IS_PROD else 5432

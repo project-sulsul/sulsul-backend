@@ -8,7 +8,7 @@ from google.auth import transport
 from src.orm import transactional
 from v1.user.model import User
 from v1.auth.model import GoogleCredentialsModel, KakaoCredentialsModel, AuthenticationResponse
-from v1.auth.jwt import build_token
+from src.jwt import build_token
 from src.config.var_config import JWT_COOKIE_OPTIONS
 
 
@@ -54,7 +54,7 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
 
     response = JSONResponse(
         status_code=status_code,
-        content=AuthenticationResponse(access_token=token)
+        content=AuthenticationResponse(access_token=token).model_dump()
     )
     response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
     return response
@@ -83,13 +83,13 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
 
     user = User.get_or_none(
         User.social_type == "kakao",
-        User.uid == user_info["id"],
+        User.uid == user_info["kakao_account"]["email"],
         User.status == "active",
     )
     if not user:
         status_code = status.HTTP_201_CREATED
-        user = user.create(
-            uid=user_info["id"],
+        user = User.create(
+            uid=user_info["kakao_account"]["email"],
             social_type="kakao",
         )
     
@@ -99,5 +99,5 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
     return JSONResponse(
         status_code=status_code,
-        content=AuthenticationResponse(access_token=token)
+        content=AuthenticationResponse(access_token=token).model_dump()
     )
