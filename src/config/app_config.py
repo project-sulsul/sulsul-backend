@@ -4,7 +4,6 @@ import os
 # from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi.staticfiles import StaticFiles
-from peewee import PostgresqlDatabase
 
 from src.middleware import EnhancedTrustedHostMiddleware
 
@@ -28,10 +27,9 @@ app.add_middleware(
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 
-# Init DB tables
 @app.on_event("startup")
 def on_startup():
-    import db_init_tables
+    import src.db_init_tables
 
 
 # Exception handlers

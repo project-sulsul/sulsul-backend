@@ -13,4 +13,8 @@ class GoogleCredentialsModel(BaseModel):
 
 
 class KakaoCredentialsModel(BaseModel):
+    """
+    카카오 로그인/회원가입 양식  
+    - access_token (str): 카카오 로그인 후 발급받은 Access Token
+    """
     access_token: str

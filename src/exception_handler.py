@@ -1,12 +1,12 @@
 import traceback
-from fastapi import status
+from fastapi import status, Request
 from fastapi.responses import JSONResponse
 
 from app import app
 
 
 @app.exception_handler(Exception)
-async def hanlde_exceptions(request, exc):
+async def hanlde_exceptions(request: Request, exc):
     trace_info = traceback.format_exc()
 
     return JSONResponse(
@@ -14,5 +14,6 @@ async def hanlde_exceptions(request, exc):
         content={
             "error": f"{exc.__class__.__name__}",
             "message": str(exc),
+            "trace_info": trace_info
         }
     )
