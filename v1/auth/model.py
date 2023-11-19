@@ -18,3 +18,11 @@ class KakaoCredentialsModel(BaseModel):
     - access_token (str): 카카오 로그인 후 발급받은 Access Token
     """
     access_token: str
+
+
+class AuthenticationResponse(BaseModel):
+    """
+    소셜 로그인 응답 DTO
+    """
+    token_type: str = "Bearer"
+    access_token: str
