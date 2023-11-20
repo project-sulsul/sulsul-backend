@@ -37,7 +37,7 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
     user = User.get_or_none(
         User.social_type == "google",
         User.uid == user_info["email"],
-        User.status == "active",
+        User.is_deleted == False,
     )
     status_code = status.HTTP_200_OK
     if not user:

@@ -1,0 +1,30 @@
+name: Sulsul API server deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install AWS ElasticBeanstalk CLI
+        run: |
+          sudo apt-get install python3-pip
+          pip3 install awsebcli
+
+      - name: Configure AWS credentials
+        run: | 
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && aws configure set region us-east-1
+
+      - name: Init AWS ElasticBeanstalk
+        run: eb init -r ap-northeast-2 -p Python sulsul
+
+      - name: Deploy AWS ElasticBeanstalk
+        run: eb deploy -l "GitHubActions-$(date +'%Y%m%d%H%M%S')" Sulsul-env

@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 import re
 import requests
+from peewee import DoesNotExist
 
 from src.middleware import auth, auth_required
 from src.orm import transactional
@@ -15,7 +16,7 @@ from src.config.var_config import USER_NICKNAME_MAX_LENGTH
 
 
 router = APIRouter(
-    prefix="/user",
+    prefix="/users",
     tags=["User"],
 )
 
@@ -43,19 +44,24 @@ async def generate_random_nickname(request: Request):
 @router.get("/{user_id}", dependencies=[Depends(transactional)], response_model=UserResponseModel)
 @auth
 async def get_user(request: Request, user_id: int):
-    user = User.get_or_none(User.id == user_id)
+    user = User.get_or_none(User.id == user_id, User.is_deleted == False)
     if not user:
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "error": "User Not Found",
-                "message": f"User {user_id} doesn't exist"
-            }
-        )
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=user.dto().model_dump(),
-    )
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": f"User {user_id} doesn't exist"})
+    return JSONResponse(status_code=status.HTTP_200_OK, content=user.dto().model_dump())
+
+
+@router.get("/validation", dependencies=[Depends(transactional)])
+@auth
+async def validate_user_nickname(request: Request, nickname: str):
+    if len(nickname) > USER_NICKNAME_MAX_LENGTH:
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": f"Max length({USER_NICKNAME_MAX_LENGTH}) exceeded", "is_valid": False})
+    if re.compile(r'[!@#$%^&*(),.?":{}|<>]').search(nickname):
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": "Nicknames cannot contain special characters", "is_valid": False})
+    try:
+        User.get(User.nickname == nickname)
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": "Already exists nickname", "is_valid": False})
+    except DoesNotExist:
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"is_valid": True})
 
 
 @router.post("/{user_id}/nickname", dependencies=[Depends(transactional)], response_model=UserResponseModel)
@@ -64,17 +70,10 @@ async def update_user_nickname(request: Request, user_id: int, form: UserNicknam
     login_user = User.get_by_id(request.state.user["id"])
     nickname = form.model_dump()["nickname"]
     if login_user.id != user_id:
-        return JSONResponse(
-            status_code=status.HTTP_403_FORBIDDEN,
-            content={"message": "Forbidden request"}
-        )
-    
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"message": "Forbidden request"})
     login_user.nickname = nickname
     login_user.save()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=login_user.dto().model_dump()
-    )
+    return JSONResponse(status_code=status.HTTP_200_OK, content=login_user.dto().model_dump())
 
 
 @router.post("/{user_id}/preference", dependencies=[Depends(transactional)], response_model=UserResponseModel)
@@ -83,14 +82,18 @@ async def update_user_preference(request: Request, user_id: int, form: UserPrefe
     login_user = User.get_by_id(request.state.user["id"])
     preference = form.model_dump()["preference"]
     if login_user.id != user_id:
-        return JSONResponse(
-            status_code=status.HTTP_403_FORBIDDEN,
-            content={"message": "Forbidden request"}
-        )
-    
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"message": "Forbidden request"})
     login_user.preference = preference
     login_user.save()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=login_user.dto().model_dump()
-    )
+    return JSONResponse(status_code=status.HTTP_200_OK, content=login_user.dto().model_dump())
+
+
+@router.delete("/{user_id}", dependencies=[Depends(transactional)])
+@auth_required
+async def delete_user(request: Request, user_id: int):
+    login_user = User.get_by_id(request.state.user["id"])
+    if login_user.id != user_id:
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"message": "Forbidden request"})
+    login_user.is_deleted = True
+    login_user.save()
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"result": True})
