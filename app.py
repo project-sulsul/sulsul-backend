@@ -13,6 +13,10 @@ app_desc = """
 - 회원 기능 일부가 추가되었어요. (유저 조회, 닉네임/취향 변경)
 - 술/안주(Pairing) 조회 기능이 추가됐어요
 - 관리자 페이지는 개발 중이에요.(/admin)
+
+**몇가지 사용법**
+- 로그인이 필요한 API는 '<token_type> <access_token>' 형태의 값을 Authorization 헤더에 포함하여 요청합니다.
+- 
 """
 app = FastAPI(
     title="술술 API",

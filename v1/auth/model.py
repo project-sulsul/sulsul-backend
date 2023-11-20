@@ -20,6 +20,10 @@ class KakaoCredentialsModel(BaseModel):
     access_token: str
 
 
+class AppleCredentialsModel(BaseModel):
+    pass
+
+
 class AuthenticationResponseModel(BaseModel):
     """
     소셜 로그인 응답 DTO

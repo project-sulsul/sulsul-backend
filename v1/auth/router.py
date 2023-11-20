@@ -6,10 +6,12 @@ from google.oauth2 import id_token
 from google.auth import transport
 
 from src.orm import transactional
-from v1.user.model import User
-from v1.auth.model import GoogleCredentialsModel, KakaoCredentialsModel, AuthenticationResponseModel
 from src.jwt import build_token
-from src.config.var_config import JWT_COOKIE_OPTIONS
+from v1.user.model import User
+from v1.auth.model import GoogleCredentialsModel
+from v1.auth.model import KakaoCredentialsModel
+from v1.auth.model import AppleCredentialsModel
+from v1.auth.model import AuthenticationResponseModel
 
 
 router = APIRouter(
@@ -56,11 +58,10 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
         status_code=status_code,
         content=AuthenticationResponseModel(access_token=token).model_dump()
     )
-    # response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
     return response
 
 
-@router.post("/sign-in/kakao", response_model=AuthenticationResponseModel)
+@router.post("/sign-in/kakao", dependencies=[Depends(transactional)], response_model=AuthenticationResponseModel)
 async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentialsModel):
     form = kakao_credentials.model_dump()
     oauth_response = requests.get(
@@ -101,3 +102,9 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
         status_code=status_code,
         content=AuthenticationResponseModel(access_token=token).model_dump()
     )
+
+
+@router.post("/sign-in/apple", dependencies=[Depends(transactional)], response_model=AuthenticationResponseModel)
+async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentialsModel):
+    form = apple_credentials.model_dump()
+    return {}
