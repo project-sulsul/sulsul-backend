@@ -10,10 +10,18 @@ KST = timezone("Asia/Seoul")
 ALG = "HS256"
 ISSUER = "" # TODO 도메인 연결 후 작성
 TOKEN_DURATION = 60 * 60 * 24 * 7
+ADMIN_TOKEN_DURATION = 60 * 60 * 12
 
 JWT_COOKIE_OPTIONS = {
     "key": "access_token",
     "max_age": TOKEN_DURATION,
+    "httponly": True,
+    "secure": True,
+    "samesite": "lax",
+}
+ADMIN_JWT_COOKIE_OPTIONS = {
+    "key": "access_token",
+    "max_age": ADMIN_TOKEN_DURATION,
     "httponly": True,
     "secure": True,
     "samesite": "lax",
@@ -37,3 +45,8 @@ DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_NAME = "sulsul"
 DB_SCHEMA = "sulsul"
+
+
+ADMIN_USER_UIDS = [
+    "ahdwjdtprtm@gmail.com",
+]

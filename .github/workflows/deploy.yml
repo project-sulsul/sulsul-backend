@@ -21,10 +21,11 @@ jobs:
       - name: Configure AWS credentials
         run: | 
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && aws configure set region us-east-1
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ap-northeast-2
 
       - name: Init AWS ElasticBeanstalk
         run: eb init -r ap-northeast-2 -p Python sulsul
 
       - name: Deploy AWS ElasticBeanstalk
-        run: eb deploy -l "GitHubActions-$(date -u +'%Y-%m-%d %H:%M:%S')" Sulsul-env
+        run: eb deploy -l "GitHubActions-$(date +%s)" Sulsul-env

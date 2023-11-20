@@ -9,8 +9,8 @@ from starlette.datastructures import URL, Headers
 from starlette.responses import PlainTextResponse, RedirectResponse, Response, JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from src.orm import db
 from src.jwt import get_login_user
+from src.config.var_config import ADMIN_USER_UIDS
 from v1.user.model import User
 
 
@@ -99,19 +99,17 @@ def auth(call_next: RequestResponseEndpoint):
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
         auth_header = request.headers.get("Authorization")
+        request.state.user = None
 
-        token_type, token = auth_header.split(" ")
+        if auth_header:
+            token_type, token = auth_header.split(" ")
 
-        if token_type != "Bearer":
-            return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={"message": "Invalid token type"},
-            )
-        
-        try:
-            request.state.user = get_login_user(token)
-        except Exception as e:
-            request.state.user = None
+            if token_type != "Bearer":
+                return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": "Invalid token type"})
+            try:
+                request.state.user = get_login_user(token)
+            except Exception as e:
+                pass
 
         return await call_next(*args, **kwargs)
     return wrapper
@@ -122,22 +120,35 @@ def auth_required(call_next: RequestResponseEndpoint):
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
         auth_header = request.headers.get("Authorization")
-
+        if not auth_header:
+            return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"message": "Unauthorized user cannot access"})
+        
         token_type, token = auth_header.split(" ")
 
         if token_type != "Bearer":
-            return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={"message": "Invalid token type"},
-            )
+            return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": "Invalid token type"})
         
         try:
             request.state.user = get_login_user(token)
         except Exception as e:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"message": "Unauthorized user cannot access"}
-            )
+            return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"message": "Unauthorized user cannot access"})
 
+        return await call_next(*args, **kwargs)
+    return wrapper
+
+
+def admin(call_next: RequestResponseEndpoint):
+    @wraps(call_next)
+    async def wrapper(*args, **kwargs):
+        request: Request = kwargs["request"]
+        access_token = request.cookies.get("access_token")
+        try:
+            admin = get_login_user(access_token)
+            if not admin["is_admin_token"]: raise Exception()
+            
+            request.state.admin = admin
+        except Exception:
+            return RedirectResponse("/admin/sign-in")
+        
         return await call_next(*args, **kwargs)
     return wrapper

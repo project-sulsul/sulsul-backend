@@ -9,6 +9,9 @@ from src.middleware import EnhancedTrustedHostMiddleware
 
 
 # Routers
+from admin.router import router as admim_router
+app.include_router(admim_router)
+
 from v1.root_router import v1_root_router
 app.include_router(v1_root_router)
 

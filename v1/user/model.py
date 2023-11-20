@@ -14,6 +14,11 @@ class NicknameResponseModel(BaseModel):
     nickname: str
 
 
+class NicknameValidationResponseModel(BaseModel):
+    is_valid: bool
+    message: str | None
+
+
 class UserNicknameUpdateModel(BaseModel):
     nickname: str
 

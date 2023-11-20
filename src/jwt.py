@@ -22,6 +22,22 @@ def build_token(**kwargs) -> str:
     )
 
 
+def build_admin_token(**kwargs) -> str:
+    current_time = datetime.now(KST)
+    payload = {
+        "iss": ISSUER,
+        "iat": current_time,
+        "exp": current_time + timedelta(seconds=ADMIN_TOKEN_DURATION),
+    }
+    payload.update(kwargs)
+
+    return jwt.encode(
+        payload=payload, 
+        key=JWT_ENCRYPTION_KEY, 
+        algorithm=ALG, 
+    )
+
+
 def get_login_user(token: str) -> dict:
     return jwt.decode(
         jwt=token, 

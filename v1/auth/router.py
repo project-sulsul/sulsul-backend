@@ -56,7 +56,7 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
         status_code=status_code,
         content=AuthenticationResponseModel(access_token=token).model_dump()
     )
-    response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
+    # response.set_cookie(value="token", **JWT_COOKIE_OPTIONS)
     return response
 
 

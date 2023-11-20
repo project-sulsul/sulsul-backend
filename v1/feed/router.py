@@ -3,10 +3,6 @@ from fastapi import APIRouter
 
 router = APIRouter(
     prefix="/feed",
-    tags=["Authentication"],
+    tags=["Feed"],
 )
 
-
-@router.get("")
-async def user_test(request):
-    return {}
