@@ -6,7 +6,7 @@ from src.middleware import admin
 from src.jwt import build_token
 from src.orm import transactional
 from admin.model import Admin, AdminSigninModel
-from src.config.var_config import ADMIN_JWT_COOKIE_OPTIONS
+from src.config.var_config import TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
 
 
 router = APIRouter(
@@ -34,15 +34,9 @@ async def admin_sign_in(request: Request, form: AdminSigninModel):
     form = form.model_dump()
     admin = Admin.select().first()
     if form["username"] == admin.username and form["password"] == admin.password:
-        token = build_token(
-            id=admin.id,
-            is_admin_token=True,
-        )
-        response = JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={"token_type": "Bearer", "access_token": token}
-        )
-        response.set_cookie(value=token, **ADMIN_JWT_COOKIE_OPTIONS)
+        token = build_token(id=admin.id, is_admin_token=True)
+        response = JSONResponse(status_code=status.HTTP_200_OK, content={"token_type": TOKEN_TYPE, "access_token": token})
+        response.set_cookie(value=token, max_age=TOKEN_DURATION, **JWT_COOKIE_OPTIONS)
         return response
     
     else:

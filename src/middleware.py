@@ -143,10 +143,11 @@ def admin(call_next: RequestResponseEndpoint):
         request: Request = kwargs["request"]
         access_token = request.cookies.get("access_token")
         try:
-            admin = get_login_user(access_token)
-            if not admin["is_admin_token"]: raise Exception()
+            login_user = get_login_user(access_token)
+            if "is_admin_token" in login_user and login_user["is_admin_token"] != True: 
+                raise Exception()
             
-            request.state.admin = admin
+            request.state.admin = login_user
         except Exception:
             return RedirectResponse("/admin/sign-in")
         

@@ -1,7 +1,8 @@
 from fastapi import FastAPI
+from src.config.var_config import IS_PROD
 
 
-app_desc = """
+app_desc = f"""
 ### 술술 REST API 문서입니다  
 열심히 개발중이에요  
 
@@ -16,11 +17,8 @@ app_desc = """
 
 **몇가지 사용법**
 - 로그인이 필요한 API는 '<token_type> <access_token>' 형태의 값을 Authorization 헤더에 포함하여 요청합니다.
-```javascript
-{
-    "Authorization": `${token_type} ${access_token}`
-}
-```
+
+[**관리자 페이지**]({'http://sulsul-env.eba-gvmvk4bq.ap-northeast-2.elasticbeanstalk.com/admin' if IS_PROD else 'http://localhost:8000/admin'})
 """
 app = FastAPI(
     title="술술 API",

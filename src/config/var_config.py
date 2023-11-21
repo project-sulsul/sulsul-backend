@@ -15,14 +15,6 @@ ADMIN_TOKEN_DURATION = 60 * 60 * 12
 
 JWT_COOKIE_OPTIONS = {
     "key": "access_token",
-    "max_age": TOKEN_DURATION,
-    "httponly": True,
-    "secure": True,
-    "samesite": "lax",
-}
-ADMIN_JWT_COOKIE_OPTIONS = {
-    "key": "access_token",
-    "max_age": ADMIN_TOKEN_DURATION,
     "httponly": True,
     "secure": True,
     "samesite": "lax",
