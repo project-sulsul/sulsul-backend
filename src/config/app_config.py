@@ -1,7 +1,5 @@
 from app import app
 
-import os
-# from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi import Request
 from fastapi.responses import RedirectResponse

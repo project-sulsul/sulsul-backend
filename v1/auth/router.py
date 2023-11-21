@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 
-import requests, jwt
-from cryptography.x509 import load_pem_x509_certificate
-from cryptography.hazmat.backends import default_backend
+import jwt
+import json
+import requests
+from jwt.algorithms import RSAAlgorithm
+from cryptography.hazmat.primitives import serialization
+
 from google.oauth2 import id_token
 from google.auth import transport
 
@@ -85,7 +88,7 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     user = User.get_or_none(
         User.social_type == "kakao",
         User.uid == user_info["kakao_account"]["email"],
-        User.status == "active",
+        User.is_deleted == False
     )
     if not user:
         status_code = status.HTTP_201_CREATED
@@ -104,28 +107,31 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
 
 
-@router.post("/sign-in/apple", dependencies=[Depends(transactional)]
-            #  , response_model=AuthenticationResponseModel
-             )
+@router.post("/sign-in/apple", dependencies=[Depends(transactional)], response_model=TokenResponseModel)
 async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentialsModel):
     form = apple_credentials.model_dump()
 
-    token_header = jwt.get_unverified_header(form["id_token"])
-    jwks = requests.get("https://appleid.apple.com/auth/keys").json()
-    rsa_key = [ key for key in jwks["keys"] if key["kid"] == token_header["kid"] ][0]
-
-    PUBLIC_KEY = ""
-    cert_str = f"-----BEGIN CERTIFICATE-----\n{PUBLIC_KEY}\n-----END CERTIFICATE-----"
-    cert_obj = load_pem_x509_certificate(cert_str.encode(), default_backend())
-    public_key = cert_obj.public_key()
+    id_token_header = jwt.get_unverified_header(form["id_token"])
+    jwks = requests.get("https://appleid.apple.com/auth/keys").json()["keys"]
+    rsa_public_key = RSAAlgorithm.from_jwk(
+        jwk=[ json.dumps(jwk) for jwk in jwks if jwk["kid"] == id_token_header["kid"] ][0]
+    ).public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
 
     user_info = jwt.decode(
         jwt=form["id_token"],
-        key=public_key,
-        algorithms=["RS256"],
-        # audience=APPLE_CLIENT_ID,
-        # subject=APPLE_TEAM_ID,
+        key=rsa_public_key,
+        algorithms=id_token_header["alg"],
         options={"verify_signature": True},
     )
+    status_code = status.HTTP_200_OK
 
-    return user_info
+    user = User.get_or_none(
+        User.social_type == "apple",
+        User.uid == user_info["email"],
+        User.is_deleted == False
+    )
+
+    return JSONResponse(status_code=status_code, content=TokenResponseModel(access_token=""))
