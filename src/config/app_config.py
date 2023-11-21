@@ -2,7 +2,7 @@ from app import app
 
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi import Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.middleware import EnhancedTrustedHostMiddleware
@@ -48,6 +48,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 # favicon config
-# @app.get("/favicon.ico", include_in_schema=False)
-# async def favicon():
-#     return FileResponse("static/favicon.ico")
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse("static/favicon.png")

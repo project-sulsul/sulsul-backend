@@ -57,6 +57,7 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
     token = build_token(
         id=user.id,
         social_type="google",
+        status=user.status,
     )
 
     response = JSONResponse(
@@ -100,6 +101,7 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     token = build_token(
         id=user.id,
         social_type="kakao",
+        status=user.status,
     )
     return JSONResponse(
         status_code=status_code,
@@ -124,6 +126,7 @@ async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentia
         jwt=form["id_token"],
         key=rsa_public_key,
         algorithms=id_token_header["alg"],
+        audience="com.SulSul-iOS",
         options={"verify_signature": True},
     )
     status_code = status.HTTP_200_OK
@@ -133,5 +136,20 @@ async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentia
         User.uid == user_info["email"],
         User.is_deleted == False
     )
+    if not user:
+        status_code = status.HTTP_201_CREATED
+        user = User.create(
+            uid=user_info["email"],
+            social_type="apple",
+        )
 
-    return JSONResponse(status_code=status_code, content=TokenResponseModel(access_token=""))
+    token = build_token(
+        id=user.id,
+        social_type="apple",
+        status=user.status,
+    )
+
+    return JSONResponse(
+        status_code=status_code, 
+        content=TokenResponseModel(access_token=token).model_dump(),
+    )

@@ -10,12 +10,20 @@
 
     {% block head %}{% endblock %}
 </head>
-<body>
+<body style="margin: 0; height: 100%;">
 
-{% block body %}{% endblock %}
+{% include "header.html" %}
+
+<div class="d-flex">
+    {% include "side_menu.html" %}
+    {% block body %}{% endblock %}
+</div>
     
 </body>
 
+<script>
+
+</script>
 {% block js %}{% endblock %}
 
 </html>

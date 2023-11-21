@@ -16,10 +16,12 @@ ADMIN_TOKEN_DURATION = 60 * 60 * 12
 JWT_COOKIE_OPTIONS = {
     "key": "access_token",
     "httponly": True,
-    "secure": True,
+    "secure": False,
     "samesite": "lax",
 }
 
+if os.environ.get("APPLE_CLIENT_ID"): APPLE_CLIENT_ID = os.environ.get("APPLE_CLIENT_ID")
+else: from src.config.secrets import APPLE_CLIENT_ID
 
 USER_NICKNAME_MAX_LENGTH = 10
 
