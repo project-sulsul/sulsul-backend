@@ -9,6 +9,7 @@ IS_PROD = True if os.environ.get("PYTHONPATH") == "/var/app/venv/staging-LQM1les
 KST = timezone("Asia/Seoul")
 ALG = "HS256"
 ISSUER = "" # TODO 도메인 연결 후 작성
+TOKEN_TYPE = "Bearer"
 TOKEN_DURATION = 60 * 60 * 24 * 7
 ADMIN_TOKEN_DURATION = 60 * 60 * 12
 

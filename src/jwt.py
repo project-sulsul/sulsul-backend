@@ -43,7 +43,6 @@ def get_login_user(token: str) -> dict:
         jwt=token, 
         key=JWT_ENCRYPTION_KEY, 
         algorithms=ALG, 
-        options={
-            "verify_signature": True,
-        }
+        verify=True,
+        options={"verify_signature": True}
     )

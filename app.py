@@ -16,7 +16,11 @@ app_desc = """
 
 **몇가지 사용법**
 - 로그인이 필요한 API는 '<token_type> <access_token>' 형태의 값을 Authorization 헤더에 포함하여 요청합니다.
-- 
+```javascript
+{
+    "Authorization": `${token_type} ${access_token}`
+}
+```
 """
 app = FastAPI(
     title="술술 API",

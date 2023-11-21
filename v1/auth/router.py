@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 
-import requests
+import requests, jwt
+from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.backends import default_backend
 from google.oauth2 import id_token
 from google.auth import transport
 
@@ -11,7 +13,7 @@ from v1.user.model import User
 from v1.auth.model import GoogleCredentialsModel
 from v1.auth.model import KakaoCredentialsModel
 from v1.auth.model import AppleCredentialsModel
-from v1.auth.model import AuthenticationResponseModel
+from v1.auth.model import TokenResponseModel
 
 
 router = APIRouter(
@@ -20,7 +22,7 @@ router = APIRouter(
 )
 
 
-@router.post("/sign-in/google", dependencies=[Depends(transactional)], response_model=AuthenticationResponseModel)
+@router.post("/sign-in/google", dependencies=[Depends(transactional)], response_model=TokenResponseModel)
 async def sign_in_with_google(request: Request, google_credentials: GoogleCredentialsModel):
     form = google_credentials.model_dump()
     try:
@@ -56,20 +58,18 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
 
     response = JSONResponse(
         status_code=status_code,
-        content=AuthenticationResponseModel(access_token=token).model_dump()
+        content=TokenResponseModel(access_token=token).model_dump()
     )
     return response
 
 
-@router.post("/sign-in/kakao", dependencies=[Depends(transactional)], response_model=AuthenticationResponseModel)
+@router.post("/sign-in/kakao", dependencies=[Depends(transactional)], response_model=TokenResponseModel)
 async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentialsModel):
     form = kakao_credentials.model_dump()
     oauth_response = requests.get(
         url='https://kapi.kakao.com/v2/user/me?property_keys=["kakao_account.email"]',
-        # url="https://kapi.kakao.com/v1/user/access_token_info",
         headers={
             "Authorization": f"Bearer {form['access_token']}",
-            # "Authorization": f"KakaoAK {KAKAO_ADMIN_KEY}",
             "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         },
     )
@@ -100,11 +100,32 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
     return JSONResponse(
         status_code=status_code,
-        content=AuthenticationResponseModel(access_token=token).model_dump()
+        content=TokenResponseModel(access_token=token).model_dump()
     )
 
 
-@router.post("/sign-in/apple", dependencies=[Depends(transactional)], response_model=AuthenticationResponseModel)
+@router.post("/sign-in/apple", dependencies=[Depends(transactional)]
+            #  , response_model=AuthenticationResponseModel
+             )
 async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentialsModel):
     form = apple_credentials.model_dump()
-    return {}
+
+    token_header = jwt.get_unverified_header(form["id_token"])
+    jwks = requests.get("https://appleid.apple.com/auth/keys").json()
+    rsa_key = [ key for key in jwks["keys"] if key["kid"] == token_header["kid"] ][0]
+
+    PUBLIC_KEY = ""
+    cert_str = f"-----BEGIN CERTIFICATE-----\n{PUBLIC_KEY}\n-----END CERTIFICATE-----"
+    cert_obj = load_pem_x509_certificate(cert_str.encode(), default_backend())
+    public_key = cert_obj.public_key()
+
+    user_info = jwt.decode(
+        jwt=form["id_token"],
+        key=public_key,
+        algorithms=["RS256"],
+        # audience=APPLE_CLIENT_ID,
+        # subject=APPLE_TEAM_ID,
+        options={"verify_signature": True},
+    )
+
+    return user_info

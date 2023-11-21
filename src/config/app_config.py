@@ -3,6 +3,8 @@ from app import app
 import os
 # from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+from fastapi import Request
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.middleware import EnhancedTrustedHostMiddleware
@@ -33,6 +35,10 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 @app.on_event("startup")
 def on_startup():
     import src.db_init_tables
+
+@app.get("/")
+async def redirect_to_docs(request: Request):
+    return RedirectResponse("/docs")
 
 
 # Exception handlers
