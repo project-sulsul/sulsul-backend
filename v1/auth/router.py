@@ -42,7 +42,6 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
         )
     
     user = User.get_or_none(
-        User.social_type == "google",
         User.uid == user_info["email"],
         User.is_deleted == False,
     )
@@ -56,7 +55,7 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
 
     token = build_token(
         id=user.id,
-        social_type="google",
+        social_type=user.social_type,
         status=user.status,
     )
 
@@ -87,7 +86,6 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     status_code = status.HTTP_200_OK
 
     user = User.get_or_none(
-        User.social_type == "kakao",
         User.uid == user_info["kakao_account"]["email"],
         User.is_deleted == False
     )
@@ -100,7 +98,7 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     
     token = build_token(
         id=user.id,
-        social_type="kakao",
+        social_type=user.social_type,
         status=user.status,
     )
     return JSONResponse(
@@ -145,7 +143,7 @@ async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentia
 
     token = build_token(
         id=user.id,
-        social_type="apple",
+        social_type=user.social_type,
         status=user.status,
     )
 

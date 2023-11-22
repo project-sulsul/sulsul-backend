@@ -14,6 +14,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        html {
+            height: 100%;
+        }
+        header, footer {
+            height: 70px;
+        }
         .header-dark-mode {
             background-color: #222;
         }
@@ -27,22 +33,38 @@
         .btn-dark-mode:hover {
             background-color: #444;
         }
+        #content {
+            transition: width 0.3s ease-in-out;
+        }
+        @media screen and (max-width: 700px) {
+            body {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 
     {% block head %}{% endblock %}
 </head>
-<body style="margin: 0; height: 100%;">
+<body style="margin: 0;">
 
-{% include "header.html" %}
+    <div>
+        {% include "header.html" %}
+        
+        {% include "side_menu.html" %}
+        
+        <div id="content-wrapper" class="d-flex justify-content-end w-100">
+            <div id="content" style="width: 100%;">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        
+        {% include "footer.html" %}
+    </div>
 
-<div class="d-flex z-0">
-    {% include "side_menu.html" %}
-    {% block body %}{% endblock %}
-</div>
-    
 </body>
 
 <script>
+HTMLCollection.prototype.forEach = Array.prototype.forEach;
 const html = document.getElementsByTagName("html")[0];
 html.setAttribute("data-bs-theme", "light");
 
@@ -51,18 +73,27 @@ const toggleDisplayMode = () => {
         ? html.setAttribute("data-bs-theme", "dark") 
         : html.setAttribute("data-bs-theme", "light");
     
-    Array.prototype.forEach.call(document.getElementsByTagName("header"), (header) => {
+    document.getElementsByTagName("header").forEach(header => {
         header.classList.toggle("bg-white");
         header.classList.toggle("header-dark-mode");
-    })
-    Array.prototype.forEach.call(document.getElementsByTagName("svg"), (svg) => {
+    });
+    document.getElementsByTagName("svg").forEach(svg => {
         svg.classList.toggle("svg-dark-mode");
     });
-    Array.prototype.forEach.call(document.getElementsByClassName("btn"), (button) => {
+    document.getElementsByClassName("btn").forEach(button => {
         button.classList.toggle("btn-dark-mode");
-    })
+    });
 }
+
+const content = document.getElementById("content");
+document.getElementById("side-menu-offcanvas").addEventListener("show.bs.offcanvas", event => {
+    content.style.width = "calc(100% - 180px)";
+});
+document.getElementById("side-menu-offcanvas").addEventListener("hide.bs.offcanvas", event => {
+    content.style.width = "100%";
+});
 </script>
+
 {% block js %}{% endblock %}
 
 </html>
