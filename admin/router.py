@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 from src.middleware import admin
 from src.jwt import build_token
@@ -45,3 +45,8 @@ async def admin_sign_in(request: Request, form: AdminSigninModel):
             content={"message": "Incorrect credentials"},
         )
 
+@router.delete("/sign-out")
+async def admin_sign_out(request: Request):
+    response = PlainTextResponse("logout")
+    response.delete_cookie("access_token")
+    return response
