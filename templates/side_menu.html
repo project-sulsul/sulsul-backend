@@ -1,24 +1,24 @@
 <div 
     id="side-menu-offcanvas" 
-    class="offcanvas offcanvas-start" 
+    class="offcanvas offcanvas-start show" 
     data-bs-scroll="true" 
     data-bs-backdrop="false" 
-    style="width: 180px; top: 70px;"
+    style="width: 180px; top: 70px; height: calc(100vh - 140px);"
 >
     <div class="d-flex flex-column justify-content-between">
         <div class="offcanvas-header d-flex justify-content-between align-items-center">
             <span class="user-select-none" style="font-size: 1.2em; font-weight: 100;">메뉴</span>
             <button class="btn" data-bs-toggle="offcanvas" data-bs-target="#side-menu-offcanvas">
-                <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 384 512" style="fill: lightgray;"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
             </button>
         </div>
         <div>
-            <ul class="list-group list-group-flush">
-                <button class="list-group-item list-group-item-action active">대시보드</button>
-                <button class="list-group-item list-group-item-action">유저</button>
-                <button class="list-group-item list-group-item-action">피드</button>
-                <button class="list-group-item list-group-item-action">댓글</button>
-                <button class="list-group-item list-group-item-action">신고</button>
+            <ul id="side-menu-items" class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action" href="/admin">대시보드</a>
+                <a class="list-group-item list-group-item-action" href="/admin/user">유저</a>
+                <a class="list-group-item list-group-item-action" href="/admin/feed">피드</a>
+                <a class="list-group-item list-group-item-action" href="/admin/comment">댓글</a>
+                <a class="list-group-item list-group-item-action" href="/admin/report">신고</a>
             </ul>
         </div>
     </div>

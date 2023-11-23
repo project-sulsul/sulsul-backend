@@ -18,15 +18,34 @@ router = APIRouter(
 templates = Jinja2Templates(directory="templates")
 
 
+@router.get("/sign-in")
+async def admin_sign_in_template(request: Request):
+    return templates.TemplateResponse("admin_sign_in.html", {"request": request})
+
 @router.get("")
 @admin
 async def admin_index_template(request: Request):
     return templates.TemplateResponse("admin_index.html", {"request": request})
 
+@router.get("/user")
+@admin
+async def admin_index_template(request: Request):
+    return templates.TemplateResponse("admin_user.html", {"request": request})
 
-@router.get("/sign-in")
-async def admin_sign_in_template(request: Request):
-    return templates.TemplateResponse("admin_sign_in.html", {"request": request})
+@router.get("/feed")
+@admin
+async def admin_index_template(request: Request):
+    return templates.TemplateResponse("admin_feed.html", {"request": request})
+
+@router.get("/comment")
+@admin
+async def admin_index_template(request: Request):
+    return templates.TemplateResponse("admin_comment.html", {"request": request})
+
+@router.get("/report")
+@admin
+async def admin_index_template(request: Request):
+    return templates.TemplateResponse("admin_report.html", {"request": request})
 
 
 @router.post("/sign-in", dependencies=[Depends(transactional)])

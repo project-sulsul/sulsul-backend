@@ -20,6 +20,9 @@
         header, footer {
             height: 70px;
         }
+        a:hover, #main-logo:hover {
+            cursor: pointer;
+        }
         .header-dark-mode {
             background-color: #222;
         }
@@ -33,19 +36,22 @@
         .btn-dark-mode:hover {
             background-color: #444;
         }
+        .table-dark-mode {
+            background-color: #333;
+        }
         #content {
             transition: width 0.3s ease-in-out;
         }
         @media screen and (max-width: 700px) {
             body {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
         }
     </style>
 
     {% block head %}{% endblock %}
 </head>
-<body style="margin: 0;">
+<body style="margin: 0; overflow-y: scroll;">
 
     <div>
         {% include "header.html" %}
@@ -53,7 +59,7 @@
         {% include "side_menu.html" %}
         
         <div id="content-wrapper" class="d-flex justify-content-end w-100">
-            <div id="content" style="width: 100%;">
+            <div id="content" style="width: calc(100% - 180px); min-height: calc(100vh - 140px);">
                 {% block content %}{% endblock %}
             </div>
         </div>
@@ -64,14 +70,25 @@
 </body>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const path = location.pathname;
+    const menuList = Array.from(document.getElementById("side-menu-items").childNodes).filter(node => node.nodeType === 1);
+    if (path === "/admin") menuList[0].classList.toggle("active");
+    if (path === "/admin/user") menuList[1].classList.toggle("active");
+    if (path === "/admin/feed") menuList[2].classList.toggle("active");
+    if (path === "/admin/comment") menuList[3].classList.toggle("active");
+    if (path === "/admin/report") menuList[4].classList.toggle("active");
+})
+
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
-const html = document.getElementsByTagName("html")[0];
-html.setAttribute("data-bs-theme", "light");
 
 const toggleDisplayMode = () => {
-    html.getAttribute("data-bs-theme") === "light" 
-        ? html.setAttribute("data-bs-theme", "dark") 
-        : html.setAttribute("data-bs-theme", "light");
+    const html = document.getElementsByTagName("html")[0];
+    const currentTheme = html.getAttribute("data-bs-theme");
+    const changeTheme = currentTheme === "dark" ? "light" : "dark";
+    
+    html.setAttribute("data-bs-theme", changeTheme);
+    localStorage.setItem("theme", changeTheme)
     
     document.getElementsByTagName("header").forEach(header => {
         header.classList.toggle("bg-white");
@@ -83,15 +100,15 @@ const toggleDisplayMode = () => {
     document.getElementsByClassName("btn").forEach(button => {
         button.classList.toggle("btn-dark-mode");
     });
+    document.getElementsByClassName("tabulator").forEach(table => {
+        table.classList.toggle("table-dark");
+    });
 }
+if (localStorage.getItem("theme") === "dark") { toggleDisplayMode() }
 
 const content = document.getElementById("content");
-document.getElementById("side-menu-offcanvas").addEventListener("show.bs.offcanvas", event => {
-    content.style.width = "calc(100% - 180px)";
-});
-document.getElementById("side-menu-offcanvas").addEventListener("hide.bs.offcanvas", event => {
-    content.style.width = "100%";
-});
+document.getElementById("side-menu-offcanvas").addEventListener("show.bs.offcanvas", event => { content.style.width = "calc(100% - 180px)" });
+document.getElementById("side-menu-offcanvas").addEventListener("hide.bs.offcanvas", event => { content.style.width = "100%" });
 </script>
 
 {% block js %}{% endblock %}

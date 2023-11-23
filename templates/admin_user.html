@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}User{% endblock %}
+
+
+{% block content %}
+<div class="p-3" style="height: 2000px;">
+    <div id="user-table"></div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("theme") === "dark")
+        document.getElementById("user-table").classList.toggle("table-dark");
+})
+const userTable = new Tabulator("#user-table", {
+    data: [],
+    layout: "fitData",
+    minHeight: 100,
+    columns: [
+        {title: "ID", field: "id", vertAlign: "middle"},
+        {title: "UID", field: "uid", vertAlign: "middle"},
+        {title: "Nickname", field: "nickname", vertAlign: "middle"},
+        {title: "CreatedAt", field: "created_at", vertAlign: "middle"},
+        {title: "UpdatedAt", field: "updated_at", vertAlign: "middle"},
+        {title: "IsDeleted", field: "is_deleted", vertAlign: "middle"},
+    ],
+})
+
+</script>
+{% endblock %}
