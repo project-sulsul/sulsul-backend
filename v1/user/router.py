@@ -29,7 +29,8 @@ router = APIRouter(
     response_model=NicknameResponseModel, 
     description=GENERATE_RANDOM_NICKNAME_DESC
 )
-@auth_required
+@auth # 나중에 로그인 사용자만 쓸 수 있도록 해야됨
+# @auth_required
 async def generate_random_nickname(request: Request):
     error_count = 0
     while error_count < 5:

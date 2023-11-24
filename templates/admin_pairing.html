@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Pairing{% endblock %}
+
+
+{% block content %}
+<div class="p-3">
+    <div class="d-flex flex-column gap-1">
+        <div class="d-flex align-items-start gap-2">
+            <div id="pairing-table"></div>
+            <div class="d-flex flex-column gap-2">
+                <div class="row d-flex justify-content-center">
+                    <img id="selected-img" style="max-width: 200px; max-height: 200px;">
+                </div>
+                <div class="row">
+                    <div class="col-4">ID</div>
+                    <div class="col-8" id="selected-id"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Type</div>
+                    <div class="col-8">
+                        <input id="selected-type" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Name</div>
+                    <div class="col-8">
+                        <input id="selected-name" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Description</div>
+                    <div class="col-8">
+                        <textarea id="selected-description" rows="3" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">Image URL</div>
+                    <div class="col-8">
+                        <input id="selected-image" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">IsDeleted</div>
+                    <div class="col-8">
+                        <input type="checkbox" id="selected-is-deleted" class="form-check-input">
+                    </div>
+                </div>
+                <button id="selected-update-btn" class="btn btn-primary" style="display: none;" onclick="handleClickUpdatePairing()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("theme") === "dark")
+        document.getElementById("pairing-table").classList.toggle("table-dark");
+
+    getPairingsData();
+});
+
+const pairingTable = new Tabulator("#pairing-table", {
+    data: [],
+    layout: "fitData",
+    minHeight: 100,
+    maxHeight: 800,
+    columns: [
+        {title: "ID", field: "id", vertAlign: "middle"},
+        {title: "Image", field: "image", vertAlign: "middle", formatter: (cell, formatterParams) => {
+            if (cell.getData().image)
+                return `<img src='${cell.getData().image}' style='max-width: 40px; max-height: 40px;'>`;
+            else return "-";
+        }},
+        {title: "Type", field: "type", vertAlign: "middle"},
+        {title: "Name", field: "name", vertAlign: "middle"},
+        {title: "Description", field: "description", vertAlign: "middle"},
+        {title: "CreatedAt", field: "created_at", vertAlign: "middle", formatter: (cell, formatterParams) => {
+            const [date, time] = cell.getData().created_at.split("T");
+            return `${date}&nbsp&nbsp${time}`;
+        }},
+        {title: "UpdatedAt", field: "updated_at", vertAlign: "middle", formatter: (cell, formatterParams) => {
+            const [date, time] = cell.getData().updated_at.split("T");
+            return `${date}&nbsp&nbsp${time}`;
+        }},
+        {title: "IsDeleted", field: "is_deleted", vertAlign: "middle"},
+    ],
+    selectable: 1,
+});
+pairingTable.on("rowSelected", (row) => {
+    const data = row.getData();
+    document.getElementById("selected-update-btn").style.display = "block";
+    if (data.image) document.getElementById("selected-img").src = data.image;
+    document.getElementById("selected-id").innerText = data.id;
+    document.getElementById("selected-type").value = data.type;
+    document.getElementById("selected-name").value = data.name;
+    document.getElementById("selected-description").value = data.description;
+    document.getElementById("selected-image").value = data.image;
+    document.getElementById("selected-is-deleted").checked = data.is_deleted;
+});
+pairingTable.on("rowDeselected", () => {
+    document.getElementById("selected-update-btn").style.display = "none";
+    document.getElementById("selected-img").removeAttribute("src");
+    document.getElementById("selected-id").innerText = null;
+    document.getElementById("selected-type").value = null;
+    document.getElementById("selected-name").value = null;
+    document.getElementById("selected-description").value = null;
+    document.getElementById("selected-image").value = null;
+    document.getElementById("selected-is-deleted").checked = false;
+});
+
+const getPairingsData = async () => {
+    fetch("/admin/pairings", {method: "GET"})
+        .then(res => { return res.json() })
+        .then(data => {
+            pairingTable.setData(data);
+            originData = JSON.parse(JSON.stringify(data));
+        })
+        .catch(err => {
+            console.error(err);
+        });
+}
+
+const handleClickUpdatePairing = async () => {
+    const selected = pairingTable.getSelectedData()[0];
+
+    const updatedType = document.getElementById("selected-type").value;
+    const updatedName = document.getElementById("selected-name").value;
+    const updatedDescription = document.getElementById("selected-description").value;
+    const updatedImage = document.getElementById("selected-image").value ? document.getElementById("selected-image").value : null;
+    const updatedIsDeleted = document.getElementById("selected-is-deleted").checked;
+
+    console.log(updatedIsDeleted)
+
+    fetch(`/admin/pairings/${selected.id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            "type": updatedType,
+            "name": updatedName,
+            "description": updatedDescription,
+            "image": updatedImage,
+            "is_deleted": updatedIsDeleted,
+        }),
+    })
+        .then(res => { return res.json() })
+        .then(data => {
+            pairingTable.getSelectedRows()[0].deselect();
+            showToast(`ID:${selected.id}번 아이템이 수정되었습니다.`);
+            // pairingTable.setData();
+            const updatedData = pairingTable.getData().map(row => { 
+                if (row.id === selected.id) {
+                    row.type = updatedType;
+                    row.name = updatedName;
+                    row.description = updatedDescription;
+                    row.image = updatedImage;
+                    row.is_deleted = updatedIsDeleted;
+                }
+                return row;
+            });
+            pairingTable.setData(updatedData);
+        })
+        .catch(err => {
+            console.error(err);
+        });
+}
+
+</script>
+{% endblock %}

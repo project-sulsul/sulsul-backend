@@ -9,12 +9,38 @@ from src.orm import db
 from src.config.var_config import KST, DB_SCHEMA
 
 
+class PairingCreateModel(BaseModel):
+    type: str
+    name: str
+    image: str | None
+    description: str | None
+
+
+class PairingUpdateModel(BaseModel):
+    type: str
+    name: str
+    image: str | None
+    description: str | None
+    is_deleted: bool
+
+
 class PairingResponseModel(BaseModel):
     id: int
     type: str
     name: str
     image: str | None
     description: str | None
+
+
+class PairingAdminResponseModel(BaseModel):
+    id: int
+    type: str
+    name: str
+    image: str | None
+    description: str | None
+    created_at: str
+    updated_at: str
+    is_deleted: bool
 
 class PairingListResponseModel(BaseModel):
     pairings: List[PairingResponseModel]
@@ -42,6 +68,18 @@ class Pairing(Model):
             name=self.name,
             image=self.image,
             description=self.description,
+        )
+    
+    def dto_admin(self) -> PairingAdminResponseModel:
+        return PairingAdminResponseModel(
+            id=self.id,
+            type=self.type,
+            name=self.name,
+            image=self.image,
+            description=self.description,
+            created_at=self.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            updated_at=self.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            is_deleted=self.is_deleted,
         )
 
 

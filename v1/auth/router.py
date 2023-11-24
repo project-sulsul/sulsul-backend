@@ -61,7 +61,7 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
 
     response = JSONResponse(
         status_code=status_code,
-        content=TokenResponseModel(access_token=token).model_dump()
+        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump()
     )
     return response
 
@@ -103,7 +103,7 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
     return JSONResponse(
         status_code=status_code,
-        content=TokenResponseModel(access_token=token).model_dump()
+        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump()
     )
 
 
@@ -149,5 +149,5 @@ async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentia
 
     return JSONResponse(
         status_code=status_code, 
-        content=TokenResponseModel(access_token=token).model_dump(),
+        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump(),
     )

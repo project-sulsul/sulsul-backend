@@ -22,7 +22,7 @@ const userTable = new Tabulator("#user-table", {
     layout: "fitData",
     minHeight: 100,
     columns: [
-        {title: "ID", field: "id", vertAlign: "middle"},
+        {title: "ID", field: "id", vertAlign: "middle", headerSortStartingDir: "desc"},
         {title: "UID", field: "uid", vertAlign: "middle"},
         {title: "Nickname", field: "nickname", vertAlign: "middle"},
         {title: "CreatedAt", field: "created_at", vertAlign: "middle"},

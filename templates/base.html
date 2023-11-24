@@ -52,33 +52,123 @@
     {% block head %}{% endblock %}
 </head>
 <body style="margin: 0; overflow-y: scroll;">
-
-    <div>
-        {% include "header.html" %}
+    <div id="body-wrapper">
+        <!-- Header -->
+        <header class="shadow-sm sticky-top bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-center h-100" style="padding: 0 12px;">
+                <div class="d-flex align-items-center gap-4">
+                    <button class="btn btn-light" data-bs-toggle="offcanvas" data-bs-target="#side-menu-offcanvas" aria-controls="side menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>
+                    </button>
+                    <span id="main-logo" class="user-select-none d-flex align-items-center gap-2" style="font-size: 1.5em; font-weight: 100;" onclick="location.href = '/admin'">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" style="fill: #ffd257;"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M32 64c0-17.7 14.3-32 32-32H352c17.7 0 32 14.3 32 32V96h51.2c42.4 0 76.8 34.4 76.8 76.8V274.9c0 30.4-17.9 57.9-45.6 70.2L384 381.7V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V64zM384 311.6l56.4-25.1c4.6-2.1 7.6-6.6 7.6-11.7V172.8c0-7.1-5.7-12.8-12.8-12.8H384V311.6zM160 144c0-8.8-7.2-16-16-16s-16 7.2-16 16V368c0 8.8 7.2 16 16 16s16-7.2 16-16V144zm64 0c0-8.8-7.2-16-16-16s-16 7.2-16 16V368c0 8.8 7.2 16 16 16s16-7.2 16-16V144zm64 0c0-8.8-7.2-16-16-16s-16 7.2-16 16V368c0 8.8 7.2 16 16 16s16-7.2 16-16V144z"/></svg>
+                        술술 관리자 페이지
+                    </span>
+                </div>
         
-        {% include "side_menu.html" %}
+                <div class="d-flex gap-1">
+                    <button class="btn btn-light" onclick="toggleDisplayMode()">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M297.2 248.9C311.6 228.3 320 203.2 320 176c0-70.7-57.3-128-128-128S64 105.3 64 176c0 27.2 8.4 52.3 22.8 72.9c3.7 5.3 8.1 11.3 12.8 17.7l0 0c12.9 17.7 28.3 38.9 39.8 59.8c10.4 19 15.7 38.8 18.3 57.5H109c-2.2-12-5.9-23.7-11.8-34.5c-9.9-18-22.2-34.9-34.5-51.8l0 0 0 0c-5.2-7.1-10.4-14.2-15.4-21.4C27.6 247.9 16 213.3 16 176C16 78.8 94.8 0 192 0s176 78.8 176 176c0 37.3-11.6 71.9-31.4 100.3c-5 7.2-10.2 14.3-15.4 21.4l0 0 0 0c-12.3 16.8-24.6 33.7-34.5 51.8c-5.9 10.8-9.6 22.5-11.8 34.5H226.4c2.6-18.7 7.9-38.6 18.3-57.5c11.5-20.9 26.9-42.1 39.8-59.8l0 0 0 0 0 0c4.7-6.4 9-12.4 12.7-17.7zM192 128c-26.5 0-48 21.5-48 48c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-44.2 35.8-80 80-80c8.8 0 16 7.2 16 16s-7.2 16-16 16zm0 384c-44.2 0-80-35.8-80-80V416H272v16c0 44.2-35.8 80-80 80z"/></svg>
+                    </button>
+                    <button class="btn btn-light" onclick="handleClickSignOut()">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
         
+        <!-- Side menu -->
+        <div 
+            id="side-menu-offcanvas" 
+            class="offcanvas offcanvas-start show" 
+            data-bs-scroll="true" 
+            data-bs-backdrop="false" 
+            style="width: 180px; top: 70px; height: calc(100vh - 140px);"
+        >
+            <div class="d-flex flex-column justify-content-between">
+                <div class="offcanvas-header d-flex justify-content-between align-items-center">
+                    <span class="user-select-none" style="font-size: 1.2em; font-weight: 100;">메뉴</span>
+                    <button class="btn" data-bs-toggle="offcanvas" data-bs-target="#side-menu-offcanvas">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
+                    </button>
+                </div>
+                <div>
+                    <ul id="side-menu-items" class="list-group list-group-flush">
+                        <a class="list-group-item list-group-item-action" href="/admin">대시보드</a>
+                        <a class="list-group-item list-group-item-action" href="/admin/pairing">술/안주</a>
+                        <a class="list-group-item list-group-item-action" href="/admin/user">유저</a>
+                        <a class="list-group-item list-group-item-action" href="/admin/feed">피드</a>
+                        <a class="list-group-item list-group-item-action" href="/admin/comment">댓글</a>
+                        <a class="list-group-item list-group-item-action" href="/admin/report">신고</a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content -->
         <div id="content-wrapper" class="d-flex justify-content-end w-100">
             <div id="content" style="width: calc(100% - 180px); min-height: calc(100vh - 140px);">
                 {% block content %}{% endblock %}
             </div>
         </div>
         
-        {% include "footer.html" %}
-    </div>
+        <!-- Footer -->
+        <footer class="border-top bg-white p-1" style="position: sticky; bottom: 0; z-index: 1100;">
+            <div class="d-flex justify-content-between align-items-center h-100">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/static/favicon.png" style="width: 40px; height: 40px;">
+                    <div class="d-flex flex-column align-items-end">
+                        <span style="font-size: 1.1em; font-weight: 400;">SULSUL Admin</span>
+                        <span style="font-size: 0.9em; font-weight: 300;">v0.0.1</span>
+                    </div>
+                </div>
+        
+                <div class="container" style="width: 250px;">
+                    <div class="row">
+                        <a href="https://github.com/project-sulsul" class="col link-secondary">GitHub</a>
+                        <a href="https://project-sulsul.atlassian.net/jira/software/projects/SUL/boards/1/timeline" class="col link-secondary">Jira</a>
+                    </div>
+                    <div class="row">
+                        <a href="/docs" class="col link-secondary">API Document</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
+        <!-- Toast -->
+        <button type="button" style="display: none;" id="toast-trigger">.</button>
+        <div class="toast-container position-fixed translate-middle-x start-50 p-3" style="top: 70px;">
+            <div id="toast" class="toast align-items-center p-2" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px;">
+                <div class="d-flex">
+                    <div id="toast-text" class="toast-body" style="font-size: 1.2em; font-weight: 200;">
+                        토스트 텍스트
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
     const path = location.pathname;
     const menuList = Array.from(document.getElementById("side-menu-items").childNodes).filter(node => node.nodeType === 1);
-    if (path === "/admin") menuList[0].classList.toggle("active");
-    if (path === "/admin/user") menuList[1].classList.toggle("active");
-    if (path === "/admin/feed") menuList[2].classList.toggle("active");
-    if (path === "/admin/comment") menuList[3].classList.toggle("active");
-    if (path === "/admin/report") menuList[4].classList.toggle("active");
-})
+    let currentMenu = 0;
+    if (path === "/admin/pairing") currentMenu = 1
+    else if (path === "/admin/user") currentMenu = 2
+    else if (path === "/admin/feed") currentMenu = 3
+    else if (path === "/admin/comment") currentMenu = 4
+    else if (path === "/admin/report") currentMenu = 5
+    menuList[currentMenu].classList.toggle("active");
+});
+
+const handleClickSignOut = () => {
+    fetch("/admin/sign-out", {method: "DELETE"})
+        .then(res => { location.reload() })
+        .catch(err => { console.error(err) });
+}
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -94,10 +184,14 @@ const toggleDisplayMode = () => {
         header.classList.toggle("bg-white");
         header.classList.toggle("header-dark-mode");
     });
+    document.getElementsByTagName("footer").forEach(footer => {
+        footer.classList.toggle("bg-white");
+        footer.classList.toggle("header-dark-mode");
+    });
     document.getElementsByTagName("svg").forEach(svg => {
         svg.classList.toggle("svg-dark-mode");
     });
-    document.getElementsByClassName("btn").forEach(button => {
+    document.getElementsByClassName("btn-light").forEach(button => {
         button.classList.toggle("btn-dark-mode");
     });
     document.getElementsByClassName("tabulator").forEach(table => {
@@ -109,6 +203,16 @@ if (localStorage.getItem("theme") === "dark") { toggleDisplayMode() }
 const content = document.getElementById("content");
 document.getElementById("side-menu-offcanvas").addEventListener("show.bs.offcanvas", event => { content.style.width = "calc(100% - 180px)" });
 document.getElementById("side-menu-offcanvas").addEventListener("hide.bs.offcanvas", event => { content.style.width = "100%" });
+
+const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById("toast"), {
+    animation: true,
+    autohide: true,
+    delay: 3000,
+});
+const showToast = (text) => {
+    document.getElementById("toast-text").innerText = text;
+    toast.show();
+}
 </script>
 
 {% block js %}{% endblock %}

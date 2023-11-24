@@ -36,6 +36,7 @@ class TokenResponseModel(BaseModel):
     - token_type (str): 토큰 인증 타입
     - expires_in (str): 토큰의 유효성 지속 시간(초)
     """
+    user_id: int
     access_token: str
     token_type: str = TOKEN_TYPE
     expires_in: int = TOKEN_DURATION
