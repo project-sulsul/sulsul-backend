@@ -36,7 +36,6 @@ class UserResponseModel(BaseModel):
 
 
 class User(Model):
-
     id = peewee.AutoField(primary_key=True)
     uid = peewee.CharField(max_length=100, null=False, unique=True)
     social_type = peewee.CharField(max_length=10, null=True)

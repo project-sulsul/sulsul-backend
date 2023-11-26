@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Request, status, Header
 from fastapi.responses import JSONResponse
 
 import re
 import requests
+from typing import Union
 from peewee import DoesNotExist
 
 from src.middleware import auth, auth_required
@@ -29,8 +30,7 @@ router = APIRouter(
     response_model=NicknameResponseModel, 
     description=GENERATE_RANDOM_NICKNAME_DESC
 )
-@auth # 나중에 로그인 사용자만 쓸 수 있도록 해야됨
-# @auth_required
+@auth_required
 async def generate_random_nickname(request: Request):
     error_count = 0
     while error_count < 5:
@@ -81,7 +81,7 @@ async def validate_user_nickname(request: Request, nickname: str):
         return JSONResponse(status_code=status.HTTP_200_OK, content=NicknameValidationResponseModel(is_valid=True).model_dump())
 
 
-@router.post(
+@router.put(
     "/{user_id}/nickname", 
     dependencies=[Depends(transactional)], 
     response_model=UserResponseModel,
@@ -98,7 +98,7 @@ async def update_user_nickname(request: Request, user_id: int, form: UserNicknam
     return JSONResponse(status_code=status.HTTP_200_OK, content=login_user.dto().model_dump())
 
 
-@router.post(
+@router.put(
     "/{user_id}/preference", 
     dependencies=[Depends(transactional)], 
     response_model=UserResponseModel, 

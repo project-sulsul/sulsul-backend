@@ -29,8 +29,25 @@ db.create_tables([Admin], safe=True)
 db.drop_tables(models)
 db.create_tables(models, safe=True)
 
+from v1.user.model import User
+user_data = [
+    {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
+    {"uid": "iee785@daum.net", "social_type": "kakao", "nickname": "user2"},
+    {"uid": "tmlee@pluszero.co.kr", "social_type": "google", "nickname": "user3"},
+]
+for record in user_data: User.create(**record)
+
+from v1.feed.model import Feed
+feed_data = [
+    {"user_id": 1},
+    {"user_id": 1},
+    {"user_id": 1},
+    {"user_id": 2}
+]
+for record in feed_data: Feed.create(**record)
+
 from v1.pairing.model import Pairing
-data = [
+pairing_data = [
     {"type": "술", "name": "소주", "image": None, "description": "소주예요"},
     {"type": "술", "name": "맥주", "image": None, "description": "맥주예요"},
     {"type": "술", "name": "하이볼", "image": None, "description": "하이볼이에요"},
@@ -46,13 +63,7 @@ data = [
     {"type": "안주", "name": "회", "image": None, "description": "회예요"},
     {"type": "안주", "name": "마른안주", "image": None, "description": "마른안주예요"},
 ]
-for record in data:
-    Pairing.create(
-        type=record["type"],
-        name=record["name"],
-        image=record["image"],
-        description=record["description"],
-    )
+for record in pairing_data: Pairing.create(**record)
 
 # from v1.user.model import User
 # user = User.create(
