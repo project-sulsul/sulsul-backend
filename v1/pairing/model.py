@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List
 from datetime import datetime
 
@@ -42,6 +43,7 @@ class PairingAdminResponseModel(BaseModel):
     updated_at: str
     is_deleted: bool
 
+
 class PairingListResponseModel(BaseModel):
     pairings: List[PairingResponseModel]
 
@@ -69,7 +71,7 @@ class Pairing(Model):
             image=self.image,
             description=self.description,
         )
-    
+
     def dto_admin(self) -> PairingAdminResponseModel:
         return PairingAdminResponseModel(
             id=self.id,
@@ -82,6 +84,11 @@ class Pairing(Model):
             is_deleted=self.is_deleted,
         )
 
+
+class PairingSearchType(str, Enum):
+    전체 = "전체"
+    술 = "술"
+    안주 = "안주"
 
 @pre_save(sender=Pairing)
 def pre_save(model_class, instance: Pairing, created):

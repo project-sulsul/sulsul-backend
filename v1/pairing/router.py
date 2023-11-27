@@ -5,7 +5,7 @@ from peewee import DoesNotExist
 
 from src.orm import transactional
 from src.middleware import auth, auth_required
-from v1.pairing.model import Pairing
+from v1.pairing.model import Pairing, PairingSearchType
 from v1.pairing.model import PairingResponseModel
 from v1.pairing.model import PairingListResponseModel
 
@@ -18,8 +18,10 @@ router = APIRouter(
 
 @router.get("", dependencies=[Depends(transactional)], response_model=PairingListResponseModel)
 @auth
-async def get_pairings(request: Request):
+async def get_pairings(request: Request, type: PairingSearchType):
     data = [ pairing.dto().model_dump() for pairing in Pairing.select().where(Pairing.is_deleted == False) ]
+    if type is not PairingSearchType.전체:
+        data = [pairing for pairing in data if pairing['type'] == type]
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=PairingListResponseModel(pairings=data).model_dump()
