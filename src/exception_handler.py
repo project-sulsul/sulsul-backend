@@ -14,6 +14,6 @@ async def hanlde_exceptions(request: Request, exc):
         content={
             "error": f"{exc.__class__.__name__}",
             "message": str(exc),
-            "trace_info": trace_info
-        }
+            "trace_info": trace_info,
+        },
     )

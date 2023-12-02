@@ -54,8 +54,12 @@ class Pairing(Model):
     name = peewee.CharField(max_length=100, null=False, unique=True)
     image = peewee.CharField(null=True)
     description = peewee.CharField(null=True)
-    created_at = peewee.DateTimeField(default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z"))
-    updated_at = peewee.DateTimeField(default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z"))
+    created_at = peewee.DateTimeField(
+        default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+    )
+    updated_at = peewee.DateTimeField(
+        default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+    )
     is_deleted = peewee.BooleanField(default=False)
 
     class Meta:
@@ -89,6 +93,7 @@ class PairingSearchType(str, Enum):
     전체 = "전체"
     술 = "술"
     안주 = "안주"
+
 
 @pre_save(sender=Pairing)
 def pre_save(model_class, instance: Pairing, created):
