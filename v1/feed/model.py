@@ -15,7 +15,7 @@ class Feed(Model):
     user = peewee.ForeignKeyField(User, backref="user")
     content = BinaryJSONField(default={})
     view_count = peewee.IntegerField(default=0)
-    
+
     class Meta:
         table_name = "feed"
         database = db

@@ -25,7 +25,7 @@ app = FastAPI(
     description=app_desc,
     version="0.0.1",
     contact={"name": "tmlee", "email": "ahdwjdtprtm@gmail.com"},
-    license_info={"name": "MIT License", "identifier": "MIT"}
+    license_info={"name": "MIT License", "identifier": "MIT"},
 )
 
 
@@ -34,6 +34,7 @@ from src.config.app_config import *
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         app="app:app",
         port=8000,

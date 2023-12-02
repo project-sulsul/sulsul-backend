@@ -25,22 +25,31 @@ router = APIRouter(
 )
 
 
-@router.post("/sign-in/google", dependencies=[Depends(transactional)], response_model=TokenResponseModel)
-async def sign_in_with_google(request: Request, google_credentials: GoogleCredentialsModel):
+@router.post(
+    "/sign-in/google",
+    dependencies=[Depends(transactional)],
+    response_model=TokenResponseModel,
+)
+async def sign_in_with_google(
+    request: Request, google_credentials: GoogleCredentialsModel
+):
     form = google_credentials.model_dump()
     try:
         user_info = id_token.verify_oauth2_token(
-            id_token=form["id_token"], 
-            request=transport.requests.Request(), 
-            audience=form["google_client_id"]
+            id_token=form["id_token"],
+            request=transport.requests.Request(),
+            audience=form["google_client_id"],
         )
 
     except Exception as e:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"error": f"{e.__class__.__module__}.{e.__class__.__name__}", "message": str(e)}
+            content={
+                "error": f"{e.__class__.__module__}.{e.__class__.__name__}",
+                "message": str(e),
+            },
         )
-    
+
     user = User.get_or_none(
         User.uid == user_info["email"],
         User.is_deleted == False,
@@ -61,13 +70,19 @@ async def sign_in_with_google(request: Request, google_credentials: GoogleCreden
 
     response = JSONResponse(
         status_code=status_code,
-        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump()
+        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump(),
     )
     return response
 
 
-@router.post("/sign-in/kakao", dependencies=[Depends(transactional)], response_model=TokenResponseModel)
-async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentialsModel):
+@router.post(
+    "/sign-in/kakao",
+    dependencies=[Depends(transactional)],
+    response_model=TokenResponseModel,
+)
+async def sign_in_with_kakao(
+    request: Request, kakao_credentials: KakaoCredentialsModel
+):
     form = kakao_credentials.model_dump()
     oauth_response = requests.get(
         url='https://kapi.kakao.com/v2/user/me?property_keys=["kakao_account.email"]',
@@ -79,15 +94,14 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     if oauth_response.status_code != 200:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"error": "Kakao OAuth Error", "message": oauth_response.text}
+            content={"error": "Kakao OAuth Error", "message": oauth_response.text},
         )
 
     user_info = oauth_response.json()
     status_code = status.HTTP_200_OK
 
     user = User.get_or_none(
-        User.uid == user_info["kakao_account"]["email"],
-        User.is_deleted == False
+        User.uid == user_info["kakao_account"]["email"], User.is_deleted == False
     )
     if not user:
         status_code = status.HTTP_201_CREATED
@@ -95,7 +109,7 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
             uid=user_info["kakao_account"]["email"],
             social_type="kakao",
         )
-    
+
     token = build_token(
         id=user.id,
         social_type=user.social_type,
@@ -103,21 +117,27 @@ async def sign_in_with_kakao(request: Request, kakao_credentials: KakaoCredentia
     )
     return JSONResponse(
         status_code=status_code,
-        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump()
+        content=TokenResponseModel(user_id=user.id, access_token=token).model_dump(),
     )
 
 
-@router.post("/sign-in/apple", dependencies=[Depends(transactional)], response_model=TokenResponseModel)
-async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentialsModel):
+@router.post(
+    "/sign-in/apple",
+    dependencies=[Depends(transactional)],
+    response_model=TokenResponseModel,
+)
+async def sign_in_with_apple(
+    request: Request, apple_credentials: AppleCredentialsModel
+):
     form = apple_credentials.model_dump()
 
     id_token_header = jwt.get_unverified_header(form["id_token"])
     jwks = requests.get("https://appleid.apple.com/auth/keys").json()["keys"]
     rsa_public_key = RSAAlgorithm.from_jwk(
-        jwk=[ json.dumps(jwk) for jwk in jwks if jwk["kid"] == id_token_header["kid"] ][0]
+        jwk=[json.dumps(jwk) for jwk in jwks if jwk["kid"] == id_token_header["kid"]][0]
     ).public_bytes(
         encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
+        format=serialization.PublicFormat.SubjectPublicKeyInfo,
     )
 
     user_info = jwt.decode(
@@ -132,7 +152,7 @@ async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentia
     user = User.get_or_none(
         User.social_type == "apple",
         User.uid == user_info["email"],
-        User.is_deleted == False
+        User.is_deleted == False,
     )
     if not user:
         status_code = status.HTTP_201_CREATED
@@ -148,6 +168,6 @@ async def sign_in_with_apple(request: Request, apple_credentials: AppleCredentia
     )
 
     return JSONResponse(
-        status_code=status_code, 
+        status_code=status_code,
         content=TokenResponseModel(user_id=user.id, access_token=token).model_dump(),
     )

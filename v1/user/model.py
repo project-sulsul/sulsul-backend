@@ -42,8 +42,12 @@ class User(Model):
     nickname = peewee.CharField(max_length=30, null=True)
     preference = BinaryJSONField(default={})
     status = peewee.CharField(max_length=10, default="active")
-    created_at = peewee.DateTimeField(default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z"))
-    updated_at = peewee.DateTimeField(default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z"))
+    created_at = peewee.DateTimeField(
+        default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+    )
+    updated_at = peewee.DateTimeField(
+        default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+    )
     is_deleted = peewee.BooleanField(default=False)
 
     class Meta:
@@ -53,7 +57,7 @@ class User(Model):
 
     def __getitem__(self, key: str):
         return self.__data__[key]
-    
+
     def __setitem__(self, key, value):
         self.__data__[key] = value
 
@@ -63,7 +67,7 @@ class User(Model):
             uid=self.uid,
             nickname=self.nickname,
             preference=self.preference,
-            status=self.status
+            status=self.status,
         )
 
 

@@ -6,6 +6,8 @@ from src.orm import db
 
 
 models = list()
+
+
 def get_models(version: str = "v1", model_filename: str = "model.py"):
     for dirname in os.listdir(version):
         if len(dirname.split(".")) == 1:
@@ -16,37 +18,46 @@ def get_models(version: str = "v1", model_filename: str = "model.py"):
                 model = importlib.import_module(model_module)
                 global models
                 models.extend(
-                    [ obj for _, obj in inspect.getmembers(model) if inspect.isclass(obj) and issubclass(obj, Model) and obj is not Model and obj is not signals.Model ]
+                    [
+                        obj
+                        for _, obj in inspect.getmembers(model)
+                        if inspect.isclass(obj)
+                        and issubclass(obj, Model)
+                        and obj is not Model
+                        and obj is not signals.Model
+                    ]
                 )
+
 
 get_models("v1", "model.py")
 
 db.connect()
 
 from admin.model import Admin
+
 db.create_tables([Admin], safe=True)
 
 db.drop_tables(models)
 db.create_tables(models, safe=True)
 
 from v1.user.model import User
+
 user_data = [
     {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
     {"uid": "iee785@daum.net", "social_type": "kakao", "nickname": "user2"},
     {"uid": "tmlee@pluszero.co.kr", "social_type": "google", "nickname": "user3"},
 ]
-for record in user_data: User.create(**record)
+for record in user_data:
+    User.create(**record)
 
 from v1.feed.model import Feed
-feed_data = [
-    {"user_id": 1},
-    {"user_id": 1},
-    {"user_id": 1},
-    {"user_id": 2}
-]
-for record in feed_data: Feed.create(**record)
+
+feed_data = [{"user_id": 1}, {"user_id": 1}, {"user_id": 1}, {"user_id": 2}]
+for record in feed_data:
+    Feed.create(**record)
 
 from v1.pairing.model import Pairing
+
 pairing_data = [
     {"type": "술", "name": "소주", "image": None, "description": "소주예요"},
     {"type": "술", "name": "맥주", "image": None, "description": "맥주예요"},
@@ -63,7 +74,8 @@ pairing_data = [
     {"type": "안주", "name": "회", "image": None, "description": "회예요"},
     {"type": "안주", "name": "마른안주", "image": None, "description": "마른안주예요"},
 ]
-for record in pairing_data: Pairing.create(**record)
+for record in pairing_data:
+    Pairing.create(**record)
 
 # from v1.user.model import User
 # user = User.create(
