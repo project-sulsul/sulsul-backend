@@ -7,7 +7,7 @@ from peewee import DoesNotExist
 
 from api.config.middleware import auth, auth_required
 from core.config.orm_config import transactional
-
+from core.client.nickname_generator_client import NicknameGeneratorClient
 from core.domain.user_model import User
 from core.dto.user_dto import UserResponseModel
 from core.dto.user_dto import UserNicknameUpdateModel
@@ -33,25 +33,19 @@ router = APIRouter(
 )
 @auth_required
 async def generate_random_nickname(request: Request):
-    error_count = 0
-    while error_count < 5:
-        response = requests.get("https://nickname.hwanmoo.kr?format=json&count=20")
-        if response.status_code != 200:
-            error_count += 1
-            continue
 
-        nicknames = response.json()["words"]
-        for nickname in nicknames:
-            count = User.select().where(User.nickname == nickname).count()
-            if (
-                count == 0
-                and not re.compile(r'[!@#$%^&*(),.?":{}|<>]').search(nickname)
-                and len(nickname) <= USER_NICKNAME_MAX_LENGTH
-            ):
-                return JSONResponse(
-                    status_code=status.HTTP_200_OK,
-                    content=NicknameResponseModel(nickname=nickname).model_dump(),
-                )
+    nicknames = NicknameGeneratorClient.generate_random_nickname()
+    for nickname in nicknames:
+        count = User.select().where(User.nickname == nickname).count()
+        if (
+            count == 0
+            and not re.compile(r'[!@#$%^&*(),.?":{}|<>]').search(nickname)
+            and len(nickname) <= USER_NICKNAME_MAX_LENGTH
+        ):
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=NicknameResponseModel(nickname=nickname).model_dump(),
+            )
 
 
 @router.get(
