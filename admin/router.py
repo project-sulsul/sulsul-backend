@@ -5,12 +5,13 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 import bcrypt
 from datetime import datetime
 
-from src.middleware import admin
-from src.jwt import build_token
-from src.orm import transactional
+from api.config.middleware import admin
+from core.util.jwt import build_token
+from core.config.orm_config import transactional
 from admin.model import Admin, AdminSigninModel
-from src.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
-from v1.pairing.model import Pairing, PairingCreateModel, PairingUpdateModel
+from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
+from core.domain.pairing_model import Pairing
+from core.dto.pairing_dto import PairingCreateModel, PairingUpdateModel, PairingAdminResponseModel
 
 
 router = APIRouter(
@@ -19,7 +20,7 @@ router = APIRouter(
     include_in_schema=False,
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="admin/templates")
 
 
 @router.get("/sign-in")
@@ -98,7 +99,7 @@ async def get_pairings(request: Request):
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=[
-            pairing.dto_admin().model_dump()
+            PairingAdminResponseModel.from_orm(pairing).model_dump()
             for pairing in Pairing.select().order_by(Pairing.id)
         ],
     )
@@ -109,7 +110,7 @@ async def get_pairings(request: Request):
 async def create_pairing(request: Request, form: PairingCreateModel):
     form = form.model_dump()
     pairing = Pairing.create(**form)
-    return JSONResponse(status_code=status.HTTP_200_OK, content=pairing.dto_admin())
+    return JSONResponse(status_code=status.HTTP_200_OK, content=PairingAdminResponseModel.from_orm(pairing).model_dump())
 
 
 @router.put("/pairings/{pairing_id}")

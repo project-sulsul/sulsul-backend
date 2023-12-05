@@ -2,34 +2,25 @@ import os, inspect, importlib
 from peewee import Model
 from playhouse import signals
 
-from src.orm import db
+from core.config.orm_config import db
 
 
 models = list()
+for filename in os.listdir("core/domain"):
+    if "_model.py" not in filename: continue
 
-
-def get_models(version: str = "v1", model_filename: str = "model.py"):
-    for dirname in os.listdir(version):
-        if len(dirname.split(".")) == 1:
-            get_models(f"{version + '/' if version else ''}{dirname}", model_filename)
-        else:
-            if dirname == model_filename:
-                model_module = ".".join(f"{version}/{dirname}".split(".")[0].split("/"))
-                model = importlib.import_module(model_module)
-                global models
-                models.extend(
-                    [
-                        obj
-                        for _, obj in inspect.getmembers(model)
-                        if inspect.isclass(obj)
-                        and issubclass(obj, Model)
-                        and obj is not Model
-                        and obj is not signals.Model
-                    ]
-                )
-
-
-get_models("v1", "model.py")
+    model_module = "core.domain." + filename.split(".")[0]
+    model = importlib.import_module(model_module)
+    models.extend(
+        [
+            obj
+            for _, obj in inspect.getmembers(model)
+            if inspect.isclass(obj)
+            and issubclass(obj, Model)
+            and obj is not Model
+            and obj is not signals.Model
+        ]
+    )
 
 db.connect()
 
@@ -38,9 +29,9 @@ from admin.model import Admin
 db.create_tables([Admin], safe=True)
 
 db.drop_tables(models)
-db.create_tables(models, safe=True)
+db.create_tables(models)
 
-from v1.user.model import User
+from core.domain.user_model import User
 
 user_data = [
     {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
@@ -50,13 +41,13 @@ user_data = [
 for record in user_data:
     User.create(**record)
 
-from v1.feed.model import Feed
+from core.domain.feed_model import Feed
 
 feed_data = [{"user_id": 1}, {"user_id": 1}, {"user_id": 1}, {"user_id": 2}]
 for record in feed_data:
     Feed.create(**record)
 
-from v1.pairing.model import Pairing
+from core.domain.pairing_model import Pairing
 
 pairing_data = [
     {"type": "술", "name": "소주", "image": None, "description": "소주예요"},
@@ -76,11 +67,5 @@ pairing_data = [
 ]
 for record in pairing_data:
     Pairing.create(**record)
-
-# from v1.user.model import User
-# user = User.create(
-#     uid="test_user_uid",
-#     social_type="google",
-# )
 
 db.close()

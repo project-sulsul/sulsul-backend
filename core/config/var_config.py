@@ -27,7 +27,7 @@ JWT_COOKIE_OPTIONS = {
 if os.environ.get("APPLE_CLIENT_ID"):
     APPLE_CLIENT_ID = os.environ.get("APPLE_CLIENT_ID")
 else:
-    from src.config.secrets import APPLE_CLIENT_ID
+    from core.config.secrets import APPLE_CLIENT_ID
 
 USER_NICKNAME_MAX_LENGTH = 10
 

@@ -1,21 +1,26 @@
-from app import app
+import os
+import importlib
 
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi import Request
 from fastapi.responses import RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from src.middleware import EnhancedTrustedHostMiddleware
+from app import app
+from api.config.middleware import EnhancedTrustedHostMiddleware
 
 
 # Routers
 from admin.router import router as admim_router
-
 app.include_router(admim_router)
 
-from v1.root_router import v1_root_router
+for filename in os.listdir("api/routers"):
+    if "_router.py" not in filename: continue
+    if filename == "file_router.py": continue
+    module = importlib.import_module("api.routers." + filename.split(".")[0])
 
-app.include_router(v1_root_router)
+    if hasattr(module, "router"): 
+        app.include_router(module.router)
 
 
 # Middlewares
@@ -32,7 +37,7 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 @app.on_event("startup")
 def on_startup():
-    import src.db_init_tables
+    import core.db_init_tables
 
 
 @app.get("/")
@@ -41,14 +46,14 @@ async def redirect_to_docs(request: Request):
 
 
 # Exception handlers
-from src import exception_handler
+from api.config import exception_handler
 
 
 # static path config
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="admin/static"), name="static")
 
 
 # favicon config
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    return FileResponse("static/favicon.png")
+    return FileResponse("admin/static/favicon.png")

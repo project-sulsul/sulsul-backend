@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.config.var_config import TOKEN_TYPE, TOKEN_DURATION
+from core.config.var_config import TOKEN_TYPE, TOKEN_DURATION
 
 
 class GoogleCredentialsModel(BaseModel):

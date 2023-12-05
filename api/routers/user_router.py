@@ -1,21 +1,22 @@
-from fastapi import APIRouter, Depends, Request, status, Header
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 
 import re
 import requests
-from typing import Union
 from peewee import DoesNotExist
 
-from src.middleware import auth, auth_required
-from src.orm import transactional
-from v1.user.model import User
-from v1.user.model import UserResponseModel
-from v1.user.model import UserNicknameUpdateModel
-from v1.user.model import UserPreferenceUpdateModel
-from v1.user.model import NicknameResponseModel
-from v1.user.model import NicknameValidationResponseModel
-from v1.user.descriptions import *
-from src.config.var_config import USER_NICKNAME_MAX_LENGTH
+from api.config.middleware import auth, auth_required
+from core.config.orm_config import transactional
+
+from core.domain.user_model import User
+from core.dto.user_dto import UserResponseModel
+from core.dto.user_dto import UserNicknameUpdateModel
+from core.dto.user_dto import UserPreferenceUpdateModel
+from core.dto.user_dto import NicknameResponseModel
+from core.dto.user_dto import NicknameValidationResponseModel
+from core.config.var_config import USER_NICKNAME_MAX_LENGTH
+
+from api.descriptions.user_api_descriptions import *
 
 
 router = APIRouter(
@@ -67,7 +68,7 @@ async def get_user_by_id(request: Request, user_id: int):
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"message": f"User {user_id} doesn't exist"},
         )
-    return JSONResponse(status_code=status.HTTP_200_OK, content=user.dto().model_dump())
+    return JSONResponse(status_code=status.HTTP_200_OK, content=UserResponseModel.from_orm(user).model_dump())
 
 
 @router.get(
@@ -128,7 +129,7 @@ async def update_user_nickname(
     login_user.nickname = nickname
     login_user.save()
     return JSONResponse(
-        status_code=status.HTTP_200_OK, content=login_user.dto().model_dump()
+        status_code=status.HTTP_200_OK, content=UserResponseModel.from_orm(login_user).model_dump()
     )
 
 
@@ -152,7 +153,7 @@ async def update_user_preference(
     login_user.preference = preference
     login_user.save()
     return JSONResponse(
-        status_code=status.HTTP_200_OK, content=login_user.dto().model_dump()
+        status_code=status.HTTP_200_OK, content=UserResponseModel.from_orm(login_user).model_dump()
     )
 
 

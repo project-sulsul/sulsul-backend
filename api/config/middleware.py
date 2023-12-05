@@ -14,9 +14,8 @@ from starlette.responses import (
 )
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from src.jwt import get_login_user
-from src.config.var_config import ADMIN_USER_UIDS
-from v1.user.model import User
+from core.util.jwt import get_login_user
+from core.domain.user_model import User
 
 
 ENFORCE_DOMAIN_WILDCARD = "Domain wildcard patterns must be like '*.example.com'."

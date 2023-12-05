@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.config.var_config import IS_PROD
+from core.config.var_config import IS_PROD
 
 
 app_desc = f"""
@@ -29,7 +29,7 @@ app = FastAPI(
 )
 
 
-from src.config.app_config import *
+from api.config.app_config import *
 
 
 if __name__ == "__main__":

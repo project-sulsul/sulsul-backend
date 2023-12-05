@@ -10,13 +10,13 @@ from cryptography.hazmat.primitives import serialization
 from google.oauth2 import id_token
 from google.auth import transport
 
-from src.orm import transactional
-from src.jwt import build_token
-from v1.user.model import User
-from v1.auth.model import GoogleCredentialsModel
-from v1.auth.model import KakaoCredentialsModel
-from v1.auth.model import AppleCredentialsModel
-from v1.auth.model import TokenResponseModel
+from core.config.orm_config import transactional
+from core.util.jwt import build_token
+from core.domain.user_model import User
+from core.dto.auth_dto import GoogleCredentialsModel
+from core.dto.auth_dto import KakaoCredentialsModel
+from core.dto.auth_dto import AppleCredentialsModel
+from core.dto.auth_dto import TokenResponseModel
 
 
 router = APIRouter(

@@ -2,7 +2,7 @@ import peewee
 from contextvars import ContextVar
 from fastapi import Depends
 
-from src.config.var_config import (
+from core.config.var_config import (
     IS_PROD,
     DB_NAME,
     DB_HOST,
@@ -37,7 +37,7 @@ if IS_PROD:
         password=DB_PASSWORD,
     )
 else:
-    from src.config import secrets
+    from core.config import secrets
 
     db = peewee.PostgresqlDatabase(
         database=DB_NAME,

@@ -1,38 +1,10 @@
-from typing import Dict, List
-from pydantic import BaseModel
-
 import peewee
 from playhouse.signals import Model, pre_save
 from playhouse.postgres_ext import BinaryJSONField
 from datetime import datetime
 
-from src.orm import db
-from src.config.var_config import KST, DB_SCHEMA
-
-
-class NicknameResponseModel(BaseModel):
-    nickname: str
-
-
-class NicknameValidationResponseModel(BaseModel):
-    is_valid: bool
-    message: str | None
-
-
-class UserNicknameUpdateModel(BaseModel):
-    nickname: str
-
-
-class UserPreferenceUpdateModel(BaseModel):
-    preference: Dict[str, List]
-
-
-class UserResponseModel(BaseModel):
-    id: int
-    uid: str
-    nickname: str
-    preference: Dict[str, List]
-    status: str
+from core.config.orm_config import db
+from core.config.var_config import KST, DB_SCHEMA
 
 
 class User(Model):
@@ -60,15 +32,6 @@ class User(Model):
 
     def __setitem__(self, key, value):
         self.__data__[key] = value
-
-    def dto(self) -> UserResponseModel:
-        return UserResponseModel(
-            id=self.id,
-            uid=self.uid,
-            nickname=self.nickname,
-            preference=self.preference,
-            status=self.status,
-        )
 
 
 @pre_save(sender=User)

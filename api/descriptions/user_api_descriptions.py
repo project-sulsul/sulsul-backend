@@ -1,4 +1,4 @@
-from src.config.var_config import USER_NICKNAME_MAX_LENGTH
+from core.config.var_config import USER_NICKNAME_MAX_LENGTH
 
 GENERATE_RANDOM_NICKNAME_DESC = f"""
 ### 임의의 닉네임을 생성

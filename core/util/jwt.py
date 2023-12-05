@@ -1,12 +1,12 @@
 import os, jwt
 from datetime import datetime, timedelta
 
-from src.config.var_config import *
+from core.config.var_config import *
 
 if IS_PROD:
     JWT_ENCRYPTION_KEY = os.environ.get("JWT_ENCRYPTION_KEY")
 else:
-    from src.config.secrets import JWT_ENCRYPTION_KEY
+    from core.config.secrets import JWT_ENCRYPTION_KEY
 
 
 def build_token(**kwargs) -> str:

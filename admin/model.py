@@ -1,8 +1,8 @@
 import peewee
 from pydantic import BaseModel
 
-from src.orm import db
-from src.config.var_config import DB_SCHEMA
+from core.config.orm_config import db
+from core.config.var_config import DB_SCHEMA
 
 
 class Admin(peewee.Model):

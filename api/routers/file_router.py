@@ -1,3 +1,4 @@
+import os
 import urllib
 import uuid
 
@@ -6,11 +7,22 @@ from botocore.exceptions import ClientError, BotoCoreError
 from fastapi import UploadFile, APIRouter, HTTPException
 from starlette.responses import JSONResponse
 
-from src.config.secrets import AWS_S3_ACCESS_KEY, AWS_S3_PRIVATE_KEY
+from core.config.var_config import IS_PROD
 
-s3 = boto3.client(
-    "s3", aws_access_key_id=AWS_S3_ACCESS_KEY, aws_secret_access_key=AWS_S3_PRIVATE_KEY
-)
+
+if IS_PROD:
+    s3 = boto3.client(
+        service_name="s3", 
+        aws_access_key_id=os.environ.get("AWS_S3_ACCESS_KEY_ID"), 
+        aws_secret_access_key=os.environ.get("AWS_S3_PRIVATE_KEY"),
+    )
+else:
+    from core.config import secrets
+    s3 = boto3.client(
+        service_name="s3", 
+        aws_access_key_id=secrets.AWS_S3_ACCESS_KEY_ID, 
+        aws_secret_access_key=secrets.AWS_S3_PRIVATE_KEY,
+    )
 
 BUCKET_NAME = "sulsul-s3"
 
