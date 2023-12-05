@@ -16,9 +16,7 @@ app.include_router(admim_router)
 
 for filename in os.listdir("api/routers"):
     if "_router.py" not in filename: continue
-    if filename == "file_router.py": continue
     module = importlib.import_module("api.routers." + filename.split(".")[0])
-
     if hasattr(module, "router"): 
         app.include_router(module.router)
 
@@ -40,7 +38,7 @@ def on_startup():
     import core.db_init_tables
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def redirect_to_docs(request: Request):
     return RedirectResponse("/docs")
 

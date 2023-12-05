@@ -1,16 +1,8 @@
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 
-import jwt
-import json
-import requests
-from jwt.algorithms import RSAAlgorithm
-from cryptography.hazmat.primitives import serialization
-
-from google.oauth2 import id_token
-from google.auth import transport
-
 from core.config.orm_config import transactional
+from core.client.oauth_client import OAuthClient
 from core.util.jwt import build_token
 from core.domain.user_model import User
 from core.dto.auth_dto import GoogleCredentialsModel
@@ -33,22 +25,7 @@ router = APIRouter(
 async def sign_in_with_google(
     request: Request, google_credentials: GoogleCredentialsModel
 ):
-    form = google_credentials.model_dump()
-    try:
-        user_info = id_token.verify_oauth2_token(
-            id_token=form["id_token"],
-            request=transport.requests.Request(),
-            audience=form["google_client_id"],
-        )
-
-    except Exception as e:
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "error": f"{e.__class__.__module__}.{e.__class__.__name__}",
-                "message": str(e),
-            },
-        )
+    user_info = OAuthClient.verify_google_token(google_credentials)
 
     user = User.get_or_none(
         User.uid == user_info["email"],
@@ -83,26 +60,13 @@ async def sign_in_with_google(
 async def sign_in_with_kakao(
     request: Request, kakao_credentials: KakaoCredentialsModel
 ):
-    form = kakao_credentials.model_dump()
-    oauth_response = requests.get(
-        url='https://kapi.kakao.com/v2/user/me?property_keys=["kakao_account.email"]',
-        headers={
-            "Authorization": f"Bearer {form['access_token']}",
-            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-    )
-    if oauth_response.status_code != 200:
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"error": "Kakao OAuth Error", "message": oauth_response.text},
-        )
-
-    user_info = oauth_response.json()
-    status_code = status.HTTP_200_OK
+    user_info = OAuthClient.verify_kakao_token(kakao_credentials)
 
     user = User.get_or_none(
-        User.uid == user_info["kakao_account"]["email"], User.is_deleted == False
+        User.uid == user_info["kakao_account"]["email"], 
+        User.is_deleted == False
     )
+    status_code = status.HTTP_200_OK
     if not user:
         status_code = status.HTTP_201_CREATED
         user = User.create(
@@ -129,31 +93,14 @@ async def sign_in_with_kakao(
 async def sign_in_with_apple(
     request: Request, apple_credentials: AppleCredentialsModel
 ):
-    form = apple_credentials.model_dump()
-
-    id_token_header = jwt.get_unverified_header(form["id_token"])
-    jwks = requests.get("https://appleid.apple.com/auth/keys").json()["keys"]
-    rsa_public_key = RSAAlgorithm.from_jwk(
-        jwk=[json.dumps(jwk) for jwk in jwks if jwk["kid"] == id_token_header["kid"]][0]
-    ).public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo,
-    )
-
-    user_info = jwt.decode(
-        jwt=form["id_token"],
-        key=rsa_public_key,
-        algorithms=id_token_header["alg"],
-        audience="com.SulSul-iOS",
-        options={"verify_signature": True},
-    )
-    status_code = status.HTTP_200_OK
-
+    user_info = OAuthClient.verify_apple_token(apple_credentials)
+    
     user = User.get_or_none(
         User.social_type == "apple",
         User.uid == user_info["email"],
         User.is_deleted == False,
     )
+    status_code = status.HTTP_200_OK
     if not user:
         status_code = status.HTTP_201_CREATED
         user = User.create(

@@ -1,13 +1,32 @@
 import traceback
-from fastapi import status, Request
+
+from fastapi import status, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 from app import app
 
 
-@app.exception_handler(Exception)
-async def hanlde_exceptions(request: Request, exc):
+@app.exception_handler(HTTPException)
+async def handle_bad_request_exception(request: Request, exc: HTTPException):
     trace_info = traceback.format_exc()
+
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": exc.detail,
+            "metadata": {
+                "request_info": {"url": str(request.url), "method": request.method},
+                "request_headers": {header[0]: header[1] for header in request.headers.items()},
+            }
+        }
+    )
+
+
+@app.exception_handler(Exception)
+async def handle_exceptions(request: Request, exc: Exception) -> JSONResponse:
+    trace_info = traceback.format_exc()
+
+    # TODO 에러 보고
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
