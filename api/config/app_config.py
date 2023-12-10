@@ -12,12 +12,14 @@ from api.config.middleware import EnhancedTrustedHostMiddleware
 
 # Routers
 from admin.router import router as admim_router
+
 app.include_router(admim_router)
 
 for filename in os.listdir("api/routers"):
-    if "_router.py" not in filename: continue
+    if "_router.py" not in filename:
+        continue
     module = importlib.import_module("api.routers." + filename.split(".")[0])
-    if hasattr(module, "router"): 
+    if hasattr(module, "router"):
         app.include_router(module.router)
 
 

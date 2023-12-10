@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from core.config.var_config import TOKEN_TYPE, TOKEN_DURATION
 
 
-class GoogleCredentialsModel(BaseModel):
+class GoogleCredentialsRequest(BaseModel):
     """
     구글 로그인/회원가입 모델
     - google_client_id (str): 구글 로그인 시 사용한 OAuth 2.0 클라이언트 ID
@@ -14,7 +14,7 @@ class GoogleCredentialsModel(BaseModel):
     id_token: str
 
 
-class KakaoCredentialsModel(BaseModel):
+class KakaoCredentialsRequest(BaseModel):
     """
     카카오 로그인/회원가입 모델
     - access_token (str): 카카오 로그인 후 발급받은 Access Token
@@ -23,7 +23,7 @@ class KakaoCredentialsModel(BaseModel):
     access_token: str
 
 
-class AppleCredentialsModel(BaseModel):
+class AppleCredentialsRequest(BaseModel):
     """
     애플 로그인/회원가입 모델
     - id_token (str): 애플 로그인 후 발급받은 ID TOKEN
@@ -32,7 +32,7 @@ class AppleCredentialsModel(BaseModel):
     id_token: str
 
 
-class TokenResponseModel(BaseModel):
+class TokenResponse(BaseModel):
     """
     로그인 성공 시 액세스 토큰 응답 모델
     - access_token (str): API 액세스 토큰

@@ -7,7 +7,8 @@ from core.config.orm_config import db
 
 models = list()
 for filename in os.listdir("core/domain"):
-    if "_model.py" not in filename: continue
+    if "_model.py" not in filename:
+        continue
 
     model_module = "core.domain." + filename.split(".")[0]
     model = importlib.import_module(model_module)
@@ -50,13 +51,28 @@ for record in feed_data:
 from core.domain.pairing_model import Pairing
 
 pairing_data = [
-    {"type": "술", "subtype": "소주", "name": ["처음처럼", "참이슬", "좋은데이", "진로", "새로"], "image": None},
-    {"type": "술", "subtype": "맥주", "name": ["카스", "클라우드", "테라", "하이트", "오비"], "image": None},
+    {
+        "type": "술",
+        "subtype": "소주",
+        "name": ["처음처럼", "참이슬", "좋은데이", "진로", "새로"],
+        "image": None,
+    },
+    {
+        "type": "술",
+        "subtype": "맥주",
+        "name": ["카스", "클라우드", "테라", "하이트", "오비"],
+        "image": None,
+    },
     {"type": "술", "subtype": "하이볼", "name": ["하이볼"], "image": None},
     {"type": "술", "subtype": "막걸리", "name": ["막걸리"], "image": None},
     {"type": "술", "subtype": "와인", "name": ["와인"], "image": None},
     {"type": "안주", "subtype": "패스트푸드", "name": ["피자"], "image": None},
-    {"type": "안주", "subtype": "육류", "name": ["삼겹살", "소고기", "족발", "육회", "곱창", "양꼬치", "닭갈비", "닭발"], "image": None},
+    {
+        "type": "안주",
+        "subtype": "육류",
+        "name": ["삼겹살", "소고기", "족발", "육회", "곱창", "양꼬치", "닭갈비", "닭발"],
+        "image": None,
+    },
     {"type": "안주", "subtype": "탕류", "name": ["어묵탕", "짬뽕탕", "나가사키 짬뽕"], "image": None},
     {"type": "안주", "subtype": "튀김류", "name": ["치킨", "감자튀김", "새우튀김"], "image": None},
     {"type": "안주", "subtype": "과일", "name": ["화채", "파인애플", "황도"], "image": None},
@@ -69,14 +85,16 @@ pairing_data = [
 real_pairing_data = []
 for pairing in pairing_data:
     for name in pairing["name"]:
-        real_pairing_data.append({
-            "type": pairing["type"],
-            "subtype": pairing["subtype"],
-            "name": name,
-            "image": pairing["image"],
-            "description": f"{name}입니다"
-        })
-        
+        real_pairing_data.append(
+            {
+                "type": pairing["type"],
+                "subtype": pairing["subtype"],
+                "name": name,
+                "image": pairing["image"],
+                "description": f"{name}입니다",
+            }
+        )
+
 for record in real_pairing_data:
     Pairing.create(**record)
 
