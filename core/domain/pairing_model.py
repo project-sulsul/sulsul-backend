@@ -10,6 +10,7 @@ from core.config.var_config import KST, DB_SCHEMA
 class Pairing(Model):
     id = peewee.AutoField(primary_key=True)
     type = peewee.CharField(max_length=10, null=False)
+    subtype = peewee.CharField(max_length=100, null=True)
     name = peewee.CharField(max_length=100, null=False, unique=True)
     image = peewee.CharField(null=True)
     description = peewee.CharField(null=True)

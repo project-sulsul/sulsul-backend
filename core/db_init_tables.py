@@ -50,22 +50,34 @@ for record in feed_data:
 from core.domain.pairing_model import Pairing
 
 pairing_data = [
-    {"type": "술", "name": "소주", "image": None, "description": "소주예요"},
-    {"type": "술", "name": "맥주", "image": None, "description": "맥주예요"},
-    {"type": "술", "name": "하이볼", "image": None, "description": "하이볼이에요"},
-    {"type": "술", "name": "막걸리", "image": None, "description": "막걸리예요"},
-    {"type": "술", "name": "와인", "image": None, "description": "와인이에요"},
-    {"type": "안주", "name": "패스트푸드", "image": None, "description": "패스트푸드예요"},
-    {"type": "안주", "name": "육류", "image": None, "description": "육류예요"},
-    {"type": "안주", "name": "탕류", "image": None, "description": "탕류예요"},
-    {"type": "안주", "name": "튀김류", "image": None, "description": "튀김류예요"},
-    {"type": "안주", "name": "과일", "image": None, "description": "과일이에요"},
-    {"type": "안주", "name": "과자", "image": None, "description": "과자예요"},
-    {"type": "안주", "name": "면류", "image": None, "description": "면류예요"},
-    {"type": "안주", "name": "회", "image": None, "description": "회예요"},
-    {"type": "안주", "name": "마른안주", "image": None, "description": "마른안주예요"},
+    {"type": "술", "subtype": "소주", "name": ["처음처럼", "참이슬", "좋은데이", "진로", "새로"], "image": None},
+    {"type": "술", "subtype": "맥주", "name": ["카스", "클라우드", "테라", "하이트", "오비"], "image": None},
+    {"type": "술", "subtype": "하이볼", "name": ["하이볼"], "image": None},
+    {"type": "술", "subtype": "막걸리", "name": ["막걸리"], "image": None},
+    {"type": "술", "subtype": "와인", "name": ["와인"], "image": None},
+    {"type": "안주", "subtype": "패스트푸드", "name": ["피자"], "image": None},
+    {"type": "안주", "subtype": "육류", "name": ["삼겹살", "소고기", "족발", "육회", "곱창", "양꼬치", "닭갈비", "닭발"], "image": None},
+    {"type": "안주", "subtype": "탕류", "name": ["어묵탕", "짬뽕탕", "나가사키 짬뽕"], "image": None},
+    {"type": "안주", "subtype": "튀김류", "name": ["치킨", "감자튀김", "새우튀김"], "image": None},
+    {"type": "안주", "subtype": "과일", "name": ["화채", "파인애플", "황도"], "image": None},
+    {"type": "안주", "subtype": "과자", "name": ["나쵸"], "image": None},
+    {"type": "안주", "subtype": "밥류", "name": ["두부김치", "계란말이", "국밥"], "image": None},
+    {"type": "안주", "subtype": "면류", "name": ["짜파게티"], "image": None},
+    {"type": "안주", "subtype": "회", "name": ["연어", "광어/우럭"], "image": None},
+    {"type": "안주", "subtype": "마른안주", "name": ["먹태", "육포", "오징어"], "image": None},
 ]
-for record in pairing_data:
+real_pairing_data = []
+for pairing in pairing_data:
+    for name in pairing["name"]:
+        real_pairing_data.append({
+            "type": pairing["type"],
+            "subtype": pairing["subtype"],
+            "name": name,
+            "image": pairing["image"],
+            "description": f"{name}입니다"
+        })
+        
+for record in real_pairing_data:
     Pairing.create(**record)
 
 db.close()

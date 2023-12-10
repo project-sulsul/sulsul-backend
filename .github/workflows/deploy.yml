@@ -31,11 +31,10 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set region ap-northeast-2
 
-      - name: Init AWS ElasticBeanstalk
-        run: eb init -r ap-northeast-2 -p Python sulsul
-
       - name: Deploy AWS ElasticBeanstalk
-        run: eb deploy -l "GitHubActions-$(date +%s)" Sulsul-env
+        run: |
+          eb init -r ap-northeast-2 -p Python sulsul
+          eb deploy -l "GitHubActions-$(date +%s)" Sulsul-env
 
       - name: Deploy AWS Lambda function code
         run: |
