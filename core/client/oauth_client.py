@@ -9,13 +9,16 @@ from jwt.algorithms import RSAAlgorithm
 from cryptography.hazmat.primitives import serialization
 
 from core.config.var_config import APPLE_CLIENT_ID
-from core.dto.auth_dto import GoogleCredentialsModel, KakaoCredentialsModel, AppleCredentialsModel
+from core.dto.auth_dto import (
+    GoogleCredentialsRequest,
+    KakaoCredentialsRequest,
+    AppleCredentialsRequest,
+)
 
 
 class OAuthClient:
-
     @classmethod
-    def verify_google_token(cls, form: GoogleCredentialsModel):
+    def verify_google_token(cls, form: GoogleCredentialsRequest):
         try:
             user_info = id_token.verify_oauth2_token(
                 id_token=form.id_token,
@@ -24,10 +27,12 @@ class OAuthClient:
             )
             return user_info
         except Exception as e:
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid Google credentials")
-    
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST, "Invalid Google credentials"
+            )
+
     @classmethod
-    def verify_kakao_token(cls, form: KakaoCredentialsModel):
+    def verify_kakao_token(cls, form: KakaoCredentialsRequest):
         response = requests.get(
             url='https://kapi.kakao.com/v2/user/me?property_keys=["kakao_account.email"]',
             headers={
@@ -42,15 +47,17 @@ class OAuthClient:
                 error_detail = response.text
             finally:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST, error_detail)
-        
+
         return response.json()
-    
+
     @classmethod
-    def verify_apple_token(cls, form: AppleCredentialsModel):
+    def verify_apple_token(cls, form: AppleCredentialsRequest):
         id_token_header = jwt.get_unverified_header(form.id_token)
         jwks = requests.get("https://appleid.apple.com/auth/keys").json()["keys"]
         rsa_public_key = RSAAlgorithm.from_jwk(
-            jwk=[json.dumps(jwk) for jwk in jwks if jwk["kid"] == id_token_header["kid"]][0]
+            jwk=[
+                json.dumps(jwk) for jwk in jwks if jwk["kid"] == id_token_header["kid"]
+            ][0]
         ).public_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo,

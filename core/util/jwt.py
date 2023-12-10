@@ -1,7 +1,14 @@
 import os, jwt
 from datetime import datetime, timedelta
 
-from core.config.var_config import IS_PROD, KST, ALG, ISSUER, TOKEN_DURATION, ADMIN_TOKEN_DURATION
+from core.config.var_config import (
+    IS_PROD,
+    KST,
+    ALG,
+    ISSUER,
+    TOKEN_DURATION,
+    ADMIN_TOKEN_DURATION,
+)
 
 if IS_PROD:
     JWT_ENCRYPTION_KEY = os.environ.get("JWT_ENCRYPTION_KEY")

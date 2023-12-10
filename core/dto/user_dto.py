@@ -4,24 +4,24 @@ from pydantic import BaseModel
 from core.domain.user_model import User
 
 
-class NicknameResponseModel(BaseModel):
+class NicknameResponse(BaseModel):
     nickname: str
 
 
-class NicknameValidationResponseModel(BaseModel):
+class NicknameValidationResponse(BaseModel):
     is_valid: bool
     message: str | None
 
 
-class UserNicknameUpdateModel(BaseModel):
+class UserNicknameUpdateRequest(BaseModel):
     nickname: str
 
 
-class UserPreferenceUpdateModel(BaseModel):
+class UserPreferenceUpdateRequest(BaseModel):
     preference: Dict[str, List]
 
 
-class UserResponseModel(BaseModel):
+class UserResponse(BaseModel):
     id: int
     uid: str
     nickname: str
@@ -30,7 +30,7 @@ class UserResponseModel(BaseModel):
 
     @classmethod
     def from_orm(cls, entity: User):
-        return UserResponseModel(
+        return UserResponse(
             id=entity.id,
             uid=entity.uid,
             nickname=entity.nickname,

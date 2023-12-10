@@ -8,8 +8,8 @@ from api.config.middleware import auth, auth_required
 
 from core.domain.pairing_model import Pairing
 from core.dto.pairing_dto import PairingSearchType
-from core.dto.pairing_dto import PairingResponseModel
-from core.dto.pairing_dto import PairingListResponseModel
+from core.dto.pairing_dto import PairingResponse
+from core.dto.pairing_dto import PairingListResponse
 
 
 router = APIRouter(
@@ -19,33 +19,34 @@ router = APIRouter(
 
 
 @router.get(
-    "", dependencies=[Depends(transactional)], response_model=PairingListResponseModel
+    "", dependencies=[Depends(transactional)], response_model=PairingListResponse
 )
 @auth
 async def get_pairings(request: Request, type: PairingSearchType):
     data = [
-        PairingResponseModel.from_orm(pairing).model_dump()
+        PairingResponse.from_orm(pairing).model_dump()
         for pairing in Pairing.select().where(Pairing.is_deleted == False)
     ]
     if type is not PairingSearchType.전체:
         data = [pairing for pairing in data if pairing["type"] == type]
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=PairingListResponseModel(pairings=data).model_dump(),
+        content=PairingListResponse(pairings=data).model_dump(),
     )
 
 
 @router.get(
     "/{pairing_id}",
     dependencies=[Depends(transactional)],
-    response_model=PairingResponseModel,
+    response_model=PairingResponse,
 )
 @auth
 async def get_pairing_by_id(request: Request, pairing_id: int):
     try:
         pairing = Pairing.get_by_id(pairing_id)
         return JSONResponse(
-            status_code=status.HTTP_200_OK, content=pairing.dto().model_dump()
+            status_code=status.HTTP_200_OK,
+            content=PairingResponse.from_orm(pairing).model_dump(),
         )
     except DoesNotExist:
         return JSONResponse(

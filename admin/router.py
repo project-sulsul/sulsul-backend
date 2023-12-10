@@ -11,7 +11,11 @@ from core.config.orm_config import transactional
 from admin.model import Admin, AdminSigninModel
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
 from core.domain.pairing_model import Pairing
-from core.dto.pairing_dto import PairingCreateModel, PairingUpdateModel, PairingAdminResponseModel
+from core.dto.pairing_dto import (
+    PairingCreateRequest,
+    PairingUpdateRequest,
+    PairingAdminResponse,
+)
 
 
 router = APIRouter(
@@ -99,7 +103,7 @@ async def get_pairings(request: Request):
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=[
-            PairingAdminResponseModel.from_orm(pairing).model_dump()
+            PairingAdminResponse.from_orm(pairing).model_dump()
             for pairing in Pairing.select().order_by(Pairing.id)
         ],
     )
@@ -107,15 +111,18 @@ async def get_pairings(request: Request):
 
 @router.post("/pairings")
 @admin
-async def create_pairing(request: Request, form: PairingCreateModel):
+async def create_pairing(request: Request, form: PairingCreateRequest):
     form = form.model_dump()
     pairing = Pairing.create(**form)
-    return JSONResponse(status_code=status.HTTP_200_OK, content=PairingAdminResponseModel.from_orm(pairing).model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=PairingAdminResponse.from_orm(pairing).model_dump(),
+    )
 
 
 @router.put("/pairings/{pairing_id}")
 @admin
-async def update_pairing(request: Request, pairing_id: int, form: PairingUpdateModel):
+async def update_pairing(request: Request, pairing_id: int, form: PairingUpdateRequest):
     form = form.model_dump()
     pairing = (
         Pairing.update(
