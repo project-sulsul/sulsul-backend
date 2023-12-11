@@ -23,6 +23,12 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-4">SubType</div>
+                    <div class="col-8">
+                        <input id="selected-subtype" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-4">Name</div>
                     <div class="col-8">
                         <input id="selected-name" class="form-control">
@@ -77,6 +83,7 @@ const pairingTable = new Tabulator("#pairing-table", {
             else return "-";
         }},
         {title: "Type", field: "type", vertAlign: "middle"},
+        {title: "SubType", field: "subtype", vertAlign: "middle"},
         {title: "Name", field: "name", vertAlign: "middle"},
         {title: "Description", field: "description", vertAlign: "middle"},
         {title: "CreatedAt", field: "created_at", vertAlign: "middle", formatter: (cell, formatterParams) => {
@@ -97,6 +104,7 @@ pairingTable.on("rowSelected", (row) => {
     if (data.image) document.getElementById("selected-img").src = data.image;
     document.getElementById("selected-id").innerText = data.id;
     document.getElementById("selected-type").value = data.type;
+    document.getElementById("selected-subtype").value = data.subtype;
     document.getElementById("selected-name").value = data.name;
     document.getElementById("selected-description").value = data.description;
     document.getElementById("selected-image").value = data.image;
@@ -107,6 +115,7 @@ pairingTable.on("rowDeselected", () => {
     document.getElementById("selected-img").removeAttribute("src");
     document.getElementById("selected-id").innerText = null;
     document.getElementById("selected-type").value = null;
+    document.getElementById("selected-subtype").value = null;
     document.getElementById("selected-name").value = null;
     document.getElementById("selected-description").value = null;
     document.getElementById("selected-image").value = null;
@@ -129,6 +138,7 @@ const handleClickUpdatePairing = async () => {
     const selected = pairingTable.getSelectedData()[0];
 
     const updatedType = document.getElementById("selected-type").value;
+    const updatedSubtype = document.getElementById("selected-subtype").value;
     const updatedName = document.getElementById("selected-name").value;
     const updatedDescription = document.getElementById("selected-description").value;
     const updatedImage = document.getElementById("selected-image").value ? document.getElementById("selected-image").value : null;
@@ -141,6 +151,7 @@ const handleClickUpdatePairing = async () => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
             "type": updatedType,
+            "subtype": updatedSubtype,
             "name": updatedName,
             "description": updatedDescription,
             "image": updatedImage,

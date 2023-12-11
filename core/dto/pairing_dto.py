@@ -16,6 +16,7 @@ class PairingCreateRequest(BaseModel):
 class PairingUpdateRequest(BaseModel):
     type: str
     name: str
+    subtype: str
     image: str | None
     description: str | None
     is_deleted: bool
@@ -24,6 +25,7 @@ class PairingUpdateRequest(BaseModel):
 class PairingResponse(BaseModel):
     id: int
     type: str
+    subtype: str
     name: str
     image: str | None
     description: str | None
@@ -33,6 +35,7 @@ class PairingResponse(BaseModel):
         return PairingResponse(
             id=entity.id,
             type=entity.type,
+            subtype=entity.subtype,
             name=entity.name,
             image=entity.image,
             description=entity.description,
@@ -42,6 +45,7 @@ class PairingResponse(BaseModel):
 class PairingAdminResponse(BaseModel):
     id: int
     type: str
+    subtype: str
     name: str
     image: str | None
     description: str | None
@@ -54,6 +58,7 @@ class PairingAdminResponse(BaseModel):
         return PairingAdminResponse(
             id=entity.id,
             type=entity.type,
+            subtype=entity.subtype,
             name=entity.name,
             image=entity.image,
             description=entity.description,
