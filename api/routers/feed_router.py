@@ -28,8 +28,8 @@ async def search_feeds(request: Request, keyword: str):
     query_results = Feed.select().where(
         (
             Feed.content.contains(keyword)
-            or (Feed.tags.contains(keyword))
-            or (Feed.title.contains(keyword))
+            | (Feed.tags.contains(keyword))
+            | (Feed.title.contains(keyword))
         )
     )
     data = [
