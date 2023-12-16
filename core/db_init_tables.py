@@ -4,7 +4,6 @@ from playhouse import signals
 
 from core.config.orm_config import db
 
-
 models = list()
 for filename in os.listdir("core/domain"):
     if "_model.py" not in filename:
@@ -44,7 +43,29 @@ for record in user_data:
 
 from core.domain.feed_model import Feed
 
-feed_data = [{"user_id": 1}, {"user_id": 1}, {"user_id": 1}, {"user_id": 2}]
+feed_data = [
+    {
+        "user_id": 1,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": "삼겹살,소주",
+        "images": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg,https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+    },
+    {
+        "user_id": 1,
+        "title": "회쏘굳1",
+        "content": "회는 굳잡맨 맛나요 짱짱 굳1",
+        "tags": "회,소주",
+        "images": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg,https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+    },
+    {
+        "user_id": 2,
+        "title": "회쏘굳2",
+        "content": "회는 굳잡맨 맛나요 짱짱 굳2",
+        "tags": "회,소주",
+        "images": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg,https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+    },
+]
 for record in feed_data:
     Feed.create(**record)
 

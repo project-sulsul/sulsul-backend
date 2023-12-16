@@ -3,14 +3,44 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from core.config.orm_config import transactional
+from core.config.orm_config import transactional, get_db
 from core.domain.feed_model import Feed
-from core.dto.feed_dto import FeedResponse, FeedUpdateRequest
+from core.dto.feed_dto import (
+    FeedResponse,
+    FeedUpdateRequest,
+    FeedListResponse,
+    FeedSearchResultListResponse,
+    FeedSearchResultResponse,
+)
 
 router = APIRouter(
-    prefix="/feed",
-    tags=["Feed"],
+    prefix="/feeds",
+    tags=["Feeds"],
 )
+
+
+@router.get(
+    "/search",
+    dependencies=[Depends(get_db)],
+    response_model=FeedSearchResultListResponse,
+)
+async def search_feeds(request: Request, keyword: str):
+    query_results = Feed.select().where(
+        (
+            Feed.content.contains(keyword)
+            or (Feed.tags.contains(keyword))
+            or (Feed.title.contains(keyword))
+        )
+    )
+    data = [
+        FeedSearchResultResponse.from_orm(feed).model_dump() for feed in query_results
+    ]
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=FeedSearchResultListResponse(
+            results=data, keyword=keyword
+        ).model_dump(),
+    )
 
 
 @router.get(
