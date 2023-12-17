@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends, status
 from fastapi.responses import JSONResponse
 
-from api.config.middleware import auth
+from api.config.middleware import auth_required
 from core.config.orm_config import transactional
 from core.domain.report_model import Report
 from core.domain.user_model import User
@@ -16,7 +16,7 @@ router = APIRouter(
 @router.post(
     "", dependencies=[Depends(transactional)], response_model=ReportRegisterResponse
 )
-@auth
+@auth_required
 async def register_report(request: Request, request_body: ReportRegisterRequest):
     login_user = User.get_by_id(request.state.token_info["id"])
     report = Report.create(

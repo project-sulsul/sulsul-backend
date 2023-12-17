@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, Depends, status
 from fastapi.responses import JSONResponse
 
-from peewee import DoesNotExist
 
 from api.descriptions.pairing_api_descriptions import REQUEST_PAIRING_BY_USER_DESC
 from core.config.orm_config import transactional
@@ -59,7 +58,7 @@ async def get_pairing_by_id(request: Request, pairing_id: int):
     response_model=PairingRequestByUserResponse,
     description=REQUEST_PAIRING_BY_USER_DESC,
 )
-@auth
+@auth_required
 async def save_pairing_request_by_user(
     request: Request, request_body: PairingRequestByUserRequest
 ):

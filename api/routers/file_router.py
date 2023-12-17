@@ -8,6 +8,7 @@ from fastapi import UploadFile, APIRouter, HTTPException
 from starlette import status
 from starlette.responses import JSONResponse
 
+from api.config.middleware import auth_required
 from core.config.var_config import IS_PROD
 
 if IS_PROD:
