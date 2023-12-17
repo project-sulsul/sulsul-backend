@@ -18,7 +18,13 @@ class UserNicknameUpdateRequest(BaseModel):
 
 
 class UserPreferenceUpdateRequest(BaseModel):
-    preference: Dict[str, List]
+    """
+    유저 취향 수정 모델
+    - alcohol (List[int]): 취향으로 등록할 술(pairing)들의 ID 목록
+    - foods (List[int]): 취향으로 등록할 안주(pairing)들의 ID 목록
+    """
+    alcohol: List[int]
+    foods: List[int]
 
 
 class UserResponse(BaseModel):
