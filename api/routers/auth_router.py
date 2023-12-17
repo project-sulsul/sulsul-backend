@@ -128,7 +128,7 @@ async def sign_in_with_apple(
 async def get_jwt_for_test(user_id: int):
     if IS_PROD:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="This API is only available in development environment",
         )
 

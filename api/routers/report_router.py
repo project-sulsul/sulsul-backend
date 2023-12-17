@@ -18,9 +18,9 @@ router = APIRouter(
 )
 @auth
 async def register_report(request: Request, request_body: ReportRegisterRequest):
-    current_user = User.get_by_id(request.state.token_info["id"])
+    login_user = User.get_by_id(request.state.token_info["id"])
     report = Report.create(
-        reporter=current_user,
+        reporter=login_user,
         type=request_body.type,
         target_id=request_body.target_id,
         reason=request_body.reason,

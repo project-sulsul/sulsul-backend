@@ -46,17 +46,11 @@ async def get_pairings(request: Request, type: PairingSearchType):
 )
 @auth
 async def get_pairing_by_id(request: Request, pairing_id: int):
-    try:
-        pairing = Pairing.get_by_id(pairing_id)
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content=PairingResponse.from_orm(pairing).model_dump(),
-        )
-    except DoesNotExist:
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"message": f"Pairing {pairing_id} doesn't exist"},
-        )
+    pairing = Pairing.get_by_id(pairing_id)
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=PairingResponse.from_orm(pairing).model_dump(),
+    )
 
 
 @router.post(

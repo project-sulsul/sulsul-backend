@@ -18,7 +18,6 @@ from core.config.var_config import USER_NICKNAME_MAX_LENGTH
 
 from api.descriptions.user_api_descriptions import *
 
-
 router = APIRouter(
     prefix="/users",
     tags=["User"],
