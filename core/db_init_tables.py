@@ -69,6 +69,17 @@ feed_data = [
 for record in feed_data:
     Feed.create(**record)
 
+from core.domain.feed_like_model import FeedLike
+
+feed_like_data = [
+    {"user_id": 1, "feed_id": 1},
+    {"user_id": 1, "feed_id": 2},
+    {"user_id": 2, "feed_id": 1},
+    {"user_id": 2, "feed_id": 2},
+]
+for record in feed_like_data:
+    FeedLike.create(**record)
+
 from core.domain.pairing_model import Pairing
 
 pairing_data = [
