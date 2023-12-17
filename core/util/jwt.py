@@ -48,7 +48,7 @@ def build_admin_token(**kwargs) -> str:
     )
 
 
-def get_login_user(token: str) -> dict:
+def decode_token(token: str) -> dict:
     return jwt.decode(
         jwt=token,
         key=JWT_ENCRYPTION_KEY,

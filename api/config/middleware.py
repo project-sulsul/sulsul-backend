@@ -14,7 +14,7 @@ from starlette.responses import (
 )
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from core.util.jwt import get_login_user
+from core.util.jwt import decode_token
 from core.domain.user_model import User
 
 
@@ -108,7 +108,7 @@ def auth(call_next: RequestResponseEndpoint):
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
         auth_header = request.headers.get("Authorization")
-        request.state.user = None
+        request.state.token_info = None
 
         if auth_header:
             token_type, token = auth_header.split(" ")
@@ -119,7 +119,7 @@ def auth(call_next: RequestResponseEndpoint):
                     content={"message": "Invalid token type"},
                 )
             try:
-                request.state.user = get_login_user(token)
+                request.state.token_info = decode_token(token)
             except Exception as e:
                 pass
 
@@ -148,7 +148,7 @@ def auth_required(call_next: RequestResponseEndpoint):
             )
 
         try:
-            request.state.user = get_login_user(token)
+            request.state.user = decode_token(token)
         except Exception as e:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -166,7 +166,7 @@ def admin(call_next: RequestResponseEndpoint):
         request: Request = kwargs["request"]
         access_token = request.cookies.get("access_token")
         try:
-            login_user = get_login_user(access_token)
+            login_user = decode_token(access_token)
             if "is_admin_token" in login_user and login_user["is_admin_token"] != True:
                 raise Exception()
 

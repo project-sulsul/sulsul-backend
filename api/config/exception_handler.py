@@ -2,6 +2,7 @@ import traceback
 
 from fastapi import status, Request, HTTPException
 from fastapi.responses import JSONResponse
+from peewee import DoesNotExist
 
 from app import app
 
@@ -36,5 +37,18 @@ async def handle_exceptions(request: Request, exc: Exception) -> JSONResponse:
             "error": f"{exc.__class__.__name__}",
             "message": str(exc),
             "trace_info": trace_info,
+        },
+    )
+
+
+@app.exception_handler(DoesNotExist)
+async def handle_peewee_not_found_exception(
+    request: Request, exc: Exception
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={
+            "error": f"{exc.__class__.__name__}",
+            "message": "not found entity for id",
         },
     )

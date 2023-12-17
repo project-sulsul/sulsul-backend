@@ -63,7 +63,7 @@ async def get_pairing_by_id(request: Request, pairing_id: int):
     "/requests",
     dependencies=[Depends(transactional)],
     response_model=PairingRequestByUserResponse,
-    description=REQUEST_PAIRING_BY_USER_DESC
+    description=REQUEST_PAIRING_BY_USER_DESC,
 )
 @auth
 async def save_pairing_request_by_user(
