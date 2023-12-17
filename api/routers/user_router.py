@@ -139,7 +139,7 @@ async def update_user_preference(
     request: Request, user_id: int, form: UserPreferenceUpdateRequest
 ):
     login_user = User.get_by_id(request.state.user["id"])
-    preference = form.model_dump()["preference"]
+    preference = form.model_dump()
     if login_user.id != user_id:
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
