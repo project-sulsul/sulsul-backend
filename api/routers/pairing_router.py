@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from peewee import DoesNotExist
 
+from api.descriptions.pairing_api_descriptions import REQUEST_PAIRING_BY_USER_DESC
 from core.config.orm_config import transactional
 from api.config.middleware import auth, auth_required
 
@@ -17,7 +18,7 @@ from core.dto.pairing_dto import PairingListResponse
 
 router = APIRouter(
     prefix="/pairings",
-    tags=["Pairing"],
+    tags=["Pairing (술, 안주)"],
 )
 
 
@@ -58,11 +59,11 @@ async def get_pairing_by_id(request: Request, pairing_id: int):
         )
 
 
-# 술, 안주 중 없는 것을 유저가 직접 등록 요청을 한다.
 @router.post(
-    "/request",
+    "/requests",
     dependencies=[Depends(transactional)],
     response_model=PairingRequestByUserResponse,
+    description=REQUEST_PAIRING_BY_USER_DESC
 )
 @auth
 async def save_pairing_request_by_user(
