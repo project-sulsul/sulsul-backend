@@ -6,11 +6,14 @@ from peewee import DoesNotExist
 from core.config.orm_config import transactional
 from api.config.middleware import auth, auth_required
 
-from core.domain.pairing_model import Pairing
-from core.dto.pairing_dto import PairingSearchType
+from core.domain.pairing_model import Pairing, PairingRequest
+from core.dto.pairing_dto import (
+    PairingSearchType,
+    PairingRequestByUserRequest,
+    PairingRequestByUserResponse,
+)
 from core.dto.pairing_dto import PairingResponse
 from core.dto.pairing_dto import PairingListResponse
-
 
 router = APIRouter(
     prefix="/pairings",
@@ -53,3 +56,20 @@ async def get_pairing_by_id(request: Request, pairing_id: int):
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"message": f"Pairing {pairing_id} doesn't exist"},
         )
+
+
+# 술, 안주 중 없는 것을 유저가 직접 등록 요청을 한다.
+@router.post(
+    "/request",
+    dependencies=[Depends(transactional)],
+    response_model=PairingRequestByUserResponse,
+)
+@auth
+async def save_pairing_request_by_user(
+    request: Request, request_body: PairingRequestByUserRequest
+):
+    pairing_request = PairingRequest.create(**request_body.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=PairingRequestByUserResponse.from_orm(pairing_request).model_dump(),
+    )
