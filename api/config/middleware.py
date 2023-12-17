@@ -148,7 +148,7 @@ def auth_required(call_next: RequestResponseEndpoint):
             )
 
         try:
-            request.state.user = decode_token(token)
+            request.state.token_info = decode_token(token)
         except Exception as e:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
