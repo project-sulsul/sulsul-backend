@@ -1,7 +1,9 @@
+from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
 
+from core.domain.comment_model import Comment
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
@@ -17,9 +19,13 @@ class FeedResponse(BaseModel):
     is_liked: bool = False
     view_count: int = 0
     likes_count: int = 0
+    comments_count: int = 0
+    score: float
+    created_at: datetime
+    updated_at: datetime
 
     @classmethod
-    def of(cls, feed: Feed, likes: List[FeedLike], is_liked: bool):
+    def of(cls, feed: Feed, likes_count: int, comments_count: int, is_liked: bool):
         return FeedResponse(
             feed_id=feed.id,
             writer_info=UserSimpleInfoResponse(
@@ -32,7 +38,11 @@ class FeedResponse(BaseModel):
             tags=feed.tags.split(","),
             is_liked=is_liked,
             view_count=feed.view_count,
-            likes_count=likes.count(),
+            likes_count=likes_count,
+            comments_count=comments_count,
+            score=feed.score,
+            created_at=feed.created_at,
+            updated_at=feed.updated_at,
         )
 
     @classmethod
