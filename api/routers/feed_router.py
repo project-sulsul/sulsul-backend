@@ -15,7 +15,7 @@ from core.dto.feed_dto import (
 
 router = APIRouter(
     prefix="/feeds",
-    tags=["Feeds"],
+    tags=["Feed"],
 )
 
 

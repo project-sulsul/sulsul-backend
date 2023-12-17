@@ -29,7 +29,7 @@ BUCKET_NAME = "sulsul-s3"
 
 router = APIRouter(
     prefix="/files",
-    tags=["Files"],
+    tags=["File (이미지 업로드)"],
 )
 
 directories = ["images"]

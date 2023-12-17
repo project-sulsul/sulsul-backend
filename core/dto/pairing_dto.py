@@ -3,7 +3,7 @@ from typing import List
 from datetime import datetime
 from pydantic import BaseModel
 
-from core.domain.pairing_model import Pairing
+from core.domain.pairing_model import Pairing, PairingRequest
 
 
 class PairingCreateRequest(BaseModel):
@@ -76,3 +76,25 @@ class PairingSearchType(str, Enum):
     전체 = "전체"
     술 = "술"
     안주 = "안주"
+
+
+class PairingRequestByUserRequest(BaseModel):
+    type: str
+    subtype: str
+    name: str
+
+
+class PairingRequestByUserResponse(BaseModel):
+    id: int
+    type: str
+    subtype: str
+    name: str
+
+    @classmethod
+    def from_orm(cls, entity: PairingRequest):
+        return PairingRequestByUserResponse(
+            id=entity.id,
+            type=entity.type,
+            subtype=entity.subtype,
+            name=entity.name,
+        )

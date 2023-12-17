@@ -1,5 +1,4 @@
 import peewee
-from playhouse.postgres_ext import BinaryJSONField
 
 from core.domain.base_entity import BaseEntity
 from core.domain.user_model import User
