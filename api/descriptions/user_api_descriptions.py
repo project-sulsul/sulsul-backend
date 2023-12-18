@@ -24,7 +24,7 @@ UPDATE_USER_NICKNAME_DESC = """
 
 UPDATE_USER_IMAGE_DESC = """
 ### 유저 프로필 사진 변경
-**로그인이 필요한 API 입니다.**
+**로그인이 필요한 API 입니다.**  
 로그인 한 유저 본인의 프로필 사진만 변경 가능합니다
 """
 

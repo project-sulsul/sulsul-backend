@@ -33,8 +33,8 @@ db.create_tables([Admin], safe=True)
 db.drop_tables(models)
 db.create_tables(models)
 
-from core.domain.user_model import User
 
+from core.domain.user_model import User
 user_data = [
     {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
     {"uid": "iee785@daum.net", "social_type": "kakao", "nickname": "user2"},
@@ -43,8 +43,8 @@ user_data = [
 for record in user_data:
     User.create(**record)
 
-from core.domain.feed_model import Feed
 
+from core.domain.feed_model import Feed
 feed_data = [
     {
         "user_id": 1,
@@ -71,8 +71,8 @@ feed_data = [
 for record in feed_data:
     Feed.create(**record)
 
-from core.domain.feed_like_model import FeedLike
 
+from core.domain.feed_like_model import FeedLike
 feed_like_data = [
     {"user_id": 1, "feed_id": 1},
     {"user_id": 1, "feed_id": 2},
@@ -82,8 +82,8 @@ feed_like_data = [
 for record in feed_like_data:
     FeedLike.create(**record)
 
-from core.domain.pairing_model import Pairing
 
+from core.domain.pairing_model import Pairing
 pairing_data = [
 	{
 		"type" : "술",
@@ -375,5 +375,16 @@ pairing_data = [
 ]
 for record in pairing_data:
     Pairing.create(**record)
+    
+
+from core.domain.combination_model import Combination
+combination_data = [
+    {"alcohol": 2, "food": 15, "count": 15469},
+    {"alcohol": 13, "food": 16, "count": 5165},
+    {"alcohol": 8, "food": 26, "count": 38089},
+    {"alcohol": 12, "food": 17, "count": 159},
+]
+for record in combination_data:
+    Combination.create(**record)
 
 db.close()
