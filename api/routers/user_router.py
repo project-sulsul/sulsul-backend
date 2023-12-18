@@ -122,15 +122,15 @@ async def update_user_nickname(
     description=UPDATE_USER_IMAGE_DESC,
 )
 @auth_required
-async def update_user_image(
-    request: Request, user_id: int, file: UploadFile
-):
+async def update_user_image(request: Request, user_id: int, file: UploadFile):
     login_user = User.get_by_id(request.state.token_info["id"])
     if login_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     if file.size == 0:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file"
+        )
 
     s3 = S3Client()
     key = f"profile_images/{uuid.uuid4()}.{file.filename.split('.')[-1]}"
@@ -141,8 +141,10 @@ async def update_user_image(
         login_user.image = s3.get_object_url(key)
         login_user.save()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
     return UserResponse.from_orm(login_user)
 
 

@@ -28,7 +28,6 @@ app = FastAPI(
 
 from api.config.app_config import *
 
-
 if __name__ == "__main__":
     import uvicorn
 

@@ -22,7 +22,7 @@ class CombinationResponse(BaseModel):
             count=entity.count,
             description=entity.description,
         )
-    
+
 
 class CombinationListResponse(BaseModel):
     combinations: List[CombinationResponse]

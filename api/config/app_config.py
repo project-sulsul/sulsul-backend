@@ -39,8 +39,10 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 def on_startup():
     import core.db_init_tables
     from core.config.var_config import IS_PROD
+
     if not IS_PROD:
         import logging
+
         logger = logging.getLogger("peewee")
         logger.addHandler(logging.StreamHandler())
         logger.setLevel(logging.DEBUG)
