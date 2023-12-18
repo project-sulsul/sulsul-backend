@@ -43,3 +43,8 @@ class UserResponse(BaseModel):
             preference=entity.preference,
             status=entity.status,
         )
+
+
+class UserSimpleInfoResponse(BaseModel):
+    user_id: int
+    nickname: str
