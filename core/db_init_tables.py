@@ -3,6 +3,7 @@ from peewee import Model
 from playhouse import signals
 
 from core.config.orm_config import db
+from core.domain.base_entity import BaseEntity
 
 models = list()
 for filename in os.listdir("core/domain"):
@@ -19,6 +20,7 @@ for filename in os.listdir("core/domain"):
             and issubclass(obj, Model)
             and obj is not Model
             and obj is not signals.Model
+            and obj is not BaseEntity
         ]
     )
 
