@@ -89,19 +89,19 @@ class EnhancedTrustedHostMiddleware:
 
 def auth(call_next: RequestResponseEndpoint):
     """
-    사용자 로그인 정보를 request.state.user에 바인딩 하기 위한 미들웨어
+    사용자 로그인 정보를 request.state.token_info에 바인딩 하기 위한 미들웨어
 
     -- Usage
         ```
         @router.get("/path")
         @auth
         async def some_handler_method(request: fastapi.Request):
-            login_user = request.state.user
+            login_user = request.state.token_info에
         ```
 
     - 해당 미들웨어 사용 시 핸들러 메소드는 request 매개변수를 필수로 받아야 함
-    - 인증된 사용자의 경우 request.state.user: 디코드된 액세스 토큰 payload
-    - 인증되지 않은 사용자의 경우 request.state.user: None
+    - 인증된 사용자의 경우 request.state.token_info에: 디코드된 액세스 토큰 payload
+    - 인증되지 않은 사용자의 경우 request.state.token_info에: None
     """
 
     @wraps(call_next)

@@ -47,7 +47,5 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_NAME = "sulsul"
 DB_SCHEMA = "sulsul"
 
-
-ADMIN_USER_UIDS = [
-    "ahdwjdtprtm@gmail.com",
-]
+S3_REGION = "ap-northeast-2"
+S3_BUCKET_NAME = "sulsul-s3"

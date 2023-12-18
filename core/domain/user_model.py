@@ -7,6 +7,7 @@ class User(BaseEntity):
     uid = peewee.CharField(max_length=100, null=False, unique=True)
     social_type = peewee.CharField(max_length=10, null=True)
     nickname = peewee.CharField(max_length=30, null=True)
+    image = peewee.CharField(null=True, default=None)
     preference = BinaryJSONField(default={})
     status = peewee.CharField(max_length=10, default="active")
 

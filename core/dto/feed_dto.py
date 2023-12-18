@@ -31,6 +31,7 @@ class FeedResponse(BaseModel):
             writer_info=UserSimpleInfoResponse(
                 user_id=feed.user.id,
                 nickname=feed.user.nickname,
+                image=feed.user.image,
             ),
             title=feed.title,
             content=feed.content,

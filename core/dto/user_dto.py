@@ -31,6 +31,7 @@ class UserResponse(BaseModel):
     id: int
     uid: str
     nickname: str
+    image: str
     preference: Dict[str, List]
     status: str
 
@@ -40,6 +41,7 @@ class UserResponse(BaseModel):
             id=entity.id,
             uid=entity.uid,
             nickname=entity.nickname,
+            image=entity.image,
             preference=entity.preference,
             status=entity.status,
         )
@@ -48,3 +50,4 @@ class UserResponse(BaseModel):
 class UserSimpleInfoResponse(BaseModel):
     user_id: int
     nickname: str
+    image: str
