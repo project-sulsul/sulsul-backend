@@ -1,6 +1,7 @@
 import peewee
 from contextvars import ContextVar
 from fastapi import Depends
+from playhouse.pool import PooledPostgresqlExtDatabase
 
 from core.config.var_config import (
     IS_PROD,
@@ -10,7 +11,6 @@ from core.config.var_config import (
     DB_USER,
     DB_PASSWORD,
 )
-
 
 db_state_default = {"closed": None, "conn": None, "ctx": None, "transactions": None}
 db_state = ContextVar("db_state", default=db_state_default.copy())
@@ -29,22 +29,26 @@ class PeeweeConnectionState(peewee._ConnectionState):
 
 
 if IS_PROD:
-    db = peewee.PostgresqlDatabase(
+    db = PooledPostgresqlExtDatabase(
         database=DB_NAME,
         host=DB_HOST,
         port=DB_PORT,
         user=DB_USER,
         password=DB_PASSWORD,
+        max_connections=8,
+        stale_timeout=300,
     )
 else:
     from core.config import secrets
 
-    db = peewee.PostgresqlDatabase(
+    db = PooledPostgresqlExtDatabase(
         database=DB_NAME,
         host=secrets.DB_HOST,
         port=secrets.DB_PORT,
         user=secrets.DB_USER,
         password=secrets.DB_PASSWORD,
+        max_connections=8,
+        stale_timeout=300,
     )
 db._state = PeeweeConnectionState()
 
