@@ -27,15 +27,12 @@ router = APIRouter(
 @auth
 async def get_pairings(request: Request, type: PairingSearchType):
     data = [
-        PairingResponse.from_orm(pairing).model_dump()
-        for pairing in Pairing.select().where(Pairing.is_deleted == False)
+        PairingResponse.from_orm(pairing) for pairing in Pairing.select().where(Pairing.is_deleted == False)
     ]
     if type is not PairingSearchType.전체:
         data = [pairing for pairing in data if pairing["type"] == type]
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=PairingListResponse(pairings=data).model_dump(),
-    )
+    
+    return PairingListResponse(pairings=data)
 
 
 @router.get(
@@ -46,10 +43,7 @@ async def get_pairings(request: Request, type: PairingSearchType):
 @auth
 async def get_pairing_by_id(request: Request, pairing_id: int):
     pairing = Pairing.get_by_id(pairing_id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=PairingResponse.from_orm(pairing).model_dump(),
-    )
+    return PairingResponse.from_orm(pairing)
 
 
 @router.post(
@@ -63,7 +57,4 @@ async def save_pairing_request_by_user(
     request: Request, request_body: PairingRequestByUserRequest
 ):
     pairing_request = PairingRequest.create(**request_body.model_dump())
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=PairingRequestByUserResponse.from_orm(pairing_request).model_dump(),
-    )
+    return PairingRequestByUserResponse.from_orm(pairing_request)

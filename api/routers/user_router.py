@@ -175,4 +175,4 @@ async def delete_user(request: Request, user_id: int):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     login_user.is_deleted = True
     login_user.save()
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"result": True})
+    return {"result": True}

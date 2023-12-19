@@ -70,5 +70,5 @@ async def get_combination_ranking(request: Request, order_by_popular: bool = Tru
     # response_model=
 )
 @auth_required
-def get_alcohol_ranking(request: Request):
+async def get_alcohol_ranking(request: Request):
     return

@@ -1,54 +1,41 @@
 from typing import Dict, List
-from pydantic import BaseModel
 
-from core.domain.user_model import User
+from core.dto.base_dto import BaseDTO
 
 
-class NicknameResponse(BaseModel):
+class NicknameResponse(BaseDTO):
     nickname: str
 
 
-class NicknameValidationResponse(BaseModel):
+class NicknameValidationResponse(BaseDTO):
     is_valid: bool
     message: str | None
 
 
-class UserNicknameUpdateRequest(BaseModel):
+class UserNicknameUpdateRequest(BaseDTO):
     nickname: str
 
 
-class UserPreferenceUpdateRequest(BaseModel):
+class UserPreferenceUpdateRequest(BaseDTO):
     """
     유저 취향 수정 모델
     - alcohol (List[int]): 취향으로 등록할 술(pairing)들의 ID 목록
     - foods (List[int]): 취향으로 등록할 안주(pairing)들의 ID 목록
     """
-
     alcohol: List[int]
     foods: List[int]
 
 
-class UserResponse(BaseModel):
+class UserResponse(BaseDTO):
     id: int
     uid: str
     nickname: str
-    image: str
+    image: str | None
     preference: Dict[str, List]
     status: str
 
-    @classmethod
-    def from_orm(cls, entity: User):
-        return UserResponse(
-            id=entity.id,
-            uid=entity.uid,
-            nickname=entity.nickname,
-            image=entity.image,
-            preference=entity.preference,
-            status=entity.status,
-        )
 
-
-class UserSimpleInfoResponse(BaseModel):
+class UserSimpleInfoResponse(BaseDTO):
     user_id: int
     nickname: str
-    image: str
+    image: str | None

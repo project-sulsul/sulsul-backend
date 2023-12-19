@@ -1,19 +1,20 @@
 from enum import Enum
 from typing import List
 from datetime import datetime
-from pydantic import BaseModel
 
+
+from core.dto.base_dto import BaseDTO
 from core.domain.pairing_model import Pairing, PairingRequest
 
 
-class PairingCreateRequest(BaseModel):
+class PairingCreateRequest(BaseDTO):
     type: str
     name: str
     image: str | None
     description: str | None
 
 
-class PairingUpdateRequest(BaseModel):
+class PairingUpdateRequest(BaseDTO):
     type: str
     name: str
     subtype: str
@@ -22,7 +23,7 @@ class PairingUpdateRequest(BaseModel):
     is_deleted: bool
 
 
-class PairingResponse(BaseModel):
+class PairingResponse(BaseDTO):
     id: int
     type: str
     subtype: str
@@ -30,19 +31,8 @@ class PairingResponse(BaseModel):
     image: str | None
     description: str | None
 
-    @classmethod
-    def from_orm(cls, entity: Pairing):
-        return PairingResponse(
-            id=entity.id,
-            type=entity.type,
-            subtype=entity.subtype,
-            name=entity.name,
-            image=entity.image,
-            description=entity.description,
-        )
 
-
-class PairingAdminResponse(BaseModel):
+class PairingAdminResponse(BaseDTO):
     id: int
     type: str
     subtype: str
@@ -68,7 +58,7 @@ class PairingAdminResponse(BaseModel):
         )
 
 
-class PairingListResponse(BaseModel):
+class PairingListResponse(BaseDTO):
     pairings: List[PairingResponse]
 
 
@@ -78,23 +68,14 @@ class PairingSearchType(str, Enum):
     안주 = "안주"
 
 
-class PairingRequestByUserRequest(BaseModel):
+class PairingRequestByUserRequest(BaseDTO):
     type: str
     subtype: str
     name: str
 
 
-class PairingRequestByUserResponse(BaseModel):
+class PairingRequestByUserResponse(BaseDTO):
     id: int
     type: str
     subtype: str
     name: str
-
-    @classmethod
-    def from_orm(cls, entity: PairingRequest):
-        return PairingRequestByUserResponse(
-            id=entity.id,
-            type=entity.type,
-            subtype=entity.subtype,
-            name=entity.name,
-        )
