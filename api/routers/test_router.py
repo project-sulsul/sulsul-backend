@@ -6,8 +6,7 @@ from core.domain.user_model import User
 from core.util.jwt import build_token
 from core.dto.auth_dto import TokenResponse
 from core.config.var_config import IS_PROD
-from ai.inference import classify
-
+# from ai.inference import classify
 
 
 router = APIRouter(
@@ -42,10 +41,10 @@ async def get_jwt_for_test(user_id: int):
     )
 
 
-@router.get("/ai")
-async def get_inference_from_image(request: Request, img_url: str, model_name: str):
-    return classify(
-        img_url=img_url,
-        model_name=model_name,
-        weight="ai/weights/resnet18_qat.pt"
-    )
+# @router.get("/ai")
+# async def get_inference_from_image(request: Request, img_url: str, model_name: str):
+#     return classify(
+#         img_url=img_url,
+#         model_name=model_name,
+#         weight="ai/weights/resnet18_qat.pt"
+#     )

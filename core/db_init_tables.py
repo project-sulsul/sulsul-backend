@@ -315,9 +315,9 @@ pairing_data = [
     {
         "type": "안주",
         "subtype": "회",
-        "name": "광어\/우럭",
+        "name": "광어/우럭",
         "image": None,
-        "description": "광어\/우럭입니다",
+        "description": "광어/우럭입니다",
     },
     {
         "type": "안주",
