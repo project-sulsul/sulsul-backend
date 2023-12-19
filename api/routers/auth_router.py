@@ -120,27 +120,3 @@ async def sign_in_with_apple(
     )
 
 
-@router.get(
-    "/jwt-for-test",
-    dependencies=[Depends(transactional)],
-    response_model=TokenResponse,
-)
-async def get_jwt_for_test(user_id: int):
-    if IS_PROD:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="This API is only available in development environment",
-        )
-
-    user = User.get_by_id(user_id)
-
-    token = build_token(
-        id=user_id,
-        social_type=user.social_type,
-        status=user.status,
-    )
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=TokenResponse(user_id=user.id, access_token=token).model_dump(),
-    )

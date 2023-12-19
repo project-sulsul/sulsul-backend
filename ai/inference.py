@@ -10,8 +10,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
-from dataset import Padding
-from quantize import ptq_serving, qat_serving
+from ai.dataset import Padding
+from ai.quantize import ptq_serving, qat_serving
 
 
 class_info = {
@@ -69,15 +69,15 @@ def load_model(model_name: str, weight: str, num_classes: int, quantization: str
 
     # load model
     if model_name == 'shufflenet':
-        from models.shufflenet import ShuffleNetV2
+        from ai.models.shufflenet import ShuffleNetV2
         model = ShuffleNetV2(num_classes=num_classes, pre_trained=False, quantize=q)
         
     elif model_name == 'resnet18':
-        from models.resnet import resnet18
+        from ai.models.resnet import resnet18
         model = resnet18(num_classes=num_classes, pre_trained=False, quantize=q)
         
     elif model_name == 'resnet50':
-        from models.resnet import resnet50
+        from ai.models.resnet import resnet50
         model = resnet50(num_classes=num_classes, pre_trained=False, quantize=q)
         
     else:
