@@ -102,7 +102,7 @@ def classify(
     q = True if quantization != 'none' else False
 
     # load model
-    model = load_model(model_name=model_name, weight=weight, num_classes=39, quantization=quantization)
+    model = load_model(model_name=model_name, weight=weight, num_classes=num_classes, quantization=quantization)
 
     # load image
     img, img_url = load_image(img_url=img_url)
