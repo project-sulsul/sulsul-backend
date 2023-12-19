@@ -103,11 +103,11 @@ def classify(
     threshold: float=0.5, 
     quantization: str='qat',
     num_classes: int=39,
-) -> List[str]:
+) -> Dict:
     q = True if quantization != 'none' else False
 
     # load model
-    model = load_model(model_name=model_name, weight=weight, num_classes=num_classes, quantization=quantization)
+    model = load_model(model_name=model_name, weight=weight, num_classes=num_classes, quantization=q)
 
     # load image
     img, img_url = load_image(img_url=img_url)
