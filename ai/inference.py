@@ -59,62 +59,55 @@ def inference(src: torch.Tensor, model: nn.Module, threshold: int=0.5):
     return result_list
 
 
-def get_args_parser():
-    parser = argparse.ArgumentParser(description='Inference', add_help=False)
-    parser.add_argument('--model_name', type=str, required=True,
-                        help='model name')
-    parser.add_argument('--img_url', type=str, required=True,
-                        help='input image')
-    parser.add_argument('--weight', type=str, required=True,
-                        help='a path of trained weight file')
-    parser.add_argument('--num_classes', type=int, default=39,
-                        help='the number of classes')
-    parser.add_argument('--quantization', type=str, default='none', choices=['none', 'qat', 'ptq'],
-                        help='load quantized model or float32 model')
-    parser.add_argument('--measure_latency', action='store_true',
-                        help='print latency time')
-    parser.add_argument('--threshold', type=float, default=0.5,
-                        help='a threshold for filtering outputs')
-
-    return parser
-
-
-def main(args):
-    q = True if args.quantization != 'none' else False
+def load_model(model_name: str, weight: str, num_classes: int, quantization: str='none'):
+    q = True if quantization != 'none' else False
 
     # load model
-    if args.model_name == 'shufflenet':
+    if model_name == 'shufflenet':
         from models.shufflenet import ShuffleNetV2
-        model = ShuffleNetV2(num_classes=args.num_classes, pre_trained=False, quantize=q)
+        model = ShuffleNetV2(num_classes=num_classes, pre_trained=False, quantize=q)
         
-    elif args.model_name == 'resnet18':
+    elif model_name == 'resnet18':
         from models.resnet import resnet18
-        model = resnet18(num_classes=args.num_classes, pre_trained=False, quantize=q)
+        model = resnet18(num_classes=num_classes, pre_trained=False, quantize=q)
         
-    elif args.model_name == 'resnet50':
+    elif model_name == 'resnet50':
         from models.resnet import resnet50
-        model = resnet50(num_classes=args.num_classes, pre_trained=False, quantize=q)
+        model = resnet50(num_classes=num_classes, pre_trained=False, quantize=q)
         
     else:
-        raise ValueError(f'model name {args.model_name} does not exists.')
-    
+        raise ValueError(f'model name {model_name} does not exists.')
     
     # quantization
-    if args.quantization == 'ptq':
-        model = ptq_serving(model=model, weight=args.weight)
+    if quantization == 'ptq':
+        model = ptq_serving(model=model, weight=weight)
 
-    elif args.quantization == 'qat':
-        model = qat_serving(model=model, weight=args.weight)
+    elif quantization == 'qat':
+        model = qat_serving(model=model, weight=weight)
 
     else: # 'none'
         pass
 
-    img, img_url = load_image(args.img_url)
-    result = inference(img, model, args.threshold)
-    print(result)
+    return model
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser('Inference', parents=[get_args_parser()])
-    args = parser.parse_args()
-    main(args)
+def classify(
+    img_url: str, 
+    model_name: str, 
+    weight: str, 
+    threshold: float=0.5, 
+    quantization: str='none',
+    num_classes: int=39,
+) -> List[str]: 
+    q = True if quantization != 'none' else False
+
+    # load model
+    model = load_model(model_name=model_name, weight=weight, num_classes=39, quantization=quantization)
+
+    # load image
+    img, img_url = load_image(img_url=img_url)
+
+    # inference
+    result = inference(img, model, threshold)
+
+    return result
