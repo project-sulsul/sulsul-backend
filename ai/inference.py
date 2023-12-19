@@ -47,19 +47,24 @@ def load_image(img_url: str):
     return img, img_url
 
 
-def inference(src: torch.Tensor, model: nn.Module, threshold: int=0.5):
+def inference(src: torch.Tensor, model: nn.Module, threshold: int=0.5) -> Dict:
     model.eval()
-    result_list = []
+    result_list = {'foods': [], 'alcohols': []}
     with torch.no_grad():
         outputs = model(src)
         result = outputs[0].detach().numpy()
         indices = np.where(result > threshold)[0]
-        for idx in indices:
-            result_list.append(class_info_rev[int(idx)])
+        
+        food_indices = indices[indices <= 24]
+        alcohol_indices = indices[indices > 24]
+
+        result_list['foods'] = [class_info_rev[idx] for idx in food_indices]
+        result_list['alcohols'] = [class_info_rev[idx] for idx in alcohol_indices]
+
     return result_list
 
 
-def load_model(model_name: str, weight: str, num_classes: int, quantization: str='none'):
+def load_model(model_name: str, weight: str, num_classes: int, quantization: str='qat'):
     q = True if quantization != 'none' else False
 
     # load model
@@ -96,9 +101,9 @@ def classify(
     model_name: str, 
     weight: str, 
     threshold: float=0.5, 
-    quantization: str='none',
+    quantization: str='qat',
     num_classes: int=39,
-) -> List[str]: 
+) -> List[str]:
     q = True if quantization != 'none' else False
 
     # load model
