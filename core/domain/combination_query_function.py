@@ -61,7 +61,7 @@ def fetch_combination_ranking(order_by_popular: bool) -> list:
                     "subtype": alcohol_subtype,
                     "name": alcohol_name,
                     "image": alcohol_image,
-                    "description": alcohol_description
+                    "description": alcohol_description,
                 },
                 "food": {
                     "id": food_id,
@@ -69,8 +69,8 @@ def fetch_combination_ranking(order_by_popular: bool) -> list:
                     "subtype": food_subtype,
                     "name": food_name,
                     "image": food_image,
-                    "description": food_description
-                }
+                    "description": food_description,
+                },
             }
         )
     return result_list

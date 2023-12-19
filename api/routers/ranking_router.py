@@ -20,7 +20,12 @@ router = APIRouter(
 )
 @auth_required
 async def get_combination_ranking(request: Request, order_by_popular: bool = True):
-    combinations = [CombinationResponse(**record) for record in combination_query_function.fetch_combination_ranking(order_by_popular)]
+    combinations = [
+        CombinationResponse(**record)
+        for record in combination_query_function.fetch_combination_ranking(
+            order_by_popular
+        )
+    ]
     return CombinationListResponse(combinations=combinations)
 
 
