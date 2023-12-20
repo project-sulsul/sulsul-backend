@@ -23,11 +23,11 @@ class BaseEntity(peewee.Model):
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
         return super().save(*args, **kwargs)
-    
+
     @classmethod
     def props(cls) -> dict[str, any]:
         return {
-            prop: typ 
-            for prop, typ in dict(cls.__dict__).items() 
+            prop: typ
+            for prop, typ in dict(cls.__dict__).items()
             if isinstance(typ, peewee.FieldAccessor)
         }
