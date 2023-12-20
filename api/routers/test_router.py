@@ -6,13 +6,11 @@ from core.domain.user_model import User
 from core.util.jwt import build_token
 from core.dto.auth_dto import TokenResponse
 from core.config.var_config import IS_PROD
+
 # from ai.inference import classify
 
 
-router = APIRouter(
-    prefix="/test",
-    tags=["테스트용 API"]
-)
+router = APIRouter(prefix="/test", tags=["테스트용 API"])
 
 
 @router.get(

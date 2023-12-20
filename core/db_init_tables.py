@@ -85,6 +85,23 @@ feed_like_data = [
 for record in feed_like_data:
     FeedLike.create(**record)
 
+from core.domain.comment_model import Comment
+
+comment_data = [
+    {"user_id": 1, "feed_id": 1, "content": "댓글1", "parent_comment_id": None},
+    {"user_id": 1, "feed_id": 1, "content": "댓글2", "parent_comment_id": None},
+    {"user_id": 1, "feed_id": 1, "content": "댓글1-1", "parent_comment_id": 1},
+    {"user_id": 1, "feed_id": 1, "content": "댓글1-2", "parent_comment_id": 1},
+    {"user_id": 1, "feed_id": 1, "content": "댓글1-3", "parent_comment_id": 1},
+    {"user_id": 1, "feed_id": 2, "content": "댓글1", "parent_comment_id": None},
+    {"user_id": 1, "feed_id": 2, "content": "댓글2", "parent_comment_id": None},
+    {"user_id": 1, "feed_id": 2, "content": "댓글1-1", "parent_comment_id": 1},
+    {"user_id": 1, "feed_id": 2, "content": "댓글1-2", "parent_comment_id": 1},
+    {"user_id": 1, "feed_id": 2, "content": "댓글1-3", "parent_comment_id": 1},
+]
+for record in comment_data:
+    Comment.create(**record)
+
 
 from core.domain.pairing_model import Pairing
 

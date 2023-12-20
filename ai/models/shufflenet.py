@@ -1,4 +1,4 @@
-import torch 
+import torch
 import torch.nn as nn
 import torchvision.models as models
 from torchvision.models import ShuffleNet_V2_X0_5_Weights

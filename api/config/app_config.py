@@ -21,7 +21,7 @@ for filename in os.listdir("api/routers"):
         continue
     if filename == "test_router.py" and IS_PROD:
         continue
-        
+
     module = importlib.import_module("api.routers." + filename.split(".")[0])
     if hasattr(module, "router"):
         app.include_router(module.router)
