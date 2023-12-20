@@ -77,7 +77,7 @@ def load_image(img_url: str):
     return img, img_url
 
 
-def inference(src: torch.Tensor, model: nn.Module, threshold: int = 0.5) -> Dict:
+def inference(src: torch.Tensor, model: nn.Module, threshold: float = 0.5) -> Dict:
     model.eval()
     result_list = {"foods": [], "alcohols": []}
     with torch.no_grad():
@@ -139,11 +139,12 @@ def classify(
     quantization: str = "qat",
     num_classes: int = 39,
 ) -> Dict:
-    q = True if quantization != "none" else False
-
     # load model
     model = load_model(
-        model_name=model_name, weight=weight, num_classes=num_classes, quantization=q
+        model_name=model_name,
+        weight=weight,
+        num_classes=num_classes,
+        quantization=quantization,
     )
 
     # load image
