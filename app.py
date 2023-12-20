@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-
 from core.config.var_config import IS_PROD
 
 app_desc = f"""
@@ -24,6 +23,9 @@ app = FastAPI(
     contact={"name": "tmlee", "email": "ahdwjdtprtm@gmail.com"},
     license_info={"name": "MIT License", "identifier": "MIT"},
 )
+
+# 절대 삭제하지 말것
+from api.config.app_config import *
 
 if __name__ == "__main__":
     import uvicorn
