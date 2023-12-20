@@ -12,15 +12,19 @@ class CombinationResponse(BaseModel):
     count: int
     description: str | None
 
+    # @classmethod
+    # def from_orm(cls, entity: Combination):
+    #     dto = super().from_orm(entity)
+    #     dto.alcohol = PairingResponse.from_orm(entity.alchohol)
+    #     dto.food = PairingResponse.from_orm(entity.food)
+    #     return dto
+
     @classmethod
     def from_orm(cls, entity: Combination):
-        print(entity)
         return CombinationResponse(
-            id=entity.id,
+            **entity.__data__,
             alcohol=PairingResponse.from_orm(entity.alcohol),
             food=PairingResponse.from_orm(entity.food),
-            count=entity.count,
-            description=entity.description,
         )
 
 
