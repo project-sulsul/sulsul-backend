@@ -118,5 +118,3 @@ async def sign_in_with_apple(
         status_code=status_code,
         content=TokenResponse(user_id=user.id, access_token=token).model_dump(),
     )
-
-
