@@ -1,6 +1,6 @@
 import os
-from pytz import timezone
 
+from pytz import timezone
 
 # 실행 환경이 운영인지 개발인지 확인
 IS_PROD = (
@@ -27,7 +27,7 @@ JWT_COOKIE_OPTIONS = {
 if os.environ.get("APPLE_CLIENT_ID"):
     APPLE_CLIENT_ID = os.environ.get("APPLE_CLIENT_ID")
 else:
-    from core.config.secrets import APPLE_CLIENT_ID
+    pass
 
 USER_NICKNAME_MAX_LENGTH = 10
 

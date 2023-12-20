@@ -1,5 +1,5 @@
-from fastapi import HTTPException
 import requests
+from fastapi import HTTPException
 
 
 class NicknameGeneratorClient:

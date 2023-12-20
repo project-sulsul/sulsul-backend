@@ -1,4 +1,5 @@
 import os
+
 import boto3
 
 from core.config.var_config import IS_PROD, S3_REGION, S3_BUCKET_NAME

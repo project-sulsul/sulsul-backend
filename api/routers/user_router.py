@@ -1,23 +1,21 @@
-from fastapi import APIRouter, Depends, Request, UploadFile, status, HTTPException
-from fastapi.responses import JSONResponse
-
 import re
 import uuid
+
+from fastapi import APIRouter, Depends, Request, UploadFile, status, HTTPException
+from fastapi.responses import JSONResponse
 from peewee import DoesNotExist
 
 from api.config.middleware import auth, auth_required
-from core.config.orm_config import transactional
-from core.client.nickname_generator_client import NicknameGeneratorClient
+from api.descriptions.user_api_descriptions import *
 from core.client.aws_client import S3Client
+from core.client.nickname_generator_client import NicknameGeneratorClient
+from core.config.orm_config import transactional
 from core.domain.user_model import User
-from core.dto.user_dto import UserResponse
-from core.dto.user_dto import UserNicknameUpdateRequest
-from core.dto.user_dto import UserPreferenceUpdateRequest
 from core.dto.user_dto import NicknameResponse
 from core.dto.user_dto import NicknameValidationResponse
-from core.config.var_config import USER_NICKNAME_MAX_LENGTH
-
-from api.descriptions.user_api_descriptions import *
+from core.dto.user_dto import UserNicknameUpdateRequest
+from core.dto.user_dto import UserPreferenceUpdateRequest
+from core.dto.user_dto import UserResponse
 
 router = APIRouter(
     prefix="/users",

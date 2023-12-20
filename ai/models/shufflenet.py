@@ -1,8 +1,7 @@
-import torch
 import torch.nn as nn
 import torchvision.models as models
-from torchvision.models import ShuffleNet_V2_X0_5_Weights
 from torch.quantization import QuantStub, DeQuantStub
+from torchvision.models import ShuffleNet_V2_X0_5_Weights
 
 
 class ShuffleNetV2(nn.Module):

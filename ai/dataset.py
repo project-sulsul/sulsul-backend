@@ -1,10 +1,9 @@
 from glob import glob
-from PIL import Image
 from typing import *
 
 import torch
 import torchvision.transforms as transforms
-from torchvision.datasets import ImageFolder
+from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
 """

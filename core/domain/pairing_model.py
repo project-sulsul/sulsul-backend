@@ -1,4 +1,5 @@
 import peewee
+
 from core.domain.base_entity import BaseEntity
 
 

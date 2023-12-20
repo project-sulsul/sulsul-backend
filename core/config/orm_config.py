@@ -1,5 +1,6 @@
-import peewee
 from contextvars import ContextVar
+
+import peewee
 from fastapi import Depends
 from playhouse.pool import PooledPostgresqlExtDatabase
 

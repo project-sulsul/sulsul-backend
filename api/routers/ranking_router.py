@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends, Request
 
-from core.config.orm_config import get_db
 from api.config.middleware import auth_required
+from core.config.orm_config import get_db
 from core.domain import combination_query_function
-from core.dto.pairing_dto import PairingResponse
 from core.dto.combination_dto import CombinationResponse, CombinationListResponse
-
 
 router = APIRouter(
     prefix="/ranks",

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Request, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 
 from core.config.orm_config import transactional
-from core.domain.user_model import User
-from core.util.jwt import build_token
-from core.dto.auth_dto import TokenResponse
 from core.config.var_config import IS_PROD
+from core.domain.user_model import User
+from core.dto.auth_dto import TokenResponse
+from core.util.jwt import build_token
 
 # from ai.inference import classify
 

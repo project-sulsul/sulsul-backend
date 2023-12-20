@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from peewee import JOIN
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -13,7 +12,6 @@ from core.domain.user_model import User
 from core.dto.feed_dto import (
     FeedResponse,
     FeedUpdateRequest,
-    FeedListResponse,
     FeedSearchResultListResponse,
     FeedSearchResultResponse,
 )

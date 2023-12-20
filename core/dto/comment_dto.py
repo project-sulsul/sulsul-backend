@@ -3,8 +3,6 @@ from typing import List
 
 from pydantic import BaseModel
 
-from core.domain.comment_model import Comment
-from core.domain.user_model import User
 from core.dto.user_dto import UserSimpleInfoResponse
 
 
@@ -19,18 +17,21 @@ class CommentResponse(BaseModel):
     children_comments: List["CommentResponse"] | None
 
     @classmethod
-    def of_dict(cls, comment: dict, children_comments=None, is_writer=False):
+    def of_dict(
+        cls,
+        comment: dict,
+        children_comments: List["CommentResponse"] = None,
+        is_writer=False,
+    ):
         return CommentResponse(
+            **comment,
             comment_id=comment["id"],
             user_info=UserSimpleInfoResponse(
                 user_id=comment["user"],
                 nickname=comment["nickname"],
                 image=comment["image"],
             ),
-            content=comment["content"],
-            created_at=comment["created_at"],
-            updated_at=comment["updated_at"],
-            is_reported=comment["is_reported"],
+            is_writer=is_writer,
             children_comments=children_comments,
         )
 

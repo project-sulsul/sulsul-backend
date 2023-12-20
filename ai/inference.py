@@ -1,18 +1,16 @@
-import argparse
 import requests
-import numpy as np
-from PIL import Image
 from io import BytesIO
 from typing import *
 
+import numpy as np
+import requests
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torchvision.transforms as transforms
+from PIL import Image
 
 from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
-
 
 class_info = {
     # foods

@@ -3,8 +3,6 @@ from typing import List
 
 from pydantic import BaseModel
 
-from core.domain.comment_model import Comment
-from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
 

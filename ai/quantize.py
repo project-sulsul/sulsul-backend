@@ -1,9 +1,8 @@
 import os
-from tqdm.auto import tqdm
-from typing import *
 
 import torch
 import torch.nn as nn
+from tqdm.auto import tqdm
 
 
 # for post training quantization

@@ -3,9 +3,9 @@ from functools import wraps
 from ipaddress import IPv4Address, IPv4Network
 
 from fastapi import status
+from starlette.datastructures import URL, Headers
 from starlette.middleware.base import RequestResponseEndpoint
 from starlette.requests import Request
-from starlette.datastructures import URL, Headers
 from starlette.responses import (
     PlainTextResponse,
     RedirectResponse,
@@ -15,8 +15,6 @@ from starlette.responses import (
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from core.util.jwt import decode_token
-from core.domain.user_model import User
-
 
 ENFORCE_DOMAIN_WILDCARD = "Domain wildcard patterns must be like '*.example.com'."
 

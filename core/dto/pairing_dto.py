@@ -1,10 +1,8 @@
 from enum import Enum
 from typing import List
-from datetime import datetime
 
-
+from core.domain.pairing_model import Pairing
 from core.dto.base_dto import BaseDTO
-from core.domain.pairing_model import Pairing, PairingRequest
 
 
 class PairingCreateRequest(BaseDTO):

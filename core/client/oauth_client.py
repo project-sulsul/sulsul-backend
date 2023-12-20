@@ -1,12 +1,12 @@
-from fastapi import status, HTTPException
+import json
 
 import jwt
-import json
 import requests
-from google.oauth2 import id_token
-from google.auth import transport
-from jwt.algorithms import RSAAlgorithm
 from cryptography.hazmat.primitives import serialization
+from fastapi import status, HTTPException
+from google.auth import transport
+from google.oauth2 import id_token
+from jwt.algorithms import RSAAlgorithm
 
 from core.config.var_config import APPLE_CLIENT_ID
 from core.dto.auth_dto import (
