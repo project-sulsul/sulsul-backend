@@ -28,46 +28,46 @@ path: ./dataset/
 
 class_info = {
     # foods
-    "beef": 0,
-    "chicken": 1,
-    "chicken_feet": 2,
-    "chicken_ribs": 3,
-    "dry_snacks": 4,
-    "dubu_kimchi": 5,
-    "ecliptic": 6,
-    "egg_roll": 7,
-    "fish_cake_soup": 8,
-    "french_fries": 9,
-    "gopchang": 10,
-    "hwachae": 11,
-    "jjambbong": 12,
-    "jjapageti": 13,
-    "korean_ramen": 14,
-    "lamb_skewers": 15,
-    "nacho": 16,
-    "nagasaki": 17,
-    "pizza": 18,
-    "pork_belly": 19,
-    "pork_feet": 20,
-    "raw_meat": 21,
-    "salmon": 22,
-    "sashimi": 23,
-    "shrimp_tempura": 24,
+    "beef": 0,  # 소고기
+    "chicken": 1,  # 치킨
+    "chicken_feet": 2,  # 닭발
+    "chicken_ribs": 3,  # 닭갈비
+    "dry_snacks": 4,  # 마른 안주
+    "dubu_kimchi": 5,  # 두부 김치
+    "ecliptic": 6,  # 황도
+    "egg_roll": 7,  # 계란말이
+    "fish_cake_soup": 8,  # 어묵탕
+    "french_fries": 9,  # 감자 튀김
+    "gopchang": 10,  # 곱창
+    "hwachae": 11,  # 화채
+    "jjambbong": 12,  # 짬뽕
+    "jjapageti": 13,  # 짜파게티
+    "korean_ramen": 14,  # 라면
+    "lamb_skewers": 15,  # 양꼬치
+    "nacho": 16,  # 나초
+    "nagasaki": 17,  # 나가사키 짬뽕
+    "pizza": 18,  # 피자
+    "pork_belly": 19,  # 삼겹살
+    "pork_feet": 20,  # 족발
+    "raw_meat": 21,  # 육회
+    "salmon": 22,  # 연어
+    "sashimi": 23,  # 회
+    "shrimp_tempura": 24,  # 새우튀김
     # drinks
-    "beer": 25,
-    "cass": 26,
-    "chamisul_fresh": 27,
-    "chamisul_origin": 28,
-    "chum_churum": 29,
-    "highball": 30,
-    "hite": 31,
-    "jinro": 32,
-    "kelly": 33,
-    "kloud": 34,
-    "ob": 35,
-    "saero": 36,
-    "soju": 37,
-    "tera": 38,
+    "beer": 25,  # 맥주
+    "cass": 26,  # 카스
+    "chamisul_fresh": 27,  # 참이슬 후레쉬
+    "chamisul_origin": 28,  # 참이슬 오리지널
+    "chum_churum": 29,  # 처음처럼
+    "highball": 30,  # 하이볼
+    "hite": 31,  # 하이트
+    "jinro": 32,  # 진로
+    "kelly": 33,  # 켈리
+    "kloud": 34,  # 클라우드
+    "ob": 35,  # OB
+    "saero": 36,  # 새로
+    "soju": 37,  # 소주
+    "tera": 38,  # 테라
 }
 
 
