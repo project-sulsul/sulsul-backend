@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Request, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 
 from core.config.orm_config import transactional
@@ -7,7 +7,7 @@ from core.domain.user_model import User
 from core.dto.auth_dto import TokenResponse
 from core.util.jwt import build_token
 
-# from ai.inference import classify
+from ai.inference import classify
 
 
 router = APIRouter(prefix="/test", tags=["테스트용 API"])
@@ -39,10 +39,10 @@ async def get_jwt_for_test(user_id: int):
     )
 
 
-# @router.get("/ai")
-# async def get_inference_from_image(request: Request, img_url: str, model_name: str):
-#     return classify(
-#         img_url=img_url,
-#         model_name=model_name,
-#         weight="ai/weights/resnet18_qat.pt"
-#     )
+@router.get("/ai")
+async def get_inference_from_image(request: Request, img_url: str, model_name: str):
+    return classify(
+        img_url=img_url,
+        model_name=model_name,
+        weight="ai/weights/resnet18_qat.pt"
+    )

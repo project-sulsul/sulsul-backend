@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 from core.domain.combination_model import Combination
@@ -10,7 +10,7 @@ class CombinationResponse(BaseModel):
     alcohol: PairingResponse
     food: PairingResponse
     count: int
-    description: str | None
+    description: Optional[str]
 
     # @classmethod
     # def from_orm(cls, entity: Combination):
