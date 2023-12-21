@@ -59,7 +59,7 @@ async def reset_db_state():
     db._state.reset()
 
 
-def get_db(db_state=Depends(reset_db_state)):
+def read_only(db_state=Depends(reset_db_state)):
     try:
         db.connect()
         yield

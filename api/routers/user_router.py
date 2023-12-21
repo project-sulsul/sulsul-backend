@@ -9,7 +9,7 @@ from api.config.middleware import auth, auth_required
 from api.descriptions.user_api_descriptions import *
 from core.client.aws_client import S3Client
 from core.client.nickname_generator_client import NicknameGeneratorClient
-from core.config.orm_config import transactional
+from core.config.orm_config import transactional, read_only
 from core.domain.user_model import User
 from core.dto.user_dto import NicknameResponse
 from core.dto.user_dto import NicknameValidationResponse
@@ -44,12 +44,11 @@ async def generate_random_nickname(request: Request):
 
 @router.get(
     "/{user_id}",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(read_only)],
     response_model=UserResponse,
     description=GET_USER_BY_ID_DESC,
 )
-@auth
-async def get_user_by_id(request: Request, user_id: int):
+async def get_user_by_id(user_id: int):
     user = User.get_or_none(User.id == user_id, User.is_deleted == False)
     if not user:
         raise HTTPException(
@@ -61,7 +60,7 @@ async def get_user_by_id(request: Request, user_id: int):
 
 @router.get(
     "/validation",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(read_only)],
     response_model=NicknameValidationResponse,
     description=VALIDATE_USER_NICKNAME_DESC,
 )

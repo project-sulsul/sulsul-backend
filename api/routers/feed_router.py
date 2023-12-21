@@ -4,8 +4,9 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
+from api.config.exceptions import ForbiddenException
 from api.config.middleware import auth, auth_required
-from core.config.orm_config import transactional, get_db
+from core.config.orm_config import transactional, read_only
 from core.domain.comment_model import Comment
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
@@ -29,7 +30,7 @@ router = APIRouter(
 # Not used at MVP
 @router.get(
     "/search",
-    dependencies=[Depends(get_db)],
+    dependencies=[Depends(read_only)],
     response_model=FeedSearchResultListResponse,
 )
 async def search_feeds(keyword: str):
@@ -53,7 +54,7 @@ async def search_feeds(keyword: str):
 
 @router.get(
     "/{feed_id}",
-    dependencies=[Depends(get_db)],
+    dependencies=[Depends(read_only)],
     response_model=FeedResponse,
 )
 @auth
@@ -127,10 +128,7 @@ async def soft_delete_feed(request: Request, feed_id: int):
     feed = Feed.get_by_id(feed_id)
 
     if feed.user != login_user:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not the owner of this feed.",
-        )
+        raise ForbiddenException("You are not the owner of this feed.")
 
     Feed.update(is_deleted=True).where(Feed.id == feed_id).execute()
     deleted_comment_count = (

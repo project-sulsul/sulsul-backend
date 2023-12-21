@@ -131,11 +131,14 @@ def auth_required(call_next: RequestResponseEndpoint):
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
         auth_header = request.headers.get("Authorization")
+
+        unauthorized_response = JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"message": "Unauthorized user cannot access"},
+        )
+
         if not auth_header:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"message": "Unauthorized user cannot access"},
-            )
+            return unauthorized_response
 
         token_type, token = auth_header.split(" ")
 
@@ -148,10 +151,7 @@ def auth_required(call_next: RequestResponseEndpoint):
         try:
             request.state.token_info = decode_token(token)
         except Exception as e:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"message": "Unauthorized user cannot access"},
-            )
+            return unauthorized_response
 
         return await call_next(*args, **kwargs)
 
