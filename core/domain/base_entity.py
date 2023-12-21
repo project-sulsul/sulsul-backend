@@ -1,3 +1,4 @@
+from typing import Dict
 from datetime import datetime
 
 import peewee
@@ -25,7 +26,7 @@ class BaseEntity(peewee.Model):
         return super().save(*args, **kwargs)
 
     @classmethod
-    def props(cls) -> dict[str, any]:
+    def props(cls) -> Dict[str, any]:
         return {
             prop: typ
             for prop, typ in dict(cls.__dict__).items()

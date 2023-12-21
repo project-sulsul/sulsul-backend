@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from core.domain.pairing_model import Pairing
 from core.dto.base_dto import BaseDTO
@@ -8,16 +8,16 @@ from core.dto.base_dto import BaseDTO
 class PairingCreateRequest(BaseDTO):
     type: str
     name: str
-    image: str | None
-    description: str | None
+    image: Optional[str]
+    description: Optional[str]
 
 
 class PairingUpdateRequest(BaseDTO):
     type: str
     name: str
     subtype: str
-    image: str | None
-    description: str | None
+    image: Optional[str]
+    description: Optional[str]
     is_deleted: bool
 
 
@@ -26,8 +26,8 @@ class PairingResponse(BaseDTO):
     type: str
     subtype: str
     name: str
-    image: str | None
-    description: str | None
+    image: Optional[str]
+    description: Optional[str]
 
 
 class PairingAdminResponse(BaseDTO):
@@ -35,8 +35,8 @@ class PairingAdminResponse(BaseDTO):
     type: str
     subtype: str
     name: str
-    image: str | None
-    description: str | None
+    image: Optional[str]
+    description: Optional[str]
     created_at: str
     updated_at: str
     is_deleted: bool

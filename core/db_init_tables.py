@@ -30,7 +30,7 @@ from admin.model import Admin
 
 db.create_tables([Admin], safe=True)
 
-db.drop_tables(models)
+db.drop_tables(models, cascade=True)
 db.create_tables(models)
 
 

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from core.dto.base_dto import BaseDTO
 
@@ -9,7 +9,7 @@ class NicknameResponse(BaseDTO):
 
 class NicknameValidationResponse(BaseDTO):
     is_valid: bool
-    message: str | None
+    message: Optional[str]
 
 
 class UserNicknameUpdateRequest(BaseDTO):
@@ -31,7 +31,7 @@ class UserResponse(BaseDTO):
     id: int
     uid: str
     nickname: str
-    image: str | None
+    image: Optional[str]
     preference: Dict[str, List]
     status: str
 
@@ -39,4 +39,4 @@ class UserResponse(BaseDTO):
 class UserSimpleInfoResponse(BaseDTO):
     user_id: int
     nickname: str
-    image: str | None
+    image: Optional[str]

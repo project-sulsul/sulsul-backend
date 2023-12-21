@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -14,7 +14,7 @@ class CommentResponse(BaseModel):
     updated_at: datetime
     is_reported: bool = False
     is_writer: bool = False
-    children_comments: List["CommentResponse"] | None
+    children_comments: Optional[List["CommentResponse"]]
 
     @classmethod
     def of_dict(
