@@ -40,7 +40,5 @@ async def get_jwt_for_test(user_id: int):
 
 
 @router.get("/ai")
-async def get_inference_from_image(request: Request, img_url: str, model_name: str):
-    return classify(
-        img_url=img_url, model_name=model_name, weight="ai/weights/resnet18_qat.pt"
-    )
+async def get_inference_from_image(img_url: str):
+    return classify(img_url)

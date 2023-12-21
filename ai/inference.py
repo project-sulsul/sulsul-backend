@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 from PIL import Image
+from pydantic import BaseModel
 
 from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
@@ -131,18 +132,23 @@ def load_model(
     return model
 
 
+class ClassificationResultDto(BaseModel):
+    foods: List[str]
+    alcohols: List[str]
+
+
 def classify(
     img_url: str,
-    model_name: str,
-    weight: str,
+    model_name: str = "resnet18",
+    weight_file_path: str = "ai/weights/resnet18_qat.pt",
     threshold: float = 0.5,
     quantization: str = "qat",
     num_classes: int = 39,
-) -> Dict:
+) -> ClassificationResultDto:
     # load model
     model = load_model(
         model_name=model_name,
-        weight=weight,
+        weight=weight_file_path,
         num_classes=num_classes,
         quantization=quantization,
     )
@@ -153,4 +159,4 @@ def classify(
     # inference
     result = inference(img, model, threshold)
 
-    return result
+    return ClassificationResultDto(foods=result["foods"], alcohols=result["alcohols"])

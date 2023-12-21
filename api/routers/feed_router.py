@@ -3,7 +3,8 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from api.config.middleware import auth
+from ai.inference import classify, ClassificationResultDto
+from api.config.middleware import auth, auth_required
 from core.config.orm_config import transactional, get_db
 from core.domain.comment_model import Comment
 from core.domain.feed_like_model import FeedLike
@@ -14,6 +15,7 @@ from core.dto.feed_dto import (
     FeedUpdateRequest,
     FeedSearchResultListResponse,
     FeedSearchResultResponse,
+    FeedCreateRequest,
 )
 from core.util.auth_util import get_login_user_id
 
@@ -23,6 +25,7 @@ router = APIRouter(
 )
 
 
+# Not used at MVP
 @router.get(
     "/search",
     dependencies=[Depends(get_db)],
@@ -54,10 +57,14 @@ async def search_feeds(keyword: str):
 )
 @auth
 async def get_feed_by_id(request: Request, feed_id: int):
-    login_user = User.get_by_id(get_login_user_id(request))
+    login_user = User.get_or_none(get_login_user_id(request))
     feed = Feed.get_by_id(feed_id)
     likes = FeedLike.select().where(FeedLike.feed == feed)
-    comments_count = Comment.select().where(Comment.feed == feed).count()
+    comments_count = (
+        Comment.select()
+        .where((Comment.feed == feed) & (Comment.is_deleted == False))
+        .count()
+    )
 
     return FeedResponse.of(
         feed=feed,
@@ -65,6 +72,25 @@ async def get_feed_by_id(request: Request, feed_id: int):
         comments_count=comments_count,
         is_liked=any(like.user == login_user.id for like in likes),
     )
+
+
+@router.post(
+    "",
+    dependencies=[Depends(transactional)],
+    response_model=FeedResponse,
+)
+@auth_required
+async def create_feed(request: Request, request_body: FeedCreateRequest):
+    login_user = User.get_by_id(get_login_user_id(request))
+    feed = Feed.create(
+        user=login_user,
+        title=request_body.title,
+        content=request_body.content,
+        represent_image=request_body.represent_image,
+        images=request_body.images,
+        tags=request_body.tags,
+    )
+    return FeedResponse.from_orm(feed).model_dump()
 
 
 @router.put(
@@ -79,3 +105,11 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     return JSONResponse(
         status_code=status.HTTP_200_OK, content=FeedResponse.from_orm(feed).model_dump()
     )
+
+
+@router.post(
+    "/classifications",
+    response_model=ClassificationResultDto,
+)
+async def classify_image_by_ai(image_url: str):
+    return classify(image_url)
