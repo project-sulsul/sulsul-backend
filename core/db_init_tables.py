@@ -33,7 +33,6 @@ db.create_tables([Admin], safe=True)
 db.drop_tables(models, cascade=True)
 db.create_tables(models)
 
-
 from core.domain.user_model import User
 
 user_data = [
@@ -44,7 +43,6 @@ user_data = [
 for record in user_data:
     User.create(**record)
 
-
 from core.domain.feed_model import Feed
 
 feed_data = [
@@ -52,27 +50,38 @@ feed_data = [
         "user_id": 1,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "tags": "삼겹살,소주",
-        "images": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg,https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
     },
     {
         "user_id": 1,
         "title": "회쏘굳1",
         "content": "회는 굳잡맨 맛나요 짱짱 굳1",
-        "tags": "회,소주",
-        "images": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg,https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+        "tags": ["회", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+        ],
     },
     {
         "user_id": 2,
         "title": "회쏘굳2",
         "content": "회는 굳잡맨 맛나요 짱짱 굳2",
-        "tags": "회,소주",
-        "images": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg,https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+        "tags": ["회", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
+        ],
     },
 ]
 for record in feed_data:
     Feed.create(**record)
-
 
 from core.domain.feed_like_model import FeedLike
 
@@ -101,7 +110,6 @@ comment_data = [
 ]
 for record in comment_data:
     Comment.create(**record)
-
 
 from core.domain.pairing_model import Pairing
 
@@ -360,7 +368,6 @@ pairing_data = [
 ]
 for record in pairing_data:
     Pairing.create(**record)
-
 
 from core.domain.combination_model import Combination
 

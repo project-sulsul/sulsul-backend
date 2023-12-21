@@ -25,23 +25,16 @@ class FeedResponse(BaseModel):
     @classmethod
     def of(cls, feed: Feed, likes_count: int, comments_count: int, is_liked: bool):
         return FeedResponse(
+            **feed.__data__,  # feed 엔티티의 모든 필드를 일단 매핑
             feed_id=feed.id,
             writer_info=UserSimpleInfoResponse(
                 user_id=feed.user.id,
                 nickname=feed.user.nickname,
                 image=feed.user.image,
             ),
-            title=feed.title,
-            content=feed.content,
-            images=feed.images.split(","),
-            tags=feed.tags.split(","),
             is_liked=is_liked,
-            view_count=feed.view_count,
             likes_count=likes_count,
             comments_count=comments_count,
-            score=feed.score,
-            created_at=feed.created_at,
-            updated_at=feed.updated_at,
         )
 
     @classmethod
@@ -51,8 +44,8 @@ class FeedResponse(BaseModel):
             writer_user_id=entity.user.id,
             title=entity.title,
             content=entity.content,
-            images=entity.images.split(","),
-            tags=entity.tags.split(","),
+            images=entity.images,
+            tags=entity.tags,
         )
 
 

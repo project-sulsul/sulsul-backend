@@ -15,6 +15,7 @@ from core.dto.feed_dto import (
     FeedSearchResultListResponse,
     FeedSearchResultResponse,
 )
+from core.util.auth_util import get_login_user_id
 
 router = APIRouter(
     prefix="/feeds",
@@ -27,7 +28,7 @@ router = APIRouter(
     dependencies=[Depends(get_db)],
     response_model=FeedSearchResultListResponse,
 )
-async def search_feeds(request: Request, keyword: str):
+async def search_feeds(keyword: str):
     query_results = Feed.select().where(
         (
             Feed.content.contains(keyword)
@@ -53,25 +54,16 @@ async def search_feeds(request: Request, keyword: str):
 )
 @auth
 async def get_feed_by_id(request: Request, feed_id: int):
-    token_info = request.state.token_info
-    login_user = None
-    if token_info is not None:
-        login_user = User.get_by_id(token_info["id"])
+    login_user = User.get_by_id(get_login_user_id(request))
     feed = Feed.get_by_id(feed_id)
     likes = FeedLike.select().where(FeedLike.feed == feed)
     comments_count = Comment.select().where(Comment.feed == feed).count()
-
-    is_liked = False
-    for like in likes:
-        if like.user == login_user:
-            is_liked = True
-            break
 
     return FeedResponse.of(
         feed=feed,
         likes_count=len(likes),
         comments_count=comments_count,
-        is_liked=is_liked,
+        is_liked=any(like.user == login_user.id for like in likes),
     )
 
 
