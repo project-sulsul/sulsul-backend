@@ -32,7 +32,7 @@ app.add_middleware(
     EnhancedTrustedHostMiddleware,
     allowed_hosts=[
         "localhost",
-        "sulsul-env.eba-gvmvk4bq.ap-northeast-2.elasticbeanstalk.com",
+        "http://sulsul-env-mig.eba-gvmvk4bq.ap-northeast-2.elasticbeanstalk.com",
     ],
     allowed_cidrs=[],
 )
