@@ -84,3 +84,19 @@ class FeedSearchResultResponse(BaseModel):
 class FeedSearchResultListResponse(BaseModel):
     keyword: str
     results: List[FeedSearchResultResponse]
+
+
+class FeedSoftDeleteResponse(BaseModel):
+    feed_id: int
+    is_deleted: bool
+    deleted_comments_count: int
+    deleted_likes_count: int
+
+    @classmethod
+    def of(cls, feed: Feed, deleted_comments_count: int, deleted_likes_count: int):
+        return FeedSoftDeleteResponse(
+            feed_id=feed.id,
+            is_deleted=feed.is_deleted,
+            deleted_comments_count=deleted_comments_count,
+            deleted_likes_count=deleted_likes_count,
+        )

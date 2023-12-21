@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -16,6 +16,7 @@ from core.dto.feed_dto import (
     FeedSearchResultListResponse,
     FeedSearchResultResponse,
     FeedCreateRequest,
+    FeedSoftDeleteResponse,
 )
 from core.util.auth_util import get_login_user_id
 
@@ -113,3 +114,30 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
 )
 async def classify_image_by_ai(image_url: str):
     return classify(image_url)
+
+
+@router.delete(
+    "/{feed_id}",
+    dependencies=[Depends(transactional)],
+    response_model=FeedSoftDeleteResponse,
+)
+@auth_required
+async def soft_delete_feed(request: Request, feed_id: int):
+    login_user = User.get_by_id(get_login_user_id(request))
+    feed = Feed.get_by_id(feed_id)
+
+    if feed.user != login_user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not the owner of this feed.",
+        )
+
+    Feed.update(is_deleted=True).where(Feed.id == feed_id).execute()
+    deleted_comment_count = (
+        Comment.update(is_deleted=True).where(Comment.feed == feed).execute()
+    )
+    deleted_likes_count = (
+        FeedLike.update(is_deleted=True).where(FeedLike.feed == feed).execute()
+    )
+
+    return FeedSoftDeleteResponse.of(feed, deleted_comment_count, deleted_likes_count)
