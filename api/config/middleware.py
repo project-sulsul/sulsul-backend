@@ -14,6 +14,11 @@ from starlette.responses import (
 )
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from api.config.exceptions import ForbiddenException
+from core.domain.comment_model import Comment
+from core.domain.feed_model import Feed
+from core.domain.user_model import User
+from core.util.auth_util import get_login_user_id
 from core.util.jwt import decode_token
 
 ENFORCE_DOMAIN_WILDCARD = "Domain wildcard patterns must be like '*.example.com'."
@@ -85,6 +90,28 @@ class EnhancedTrustedHostMiddleware:
             await response(scope, receive, send)
 
 
+invalid_token_response = JSONResponse(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    content={"error": "InvalidTokenException", "message": "Invalid token type"},
+)
+
+unauthorized_response = JSONResponse(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    content={
+        "error": "UnauthorizedException",
+        "message": "Unauthorized user cannot access",
+    },
+)
+
+forbidden_response = JSONResponse(
+    status_code=status.HTTP_403_FORBIDDEN,
+    content={
+        "error": "ForbiddenException",
+        "message": "no authority to access this resource",
+    },
+)
+
+
 def auth(call_next: RequestResponseEndpoint):
     """
     사용자 로그인 정보를 request.state.token_info에 바인딩 하기 위한 미들웨어
@@ -112,10 +139,7 @@ def auth(call_next: RequestResponseEndpoint):
             token_type, token = auth_header.split(" ")
 
             if token_type != "Bearer":
-                return JSONResponse(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    content={"message": "Invalid token type"},
-                )
+                return invalid_token_response
             try:
                 request.state.token_info = decode_token(token)
             except Exception as e:
@@ -131,27 +155,19 @@ def auth_required(call_next: RequestResponseEndpoint):
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
         auth_header = request.headers.get("Authorization")
+
         if not auth_header:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"message": "Unauthorized user cannot access"},
-            )
+            return unauthorized_response
 
         token_type, token = auth_header.split(" ")
 
         if token_type != "Bearer":
-            return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={"message": "Invalid token type"},
-            )
+            return invalid_token_response
 
         try:
             request.state.token_info = decode_token(token)
         except Exception as e:
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"message": "Unauthorized user cannot access"},
-            )
+            return unauthorized_response
 
         return await call_next(*args, **kwargs)
 
@@ -171,6 +187,58 @@ def admin(call_next: RequestResponseEndpoint):
             request.state.admin = login_user
         except Exception:
             return RedirectResponse("/admin/sign-in")
+
+        return await call_next(*args, **kwargs)
+
+    return wrapper
+
+
+def only_mine(call_next: RequestResponseEndpoint):
+    """
+    토큰을 검사하여 접근하는 리소스 (유저, 피드, 댓글)가 로그인한 사용자의 것인지 검사하는 미들웨어 (권한 검사)
+    - 해당 미들웨어 사용 시 핸들러 메소드는 request 매개변수를 필수로 받아야 함
+    - user_id: int, feed_id: int, comment_id: int 매개변수를 기준으로 바인딩
+    """
+
+    def is_owner(entity_class, resource_id, login_user: User):
+        if resource_id is not None and isinstance(resource_id, int):
+            entity = entity_class.get_by_id(resource_id)
+            if entity.user != login_user:
+                return False
+            return True
+        else:
+            pass
+
+    @wraps(call_next)
+    async def wrapper(*args, **kwargs):
+        request: Request = kwargs["request"]
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header:
+            return unauthorized_response
+
+        token_type, token = auth_header.split(" ")
+
+        if token_type != "Bearer":
+            return invalid_token_response
+
+        try:
+            request.state.token_info = decode_token(token)
+        except Exception:
+            return unauthorized_response
+
+        login_user = User.get_or_none(id=request.state.token_info["id"])
+
+        user_id: typing.Optional[int] = kwargs["user_id"]
+        if user_id is not None and isinstance(user_id, int):
+            if user_id != login_user.id:
+                return forbidden_response
+
+        if not is_owner(Feed, kwargs["feed_id"], login_user):
+            return forbidden_response
+
+        if not is_owner(Comment, kwargs["comment_id"], login_user):
+            return forbidden_response
 
         return await call_next(*args, **kwargs)
 

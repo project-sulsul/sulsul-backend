@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
 from api.config.middleware import auth
-from core.config.orm_config import get_db
+from core.config.orm_config import read_only
 from core.domain.comment_model import Comment
 from core.domain.user_model import User
 from core.dto.comment_dto import CommentResponse, CommentListResponse
@@ -18,7 +18,7 @@ router = APIRouter(
 
 @router.get(
     "",
-    dependencies=[Depends(get_db)],
+    dependencies=[Depends(read_only)],
     response_model=CommentListResponse,
 )
 @auth

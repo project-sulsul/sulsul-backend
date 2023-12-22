@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Depends
 
 from api.config.middleware import auth, auth_required
 from api.descriptions.pairing_api_descriptions import REQUEST_PAIRING_BY_USER_DESC
-from core.config.orm_config import transactional
+from core.config.orm_config import transactional, read_only
 from core.domain.pairing_model import Pairing, PairingRequest
 from core.dto.pairing_dto import PairingListResponse
 from core.dto.pairing_dto import PairingResponse
@@ -18,11 +18,8 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "", dependencies=[Depends(transactional)], response_model=PairingListResponse
-)
-@auth
-async def get_pairings(request: Request, type: PairingSearchType):
+@router.get("", dependencies=[Depends(read_only)], response_model=PairingListResponse)
+async def get_pairings(type: PairingSearchType):
     data = [
         PairingResponse.from_orm(pairing)
         for pairing in Pairing.select().where(Pairing.is_deleted == False)
@@ -35,11 +32,10 @@ async def get_pairings(request: Request, type: PairingSearchType):
 
 @router.get(
     "/{pairing_id}",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(read_only)],
     response_model=PairingResponse,
 )
-@auth
-async def get_pairing_by_id(request: Request, pairing_id: int):
+async def get_pairing_by_id(pairing_id: int):
     pairing = Pairing.get_by_id(pairing_id)
     return PairingResponse.from_orm(pairing)
 
@@ -50,9 +46,6 @@ async def get_pairing_by_id(request: Request, pairing_id: int):
     response_model=PairingRequestByUserResponse,
     description=REQUEST_PAIRING_BY_USER_DESC,
 )
-@auth_required
-async def save_pairing_request_by_user(
-    request: Request, request_body: PairingRequestByUserRequest
-):
+async def save_pairing_request_by_user(request_body: PairingRequestByUserRequest):
     pairing_request = PairingRequest.create(**request_body.model_dump())
     return PairingRequestByUserResponse.from_orm(pairing_request)

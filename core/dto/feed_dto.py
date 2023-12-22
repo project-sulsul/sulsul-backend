@@ -7,11 +7,21 @@ from core.domain.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
 
 
+class FeedCreateRequest(BaseModel):
+    title: str
+    content: str
+    represent_image: str
+    images: List[str]
+    tags: List[str]
+    score: float
+
+
 class FeedResponse(BaseModel):
     feed_id: int
     writer_info: UserSimpleInfoResponse
     title: str
     content: str
+    represent_image: str
     images: List[str]
     tags: List[str]
     is_liked: bool = False
@@ -25,12 +35,10 @@ class FeedResponse(BaseModel):
     @classmethod
     def of(cls, feed: Feed, likes_count: int, comments_count: int, is_liked: bool):
         return FeedResponse(
-            **feed.__data__,  # feed 엔티티의 모든 필드를 일단 매핑
+            **feed.__data__,
             feed_id=feed.id,
             writer_info=UserSimpleInfoResponse(
-                user_id=feed.user.id,
-                nickname=feed.user.nickname,
-                image=feed.user.image,
+                user_id=feed.user.id, **feed.user.__data__
             ),
             is_liked=is_liked,
             likes_count=likes_count,
@@ -38,14 +46,13 @@ class FeedResponse(BaseModel):
         )
 
     @classmethod
-    def from_orm(cls, entity: Feed):
+    def from_orm(cls, feed: Feed):
         return FeedResponse(
-            id=entity.id,
-            writer_user_id=entity.user.id,
-            title=entity.title,
-            content=entity.content,
-            images=entity.images,
-            tags=entity.tags,
+            **feed.__data__,
+            feed_id=feed.id,
+            writer_info=UserSimpleInfoResponse(
+                user_id=feed.user.id, **feed.user.__data__
+            ),
         )
 
 
@@ -70,15 +77,26 @@ class FeedSearchResultResponse(BaseModel):
     tags: List[str]
 
     @classmethod
-    def from_orm(cls, entity: Feed):
-        return FeedSearchResultResponse(
-            id=entity.id,
-            title=entity.title,
-            content=entity.content,
-            tags=entity.tags.split(","),
-        )
+    def from_orm(cls, feed: Feed):
+        return FeedSearchResultResponse(**feed.__data__)
 
 
 class FeedSearchResultListResponse(BaseModel):
     keyword: str
     results: List[FeedSearchResultResponse]
+
+
+class FeedSoftDeleteResponse(BaseModel):
+    feed_id: int
+    is_deleted: bool
+    deleted_comments_count: int
+    deleted_likes_count: int
+
+    @classmethod
+    def of(cls, feed: Feed, deleted_comments_count: int, deleted_likes_count: int):
+        return FeedSoftDeleteResponse(
+            feed_id=feed.id,
+            is_deleted=feed.is_deleted,
+            deleted_comments_count=deleted_comments_count,
+            deleted_likes_count=deleted_likes_count,
+        )
