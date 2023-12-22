@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
@@ -44,5 +46,5 @@ async def get_inference_from_image(img_url: str):
 
 
 @router.post("/error")
-async def occur_unexpected_error():
+async def occur_unexpected_error(test_params: Optional[str] = None):
     raise Exception("Unexpected Error")

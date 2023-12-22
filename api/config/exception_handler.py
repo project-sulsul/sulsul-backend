@@ -36,8 +36,12 @@ async def handle_unexpected_exceptions(
     request: Request, exc: Exception
 ) -> JSONResponse:
     trace_info = traceback.format_exc()
-
-    error_message = f"{datetime.now()} [{exc.__class__.__name__}] unexpected error occurred :: message - {str(exc)} trace_info - {trace_info}"
+    error_message = f"""
+    {datetime.now()} {request.method} {str(request.url)}[{exc.__class__.__name__}]
+    message - {str(exc)} 
+    #################### trace_info ####################
+    {trace_info}
+    """
     logger.error(error_message)
     create_task(
         send_slack_message(
