@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
 from api.config.exceptions import ForbiddenException
-from api.config.middleware import auth, auth_required
+from api.config.middleware import auth, auth_required, only_mine
 from core.config.orm_config import transactional, read_only
 from core.domain.comment_model import Comment
 from core.domain.feed_like_model import FeedLike
@@ -123,12 +123,9 @@ async def classify_image_by_ai(image_url: str):
     response_model=FeedSoftDeleteResponse,
 )
 @auth_required
+@only_mine
 async def soft_delete_feed(request: Request, feed_id: int):
-    login_user = User.get_by_id(get_login_user_id(request))
     feed = Feed.get_by_id(feed_id)
-
-    if feed.user != login_user:
-        raise ForbiddenException("You are not the owner of this feed.")
 
     Feed.update(is_deleted=True).where(Feed.id == feed_id).execute()
     deleted_comment_count = (

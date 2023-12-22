@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Request, UploadFile, status, HTTPExcepti
 from fastapi.responses import JSONResponse
 from peewee import DoesNotExist
 
-from api.config.middleware import auth, auth_required
+from api.config.middleware import auth_required
 from api.descriptions.user_api_descriptions import *
 from core.client.aws_client import S3Client
 from core.client.nickname_generator_client import NicknameGeneratorClient
