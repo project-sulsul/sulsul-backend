@@ -11,7 +11,7 @@ from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
 from core.domain.feed_query_function import (
     fetch_related_feeds,
-    fetch_related_feeds_likes,
+    fetch_related_feeds_likes_to_dict,
 )
 from core.domain.user_model import User
 from core.dto.base_dto import CursorPageResponse
@@ -24,7 +24,7 @@ from core.dto.feed_dto import (
     FeedSoftDeleteResponse,
     RelatedFeedResponse,
 )
-from core.util.auth_util import get_login_user_id
+from core.util.auth_util import get_login_user_id, get_login_user_or_none
 
 router = APIRouter(
     prefix="/feeds",
@@ -90,12 +90,9 @@ async def get_feed_by_id(request: Request, feed_id: int):
 async def get_related_feed(
     request: Request, feed_id: int, next_feed_id: int = 0, size: int = 6
 ):
-    login_user = User.get_or_none(get_login_user_id(request))
-
     related_feeds = fetch_related_feeds(feed_id, next_feed_id, size)
 
-    likes = fetch_related_feeds_likes(related_feeds, login_user).dicts()
-
+    likes = fetch_related_feeds_likes_to_dict(related_feeds, login_user=get_login_user_or_none(request))
     is_liked_dict = {
         feed.id: any(like["feed"] == feed.id for like in likes)
         for feed in related_feeds

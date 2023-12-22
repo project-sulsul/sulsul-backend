@@ -1,9 +1,15 @@
+from typing import Optional, List
+
+from peewee import ModelSelect
+
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
 from core.domain.user_model import User
 
 
-def fetch_related_feeds(feed_id: int, next_feed_id: int | None, size: int):
+def fetch_related_feeds(
+    feed_id: int, next_feed_id: Optional[int], size: int
+) -> List[Feed]:
     feed = Feed.get_by_id(feed_id)
     return (
         Feed.select()
@@ -22,9 +28,17 @@ def fetch_related_feeds(feed_id: int, next_feed_id: int | None, size: int):
     )
 
 
-def fetch_related_feeds_likes(related_feeds: list[Feed], login_user: User):
-    return FeedLike.select().where(
-        FeedLike.feed.in_(related_feeds),
-        FeedLike.user == login_user.id,
-        FeedLike.is_deleted == False,
+def fetch_related_feeds_likes_to_dict(
+    related_feeds: list[Feed], login_user: Optional[User]
+) -> dict:
+    if login_user is None:
+        return {}
+    return (
+        FeedLike.select()
+        .where(
+            FeedLike.feed.in_(related_feeds),
+            FeedLike.user == login_user.id,
+            FeedLike.is_deleted == False,
+        )
+        .dicts()
     )
