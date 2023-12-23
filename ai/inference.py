@@ -99,12 +99,7 @@ def load_model(
     q = True if quantization != "none" else False
 
     # load model
-    if model_name == "shufflenet":
-        from ai.models.shufflenet import ShuffleNetV2
-
-        model = ShuffleNetV2(num_classes=num_classes, pre_trained=False, quantize=q)
-
-    elif model_name == "resnet18":
+    if model_name == "resnet18":
         from ai.models.resnet import resnet18
 
         model = resnet18(num_classes=num_classes, pre_trained=False, quantize=q)

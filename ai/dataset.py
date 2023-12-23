@@ -1,10 +1,10 @@
 from glob import glob
 from typing import *
 
-import torch
-import torchvision.transforms as transforms
 from PIL import Image
+from torch import zeros
 from torch.utils.data import DataLoader, Dataset
+from torchvision.transforms import Compose, Resize, ToTensor, Normalize, RandomRotation, RandomHorizontalFlip
 
 """
 path: ./dataset/
@@ -110,7 +110,7 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         image = Image.open(self.image_files[idx]).convert("RGB")
-        label = torch.zeros(self.num_classes)
+        label = zeros(self.num_classes)
         cls_idx = self.labels[idx]
         label[cls_idx] = 1
         return self.transform(image), label
@@ -146,24 +146,24 @@ def load_dataloader(
     if subset == "train":
         augmentation = [
             Padding(fill=fill_color),
-            transforms.Resize((img_size, img_size)),
-            transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomRotation(degrees=(-20, 20)),
-            transforms.ToTensor(),
+            Resize((img_size, img_size)),
+            RandomHorizontalFlip(p=0.5),
+            RandomRotation(degrees=(-20, 20)),
+            ToTensor(),
         ]
 
     else:
         augmentation = [
             Padding(fill=fill_color),
-            transforms.Resize((img_size, img_size)),
-            transforms.ToTensor(),
+            Resize((img_size, img_size)),
+            ToTensor(),
         ]
 
     augmentation.append(
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     )
 
-    augmentation = transforms.Compose(augmentation)
+    augmentation = Compose(augmentation)
 
     data_loader = DataLoader(
         CustomDataset(
