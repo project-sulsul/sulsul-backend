@@ -3,7 +3,6 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from ai.inference import classify, ClassificationResultDto
 from api.config.middleware import auth, auth_required, only_mine
 from core.config.orm_config import transactional, read_only
 from core.domain.comment_model import Comment
@@ -24,6 +23,15 @@ router = APIRouter(
     prefix="/feeds",
     tags=["Feed"],
 )
+
+# from ai.inference import classify, ClassificationResultDto
+#
+# @router.post(
+#     "/classifications",
+#     response_model=ClassificationResultDto,
+# )
+# async def classify_image_by_ai(image_url: str):
+#     return classify(image_url)
 
 
 # Not used at MVP
@@ -106,14 +114,6 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     return JSONResponse(
         status_code=status.HTTP_200_OK, content=FeedResponse.from_orm(feed).model_dump()
     )
-
-
-@router.post(
-    "/classifications",
-    response_model=ClassificationResultDto,
-)
-async def classify_image_by_ai(image_url: str):
-    return classify(image_url)
 
 
 @router.delete(
