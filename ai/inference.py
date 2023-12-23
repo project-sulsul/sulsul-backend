@@ -1,10 +1,8 @@
-import requests
 from io import BytesIO
 from typing import *
 
 import numpy as np
 import requests
-import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 from PIL import Image
@@ -12,6 +10,7 @@ from pydantic import BaseModel
 
 from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
+from torch import no_grad, Tensor
 
 class_info = {
     # foods
@@ -78,10 +77,10 @@ def load_image(img_url: str):
     return img, img_url
 
 
-def inference(src: torch.Tensor, model: nn.Module, threshold: float = 0.5) -> Dict:
+def inference(src: Tensor, model: nn.Module, threshold: float = 0.5) -> Dict:
     model.eval()
     result_list = {"foods": [], "alcohols": []}
-    with torch.no_grad():
+    with no_grad():
         outputs = model(src)
         result = outputs[0].detach().numpy()
         indices = np.where(result > threshold)[0]
