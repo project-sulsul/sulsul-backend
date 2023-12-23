@@ -29,7 +29,7 @@ def fetch_related_feeds(
 
 
 def fetch_related_feeds_likes_to_dict(
-    related_feeds: list[Feed], login_user: Optional[User]
+    related_feeds: List[Feed], login_user: Optional[User]
 ) -> dict:
     if login_user is None:
         return {}

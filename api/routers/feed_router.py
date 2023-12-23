@@ -33,6 +33,7 @@ router = APIRouter(
 
 from ai.inference import classify, ClassificationResultDto
 
+
 @router.post(
     "/classifications",
     response_model=ClassificationResultDto,
@@ -101,7 +102,9 @@ async def get_related_feed(
 ):
     related_feeds = fetch_related_feeds(feed_id, next_feed_id, size)
 
-    likes = fetch_related_feeds_likes_to_dict(related_feeds, login_user=get_login_user_or_none(request))
+    likes = fetch_related_feeds_likes_to_dict(
+        related_feeds, login_user=get_login_user_or_none(request)
+    )
     is_liked_dict = {
         feed.id: any(like["feed"] == feed.id for like in likes)
         for feed in related_feeds

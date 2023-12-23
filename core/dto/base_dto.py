@@ -1,4 +1,4 @@
-from typing import List, T
+from typing import List, T, Optional
 
 from pydantic import BaseModel
 
@@ -10,14 +10,14 @@ class BaseDTO(BaseModel):
 
 
 class CursorPageRequest(BaseModel):
-    next_cursor_id: int | None = None
+    next_cursor_id: Optional[int] = None
     size: int = 6
-    sort: str | None = None
+    sort: Optional[str] = None
     direction: str = "asc"
 
 
 class CursorPageResponse(BaseModel):
-    next_cursor_id: int | None
+    next_cursor_id: Optional[int]
     size: int
     is_last: bool
-    content: list | None
+    content: Optional[list]
