@@ -46,7 +46,7 @@ class CommentBuilder:
             children_comments = CommentBuilder._build_children(children, login_user_id)
             is_writer = parent_comment.user == login_user_id
 
-            parent_comment_response = CommentResponse.of_dict(
+            parent_comment_response = CommentResponse.of_dto(
                 comment=parent_comment,
                 children_comments=children_comments,
                 is_writer=is_writer,
@@ -76,7 +76,7 @@ class CommentBuilder:
 
         for child in children:
             is_writer = child.user == login_user_id
-            child_comment = CommentResponse.of_dict(comment=child, is_writer=is_writer)
+            child_comment = CommentResponse.of_dto(comment=child, is_writer=is_writer)
             children_comments.append(child_comment)
 
         children_comments.sort(key=lambda comment: comment.created_at)

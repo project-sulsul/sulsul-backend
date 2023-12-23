@@ -28,26 +28,8 @@ class CommentResponse(BaseModel):
     is_writer: bool = False
     children_comments: Optional[List["CommentResponse"]]
 
-    # @classmethod
-    # def of_dict(
-    #     cls,
-    #     comment: dict,
-    #     children_comments: List["CommentResponse"] = None,
-    #     is_writer=False,
-    # ):
-    #     return CommentResponse(
-    #         **comment,
-    #         comment_id=comment["id"],
-    #         user_info=UserSimpleInfoResponse(
-    #             user_id=comment["user"],
-    #             nickname=comment["nickname"],
-    #             image=comment["image"],
-    #         ),
-    #         is_writer=is_writer,
-    #         children_comments=children_comments,
-    #     )
     @classmethod
-    def of_dict(
+    def of_dto(
         cls,
         comment: "CommentDto",
         children_comments: List["CommentResponse"] = None,
