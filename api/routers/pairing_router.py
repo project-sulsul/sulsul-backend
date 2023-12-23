@@ -25,7 +25,7 @@ async def get_pairings(type: PairingSearchType):
         for pairing in Pairing.select().where(Pairing.is_deleted == False)
     ]
     if type is not PairingSearchType.전체:
-        data = [pairing for pairing in data if pairing["type"] == type]
+        data = [pairing for pairing in data if pairing.type == type]
 
     return PairingListResponse(pairings=data)
 

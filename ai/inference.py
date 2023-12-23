@@ -1,17 +1,16 @@
-import requests
 from io import BytesIO
 from typing import *
 
 import numpy as np
 import requests
-import torch
-import torch.nn as nn
-import torchvision.transforms as transforms
 from PIL import Image
 from pydantic import BaseModel
 
 from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
+from torch import no_grad, Tensor
+from torch.nn import Module
+from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 
 class_info = {
     # foods
@@ -59,13 +58,12 @@ class_info = {
 
 class_info_rev = {v: k for k, v in class_info.items()}
 
-
-transformation = transforms.Compose(
+transformation = Compose(
     [
         Padding(fill=(0, 0, 0)),
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        Resize((224, 224)),
+        ToTensor(),
+        Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ]
 )
 
@@ -78,10 +76,10 @@ def load_image(img_url: str):
     return img, img_url
 
 
-def inference(src: torch.Tensor, model: nn.Module, threshold: float = 0.5) -> Dict:
+def inference(src: Tensor, model: Module, threshold: float = 0.5) -> Dict:
     model.eval()
     result_list = {"foods": [], "alcohols": []}
-    with torch.no_grad():
+    with no_grad():
         outputs = model(src)
         result = outputs[0].detach().numpy()
         indices = np.where(result > threshold)[0]
@@ -101,12 +99,7 @@ def load_model(
     q = True if quantization != "none" else False
 
     # load model
-    if model_name == "shufflenet":
-        from ai.models.shufflenet import ShuffleNetV2
-
-        model = ShuffleNetV2(num_classes=num_classes, pre_trained=False, quantize=q)
-
-    elif model_name == "resnet18":
+    if model_name == "resnet18":
         from ai.models.resnet import resnet18
 
         model = resnet18(num_classes=num_classes, pre_trained=False, quantize=q)
@@ -139,8 +132,8 @@ class ClassificationResultDto(BaseModel):
 
 def classify(
     img_url: str,
-    model_name: str = "resnet18",
     weight_file_path: str = "ai/weights/resnet18_qat.pt",
+    model_name: str = "resnet18",
     threshold: float = 0.5,
     quantization: str = "qat",
     num_classes: int = 39,

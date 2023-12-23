@@ -31,6 +31,15 @@ router = APIRouter(
     tags=["Feed"],
 )
 
+from ai.inference import classify, ClassificationResultDto
+
+@router.post(
+    "/classifications",
+    response_model=ClassificationResultDto,
+)
+async def classify_image_by_ai(image_url: str):
+    return classify(image_url)
+
 
 # Not used at MVP
 @router.get(
@@ -143,14 +152,6 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     return JSONResponse(
         status_code=status.HTTP_200_OK, content=FeedResponse.from_orm(feed).model_dump()
     )
-
-
-@router.post(
-    "/classifications",
-    response_model=ClassificationResultDto,
-)
-async def classify_image_by_ai(image_url: str):
-    return classify(image_url)
 
 
 @router.delete(
