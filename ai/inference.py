@@ -100,14 +100,14 @@ def load_model(
 
     # load model
     if model_name == "resnet18":
-        from ai.models.resnet import custom_resnet18
+        from ai.models.resnet import resnet18
 
-        model = custom_resnet18(num_classes=num_classes, pre_trained=False, quantize=q)
+        model = resnet18(num_classes=num_classes, pre_trained=False, quantize=q)
 
     elif model_name == "resnet50":
-        from ai.models.resnet import custom_resnet50
+        from ai.models.resnet import resnet50
 
-        model = custom_resnet50(num_classes=num_classes, pre_trained=False, quantize=q)
+        model = resnet50(num_classes=num_classes, pre_trained=False, quantize=q)
 
     else:
         raise ValueError(f"model name {model_name} does not exists.")
