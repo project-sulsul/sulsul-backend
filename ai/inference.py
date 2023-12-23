@@ -3,7 +3,6 @@ from typing import *
 
 import numpy as np
 import requests
-from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 from PIL import Image
 from pydantic import BaseModel
 
@@ -11,6 +10,7 @@ from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
 from torch import no_grad, Tensor
 from torch.nn import Module
+from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 
 class_info = {
     # foods
@@ -58,7 +58,7 @@ class_info = {
 
 class_info_rev = {v: k for k, v in class_info.items()}
 
-transformation = transforms.Compose(
+transformation = Compose(
     [
         Padding(fill=(0, 0, 0)),
         Resize((224, 224)),
