@@ -100,3 +100,20 @@ class FeedSoftDeleteResponse(BaseModel):
             deleted_comments_count=deleted_comments_count,
             deleted_likes_count=deleted_likes_count,
         )
+
+
+class RelatedFeedResponse(BaseModel):
+    feed_id: int
+    title: str
+    represent_image: str
+    score: float
+    tags: List[str]
+    is_liked: bool = False
+
+    @classmethod
+    def of(cls, feed: Feed, is_liked: bool):
+        return RelatedFeedResponse(
+            **feed.__data__,
+            feed_id=feed.id,
+            is_liked=is_liked,
+        )

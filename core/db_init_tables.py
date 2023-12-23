@@ -79,6 +79,94 @@ feed_data = [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
         ],
     },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
+    {
+        "user_id": 3,
+        "title": "삼쏘굳",
+        "content": "삼겹살이 맛나요 짱짱 굳",
+        "tags": ["삼겹살", "소주"],
+        "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        "images": [
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+            "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
+        ],
+    },
 ]
 for record in feed_data:
     Feed.create(**record)
@@ -90,6 +178,8 @@ feed_like_data = [
     {"user_id": 1, "feed_id": 2},
     {"user_id": 2, "feed_id": 1},
     {"user_id": 2, "feed_id": 2},
+    {"user_id": 1, "feed_id": 4},
+    {"user_id": 1, "feed_id": 5},
 ]
 for record in feed_like_data:
     FeedLike.create(**record)
