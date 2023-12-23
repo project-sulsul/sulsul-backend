@@ -1,19 +1,55 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from starlette import status
 from starlette.requests import Request
 
-from api.config.middleware import auth
-from core.config.orm_config import read_only
+from api.config.middleware import auth, auth_required
+from core.config.orm_config import read_only, transactional
 from core.domain.comment_model import Comment
+from core.domain.feed_model import Feed
 from core.domain.user_model import User
-from core.dto.comment_dto import CommentResponse, CommentListResponse
+from core.dto.comment_dto import (
+    CommentResponse,
+    CommentListResponse,
+    CommentCreateRequest,
+)
 from core.util.auth_util import get_login_user_id
 
 router = APIRouter(
     prefix="/feeds/{feed_id}/comments",
     tags=["Comment"],
 )
+
+
+@router.post(
+    "",
+    dependencies=[Depends(transactional)],
+    response_model=CommentResponse,
+)
+@auth_required
+async def create_comment(
+    request: Request, feed_id: int, request_body: CommentCreateRequest
+):
+    feed = Feed.get_or_none(feed_id)
+
+    if feed is None or feed.is_deleted is True:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"feed(id:{feed_id}) is not found",
+        )
+
+    login_user = User.get_by_id(get_login_user_id(request))
+    comment = Comment.create(
+        user=login_user,
+        feed=feed_id,
+        content=request_body.content,
+    )
+
+    return CommentResponse.of(
+        comment=comment,
+        is_writer=True,
+    )
 
 
 @router.get(
@@ -26,7 +62,7 @@ async def get_all_comments_of_feed(request: Request, feed_id: int):
     comments = (
         Comment.select(Comment, User)
         .join(User)
-        .where((Comment.feed == feed_id) & (Comment.is_deleted == False))
+        .where(Comment.feed == feed_id, Comment.is_deleted == False)
         .dicts()
     )
 
@@ -76,5 +112,7 @@ def build_children_comments(
         is_writer = child_dict["user"] == login_user_id
         child_comment = CommentResponse.of_dict(comment=child_dict, is_writer=is_writer)
         children_comments.append(child_comment)
+
+    children_comments.sort(key=lambda comment: comment.created_at)
 
     return children_comments

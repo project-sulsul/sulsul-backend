@@ -3,7 +3,13 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+from core.domain.comment_model import Comment
 from core.dto.user_dto import UserSimpleInfoResponse
+
+
+class CommentCreateRequest(BaseModel):
+    content: str
+    parent_comment_id: Optional[int] = None
 
 
 class CommentResponse(BaseModel):
@@ -30,6 +36,25 @@ class CommentResponse(BaseModel):
                 user_id=comment["user"],
                 nickname=comment["nickname"],
                 image=comment["image"],
+            ),
+            is_writer=is_writer,
+            children_comments=children_comments,
+        )
+
+    @classmethod
+    def of(
+        cls,
+        comment: Comment,
+        children_comments: List["CommentResponse"] = None,
+        is_writer=False,
+    ):
+        return CommentResponse(
+            **comment.__data__,
+            comment_id=comment.id,
+            user_info=UserSimpleInfoResponse(
+                user_id=comment.user.id,
+                nickname=comment.user.nickname,
+                image=comment.user.image,
             ),
             is_writer=is_writer,
             children_comments=children_comments,
