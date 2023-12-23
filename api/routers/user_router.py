@@ -1,13 +1,11 @@
 import re
-import uuid
 
-from fastapi import APIRouter, Depends, Request, UploadFile, status, HTTPException
+from fastapi import APIRouter, Depends, Request, status, HTTPException
 from fastapi.responses import JSONResponse
 from peewee import DoesNotExist
 
 from api.config.middleware import auth_required
 from api.descriptions.user_api_descriptions import *
-from core.client.aws_client import S3Client
 from core.client.nickname_generator_client import NicknameGeneratorClient
 from core.config.orm_config import transactional, read_only
 from core.domain.user_model import User
@@ -119,28 +117,13 @@ async def update_user_nickname(
     description=UPDATE_USER_IMAGE_DESC,
 )
 @auth_required
-async def update_user_image(request: Request, user_id: int, file: UploadFile):
-    login_user = User.get_by_id(request.state.token_info["id"])
+async def update_user_image(request: Request, user_id: int, image_url: str):
+    login_user: User = User.get_by_id(request.state.token_info["id"])
     if login_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-    if file.size == 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file"
-        )
-
-    s3 = S3Client()
-    key = f"profile_images/{uuid.uuid4()}.{file.filename.split('.')[-1]}"
-    try:
-        if login_user.image:
-            s3.delete_object(f"profile_images/{login_user.image.split('/')[-1]}")
-        s3.upload_fileobj(file.file, key)
-        login_user.image = s3.get_object_url(key)
-        login_user.save()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+    login_user.update(image=image_url)
+    login_user.image = image_url
 
     return UserResponse.from_orm(login_user)
 
