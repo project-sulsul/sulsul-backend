@@ -24,14 +24,14 @@ router = APIRouter(
     tags=["Feed"],
 )
 
-# from ai.inference import classify, ClassificationResultDto
-#
-# @router.post(
-#     "/classifications",
-#     response_model=ClassificationResultDto,
-# )
-# async def classify_image_by_ai(image_url: str):
-#     return classify(image_url)
+from ai.inference import classify, ClassificationResultDto
+
+@router.post(
+    "/classifications",
+    response_model=ClassificationResultDto,
+)
+async def classify_image_by_ai(image_url: str):
+    return classify(image_url)
 
 
 # Not used at MVP
