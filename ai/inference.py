@@ -132,7 +132,7 @@ class ClassificationResultDto(BaseModel):
 
 def classify(
     img_url: str,
-    weight_file_path: str,
+    weight_file_path: str = "ai/weights/resnet18.pt",
     model_name: str = "resnet18",
     threshold: float = 0.5,
     quantization: str = "qat",
