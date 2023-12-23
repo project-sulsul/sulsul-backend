@@ -3,7 +3,6 @@ from typing import *
 
 import numpy as np
 import requests
-import torch.nn as nn
 import torchvision.transforms as transforms
 from PIL import Image
 from pydantic import BaseModel
@@ -11,6 +10,7 @@ from pydantic import BaseModel
 from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
 from torch import no_grad, Tensor
+from torch.nn import Module
 
 class_info = {
     # foods
@@ -58,7 +58,6 @@ class_info = {
 
 class_info_rev = {v: k for k, v in class_info.items()}
 
-
 transformation = transforms.Compose(
     [
         Padding(fill=(0, 0, 0)),
@@ -77,7 +76,7 @@ def load_image(img_url: str):
     return img, img_url
 
 
-def inference(src: Tensor, model: nn.Module, threshold: float = 0.5) -> Dict:
+def inference(src: Tensor, model: Module, threshold: float = 0.5) -> Dict:
     model.eval()
     result_list = {"foods": [], "alcohols": []}
     with no_grad():
