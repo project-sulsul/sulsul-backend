@@ -16,6 +16,8 @@ ISSUER = ""  # TODO 도메인 연결 후 작성
 TOKEN_TYPE = "Bearer"
 TOKEN_DURATION = 60 * 60 * 24 * 7
 ADMIN_TOKEN_DURATION = 60 * 60 * 12
+DEFAULT_PAGE_SIZE = 6
+
 
 JWT_COOKIE_OPTIONS = {
     "key": "access_token",

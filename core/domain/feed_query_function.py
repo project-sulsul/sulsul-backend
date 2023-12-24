@@ -36,3 +36,33 @@ def fetch_related_feeds_likes_to_dict(
         )
         .dicts()
     )
+
+
+def fetch_my_feeds(login_user_id: int, next_feed_id: int, size: int) -> List[Feed]:
+    return (
+        Feed.select()
+        .where(
+            Feed.user == login_user_id,
+            Feed.is_deleted == False,
+            Feed.id > next_feed_id,
+        )
+        .limit(size)
+        .order_by(Feed.id.asc())
+    )
+
+
+def fetch_feeds_liked_by_me(
+    login_user_id: int, next_feed_id: int, size: int
+) -> List[Feed]:
+    return (
+        Feed.select()
+        .join(FeedLike)
+        .where(
+            FeedLike.user == login_user_id,
+            FeedLike.is_deleted == False,
+            Feed.is_deleted == False,
+            Feed.id > next_feed_id,
+        )
+        .limit(size)
+        .order_by(Feed.id.asc())
+    )
