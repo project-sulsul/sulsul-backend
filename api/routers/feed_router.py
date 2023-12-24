@@ -68,6 +68,32 @@ async def search_feeds(keyword: str):
 
 
 @router.get(
+    "/by-me",
+    dependencies=[Depends(read_only)],
+    response_model=CursorPageResponse,
+)
+@auth_required
+async def get_all_my_feeds(request: Request, next_feed_id: int = 0, size: int = 6):
+    my_feeds = (
+        Feed.select()
+        .where(
+            Feed.user == User.get_by_id(get_login_user_id(request)),
+            Feed.is_deleted == False,
+            Feed.id > next_feed_id,
+        )
+        .limit(size)
+        .order_by(Feed.id.asc())
+    )
+
+    return CursorPageResponse(
+        content=[FeedResponse.from_orm(feed).model_dump() for feed in my_feeds],
+        next_cursor_id=my_feeds[-1].id if len(my_feeds) > 0 else None,
+        size=size,
+        is_last=len(my_feeds) < size,
+    )
+
+
+@router.get(
     "/{feed_id}",
     dependencies=[Depends(read_only)],
     response_model=FeedResponse,
@@ -79,7 +105,7 @@ async def get_feed_by_id(request: Request, feed_id: int):
     likes = FeedLike.select().where(FeedLike.feed == feed)
     comments_count = (
         Comment.select()
-        .where((Comment.feed == feed) & (Comment.is_deleted == False))
+        .where(Comment.feed == feed, Comment.is_deleted == False)
         .count()
     )
 
@@ -87,7 +113,9 @@ async def get_feed_by_id(request: Request, feed_id: int):
         feed=feed,
         likes_count=len(likes),
         comments_count=comments_count,
-        is_liked=any(like.user == login_user.id for like in likes),
+        is_liked=any(like.user == login_user.id for like in likes)
+        if login_user is not None
+        else False,
     )
 
 

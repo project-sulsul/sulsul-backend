@@ -7,9 +7,7 @@ from core.domain.feed_model import Feed
 from core.domain.user_model import User
 
 
-def fetch_related_feeds(
-    feed_id: int, next_feed_id: Optional[int], size: int
-) -> List[Feed]:
+def fetch_related_feeds(feed_id: int, next_feed_id: int, size: int) -> List[Feed]:
     feed = Feed.get_by_id(feed_id)
     return (
         Feed.select()
@@ -17,11 +15,7 @@ def fetch_related_feeds(
             Feed.tags.contains(feed.tags),
             Feed.id != feed_id,
             Feed.is_deleted == False,
-            (
-                Feed.id > next_feed_id
-                if next_feed_id > 0 or next_feed_id is not None
-                else None
-            ),
+            Feed.id > next_feed_id,
         )
         .order_by(Feed.id.asc())
         .limit(size)
