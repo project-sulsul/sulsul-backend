@@ -14,15 +14,15 @@ class BaseEntity(peewee.Model):
 
     id = peewee.AutoField(primary_key=True)
     created_at = peewee.DateTimeField(
-        default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+        default=datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     )
     updated_at = peewee.DateTimeField(
-        default=datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+        default=datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     )
     is_deleted = peewee.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.now(KST).strftime("%Y-%m-%dT%H:%M:%S%z")
+        self.updated_at = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
         return super().save(*args, **kwargs)
 
     @classmethod

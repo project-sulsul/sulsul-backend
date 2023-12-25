@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from peewee import ModelSelect
+from peewee import ModelSelect, fn
 
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
