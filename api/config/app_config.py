@@ -10,6 +10,7 @@ from app import app
 from api.config.middleware import EnhancedTrustedHostMiddleware
 from core.config.var_config import IS_PROD
 
+import logging
 
 # Routers
 from admin.router import router as admim_router
@@ -45,8 +46,6 @@ def on_startup():
     from core.config.var_config import IS_PROD
 
     if not IS_PROD:
-        import logging
-
         logger = logging.getLogger("peewee")
         logger.addHandler(logging.StreamHandler())
         logger.setLevel(logging.DEBUG)

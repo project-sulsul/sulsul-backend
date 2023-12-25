@@ -1,4 +1,6 @@
 import traceback
+from asyncio import create_task
+from datetime import datetime
 
 from fastapi import status, Request, HTTPException
 from fastapi.responses import JSONResponse
@@ -6,6 +8,8 @@ from peewee import DoesNotExist
 
 from api.config.exceptions import ForbiddenException
 from app import app
+from core.util.logger import logger
+from core.util.slack import send_slack_message
 
 
 @app.exception_handler(HTTPException)
@@ -28,18 +32,29 @@ async def handle_bad_request_exception(request: Request, exc: HTTPException):
 
 
 @app.exception_handler(Exception)
-async def handle_exceptions(request: Request, exc: Exception) -> JSONResponse:
+async def handle_unexpected_exceptions(
+    request: Request, exc: Exception
+) -> JSONResponse:
     trace_info = traceback.format_exc()
-
-    # TODO 에러 보고
+    error_message = f"""
+    {datetime.now()} {request.method} {str(request.url)}[{exc.__class__.__name__}]
+    message - {str(exc)} 
+    #################### trace_info ####################
+    {trace_info}
+    """
+    logger.error(error_message)
+    create_task(
+        send_slack_message(
+            channel="#error-logs",
+            icon_emoji=":collision:",
+            sender_name="님들오류남빨리안고치면인생망함",
+            message=error_message + "<!channel>",
+        )
+    )
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={
-            "error": f"{exc.__class__.__name__}",
-            "message": str(exc),
-            "trace_info": trace_info,
-        },
+        content={"error": f"{exc.__class__.__name__}", "message": str(exc)},
     )
 
 
