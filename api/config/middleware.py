@@ -193,6 +193,7 @@ def admin(call_next: RequestResponseEndpoint):
     return wrapper
 
 
+# TODO : 삭제예정
 def only_mine(call_next: RequestResponseEndpoint):
     """
     토큰을 검사하여 접근하는 리소스 (유저, 피드, 댓글)가 로그인한 사용자의 것인지 검사하는 미들웨어 (권한 검사)

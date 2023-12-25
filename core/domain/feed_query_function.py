@@ -7,9 +7,7 @@ from core.domain.feed_model import Feed
 from core.domain.user_model import User
 
 
-def fetch_related_feeds(
-    feed_id: int, next_feed_id: Optional[int], size: int
-) -> List[Feed]:
+def fetch_related_feeds(feed_id: int, next_feed_id: int, size: int) -> List[Feed]:
     feed = Feed.get_by_id(feed_id)
     return (
         Feed.select()
@@ -17,11 +15,7 @@ def fetch_related_feeds(
             Feed.tags.contains(feed.tags),
             Feed.id != feed_id,
             Feed.is_deleted == False,
-            (
-                Feed.id > next_feed_id
-                if next_feed_id > 0 or next_feed_id is not None
-                else None
-            ),
+            Feed.id > next_feed_id,
         )
         .order_by(Feed.id.asc())
         .limit(size)
@@ -41,4 +35,34 @@ def fetch_related_feeds_likes_to_dict(
             FeedLike.is_deleted == False,
         )
         .dicts()
+    )
+
+
+def fetch_my_feeds(login_user_id: int, next_feed_id: int, size: int) -> List[Feed]:
+    return (
+        Feed.select()
+        .where(
+            Feed.user == login_user_id,
+            Feed.is_deleted == False,
+            Feed.id > next_feed_id,
+        )
+        .limit(size)
+        .order_by(Feed.id.asc())
+    )
+
+
+def fetch_feeds_liked_by_me(
+    login_user_id: int, next_feed_id: int, size: int
+) -> List[Feed]:
+    return (
+        Feed.select()
+        .join(FeedLike)
+        .where(
+            FeedLike.user == login_user_id,
+            FeedLike.is_deleted == False,
+            Feed.is_deleted == False,
+            Feed.id > next_feed_id,
+        )
+        .limit(size)
+        .order_by(Feed.id.asc())
     )

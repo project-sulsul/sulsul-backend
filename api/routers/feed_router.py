@@ -6,15 +6,17 @@ from starlette.responses import JSONResponse
 from ai.inference import classify, ClassificationResultDto
 from api.config.middleware import auth, auth_required, only_mine
 from core.config.orm_config import transactional, read_only
+from core.config.var_config import DEFAULT_PAGE_SIZE
 from core.domain.comment_model import Comment
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
 from core.domain.feed_query_function import (
     fetch_related_feeds,
     fetch_related_feeds_likes_to_dict,
+    fetch_feeds_liked_by_me,
+    fetch_my_feeds,
 )
 from core.domain.user_model import User
-from core.dto.base_dto import CursorPageResponse
 from core.dto.feed_dto import (
     FeedResponse,
     FeedUpdateRequest,
@@ -24,6 +26,7 @@ from core.dto.feed_dto import (
     FeedSoftDeleteResponse,
     RelatedFeedResponse,
 )
+from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import get_login_user_id, get_login_user_or_none
 
 router = APIRouter(
@@ -68,6 +71,34 @@ async def search_feeds(keyword: str):
 
 
 @router.get(
+    "/by-me",
+    dependencies=[Depends(read_only)],
+    response_model=CursorPageResponse,
+)
+@auth_required
+async def get_all_my_feeds(
+    request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+):
+    my_feeds = fetch_my_feeds(get_login_user_id(request), next_feed_id, size)
+    return CursorPageResponse.of_feeds(my_feeds)
+
+
+@router.get(
+    "/liked-by-me",
+    dependencies=[Depends(read_only)],
+    response_model=CursorPageResponse,
+)
+@auth_required
+async def get_all_liked_feeds_by_me(
+    request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+):
+    feeds_liked_by_me = fetch_feeds_liked_by_me(
+        get_login_user_id(request), next_feed_id, size
+    )
+    return CursorPageResponse.of_feeds(feeds_liked_by_me)
+
+
+@router.get(
     "/{feed_id}",
     dependencies=[Depends(read_only)],
     response_model=FeedResponse,
@@ -79,7 +110,7 @@ async def get_feed_by_id(request: Request, feed_id: int):
     likes = FeedLike.select().where(FeedLike.feed == feed)
     comments_count = (
         Comment.select()
-        .where((Comment.feed == feed) & (Comment.is_deleted == False))
+        .where(Comment.feed == feed, Comment.is_deleted == False)
         .count()
     )
 
@@ -87,7 +118,9 @@ async def get_feed_by_id(request: Request, feed_id: int):
         feed=feed,
         likes_count=len(likes),
         comments_count=comments_count,
-        is_liked=any(like.user == login_user.id for like in likes),
+        is_liked=any(like.user == login_user.feed_id for like in likes)
+        if login_user is not None
+        else False,
     )
 
 
@@ -97,8 +130,8 @@ async def get_feed_by_id(request: Request, feed_id: int):
     response_model=CursorPageResponse,
 )
 @auth
-async def get_related_feed(
-    request: Request, feed_id: int, next_feed_id: int = 0, size: int = 6
+async def get_related_feeds(
+    request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     related_feeds = fetch_related_feeds(feed_id, next_feed_id, size)
 
@@ -163,7 +196,7 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     response_model=FeedSoftDeleteResponse,
 )
 @auth_required
-@only_mine
+@only_mine # TODO 삭제예정
 async def soft_delete_feed(request: Request, feed_id: int):
     feed = Feed.get_by_id(feed_id)
 
