@@ -1,6 +1,5 @@
 from typing import Optional, List
 
-from peewee import ModelSelect, fn
 
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
@@ -12,7 +11,10 @@ def fetch_related_feeds(feed_id: int, next_feed_id: int, size: int) -> List[Feed
     return (
         Feed.select()
         .where(
-            Feed.tags.contains(feed.tags),
+            (
+                Feed.user_tags.contains(feed.user_tags)
+                | Feed.classify_tags.contains(feed.classify_tags)
+            ),
             Feed.id != feed_id,
             Feed.is_deleted == False,
             Feed.id > next_feed_id,
