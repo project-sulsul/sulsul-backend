@@ -7,7 +7,9 @@ from core.domain.feed_model import Feed
 from core.domain.user_model import User
 
 
-def fetch_related_feeds(feed_id: int, next_feed_id: int, size: int) -> List[Feed]:
+def fetch_related_feeds_by_feed_id(
+    feed_id: int, next_feed_id: int, size: int
+) -> List[Feed]:
     feed = Feed.get_by_id(feed_id)
     return (
         Feed.select()
@@ -22,7 +24,20 @@ def fetch_related_feeds(feed_id: int, next_feed_id: int, size: int) -> List[Feed
     )
 
 
-def fetch_related_feeds_likes_to_dict(
+def fetch_related_feeds_by_tags(
+    tags: List[str], next_feed_id: int, size: int
+) -> List[Feed]:
+    return (
+        Feed.select()
+        .where(
+            Feed.tags.contains(tags), Feed.id > next_feed_id, Feed.is_deleted == False
+        )
+        .order_by(Feed.id)
+        .limit(size)
+    )
+
+
+def fetch_feeds_likes_to_dict(
     related_feeds: List[Feed], login_user: Optional[User]
 ) -> dict:
     if login_user is None:

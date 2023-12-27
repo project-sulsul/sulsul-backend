@@ -16,7 +16,7 @@ from core.dto.comment_dto import (
 )
 from core.util.auth_util import get_login_user_id
 from core.util.comment_util import CommentValidator, CommentBuilder
-from core.util.feed_validator import FeedValidator
+from core.util.feed_util import FeedValidator
 
 router = APIRouter(
     prefix="/feeds/{feed_id}/comments",

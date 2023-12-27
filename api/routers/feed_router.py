@@ -11,8 +11,8 @@ from core.domain.comment_model import Comment
 from core.domain.feed_like_model import FeedLike
 from core.domain.feed_model import Feed
 from core.domain.feed_query_function import (
-    fetch_related_feeds,
-    fetch_related_feeds_likes_to_dict,
+    fetch_related_feeds_by_feed_id,
+    fetch_feeds_likes_to_dict,
     fetch_feeds_liked_by_me,
     fetch_my_feeds,
 )
@@ -28,6 +28,7 @@ from core.dto.feed_dto import (
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import get_login_user_id, get_login_user_or_none
+from core.util.feed_util import FeedResponseBuilder
 
 router = APIRouter(
     prefix="/feeds",
@@ -133,27 +134,10 @@ async def get_feed_by_id(request: Request, feed_id: int):
 async def get_related_feeds(
     request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
-    related_feeds = fetch_related_feeds(feed_id, next_feed_id, size)
-
-    likes = fetch_related_feeds_likes_to_dict(
-        related_feeds, login_user=get_login_user_or_none(request)
-    )
-    is_liked_dict = {
-        feed.id: any(like["feed"] == feed.id for like in likes)
-        for feed in related_feeds
-    }
-
-    related_feeds_response = [
-        RelatedFeedResponse.of(feed, is_liked_dict[feed.id]) for feed in related_feeds
-    ]
-
-    return CursorPageResponse(
-        content=related_feeds_response,
-        next_cursor_id=related_feeds_response[-1].feed_id
-        if len(related_feeds_response) > 0
-        else None,
+    return FeedResponseBuilder.related_feeds(
+        feeds=fetch_related_feeds_by_feed_id(feed_id, next_feed_id, size),
         size=size,
-        is_last=len(related_feeds_response) < size,
+        login_user=get_login_user_or_none(request),
     )
 
 
