@@ -6,7 +6,7 @@ from core.config.orm_config import read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
 from core.domain import combination_query_function
 from core.domain.feed_query_function import (
-    fetch_related_feeds_by_tags,
+    fetch_related_feeds_by_classify_tags,
 )
 from core.dto.combination_dto import CombinationResponse, CombinationListResponse
 from core.dto.page_dto import CursorPageResponse
@@ -52,14 +52,14 @@ async def get_alcohol_ranking(request: Request):
     description=GET_TAGS_RELATED_FEEDS_DESC,
 )
 @auth
-async def get_alcohol_related_feeds(
+async def get_related_feeds_by_classify_tags(
     request: Request,
     tags: str,  # comma separated tags
     next_feed_id: int = 0,
     size: int = DEFAULT_PAGE_SIZE,
 ):
     return FeedResponseBuilder.related_feeds(
-        feeds=fetch_related_feeds_by_tags(tags.split(","), next_feed_id, size),
+        feeds=fetch_related_feeds_by_classify_tags(tags.split(","), next_feed_id, size),
         size=size,
         login_user=get_login_user_or_none(request),
     )

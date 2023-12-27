@@ -26,13 +26,15 @@ def fetch_related_feeds_by_feed_id(
     )
 
 
-def fetch_related_feeds_by_tags(
+def fetch_related_feeds_by_classify_tags(
     tags: List[str], next_feed_id: int, size: int
 ) -> List[Feed]:
     return (
         Feed.select()
         .where(
-            Feed.tags.contains(tags), Feed.id > next_feed_id, Feed.is_deleted == False
+            Feed.classify_tags.contains(tags),
+            Feed.id > next_feed_id,
+            Feed.is_deleted == False,
         )
         .order_by(Feed.id)
         .limit(size)
