@@ -40,8 +40,7 @@ user_data = [
     {"uid": "iee785@daum.net", "social_type": "kakao", "nickname": "user2"},
     {"uid": "tmlee@pluszero.co.kr", "social_type": "google", "nickname": "user3"},
 ]
-for record in user_data:
-    User.create(**record)
+User.bulk_create([User(**data) for data in user_data])
 
 from core.domain.feed_model import Feed
 
@@ -168,8 +167,7 @@ feed_data = [
         ],
     },
 ]
-for record in feed_data:
-    Feed.create(**record)
+Feed.bulk_create([Feed(**data) for data in feed_data])
 
 from core.domain.feed_like_model import FeedLike
 
@@ -181,8 +179,7 @@ feed_like_data = [
     {"user_id": 1, "feed_id": 4},
     {"user_id": 1, "feed_id": 5},
 ]
-for record in feed_like_data:
-    FeedLike.create(**record)
+FeedLike.bulk_create([FeedLike(**data) for data in feed_like_data])
 
 from core.domain.comment_model import Comment
 
@@ -198,8 +195,7 @@ comment_data = [
     {"user_id": 1, "feed_id": 2, "content": "댓글1-2", "parent_comment_id": 1},
     {"user_id": 1, "feed_id": 2, "content": "댓글1-3", "parent_comment_id": 1},
 ]
-for record in comment_data:
-    Comment.create(**record)
+Comment.bulk_create([Comment(**data) for data in comment_data])
 
 from core.domain.pairing_model import Pairing
 
@@ -456,8 +452,7 @@ pairing_data = [
         "description": "오징어입니다",
     },
 ]
-for record in pairing_data:
-    Pairing.create(**record)
+Pairing.bulk_create([Pairing(**data) for data in pairing_data])
 
 from core.domain.combination_model import Combination
 
@@ -467,7 +462,6 @@ combination_data = [
     {"alcohol": 8, "food": 26, "count": 38089},
     {"alcohol": 12, "food": 17, "count": 159},
 ]
-for record in combination_data:
-    Combination.create(**record)
+Combination.bulk_create([Combination(**data) for data in combination_data])
 
 db.close()

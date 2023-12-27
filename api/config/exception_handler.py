@@ -10,6 +10,7 @@ from api.config.exceptions import ForbiddenException
 from app import app
 from core.util.logger import logger
 from core.util.slack import send_slack_message
+from core.config.var_config import IS_PROD
 
 
 @app.exception_handler(HTTPException)
@@ -36,21 +37,23 @@ async def handle_unexpected_exceptions(
     request: Request, exc: Exception
 ) -> JSONResponse:
     trace_info = traceback.format_exc()
-    error_message = f"""
-    {datetime.now()} {request.method} {str(request.url)}[{exc.__class__.__name__}]
-    message - {str(exc)} 
-    #################### trace_info ####################
-    {trace_info}
-    """
-    logger.error(error_message)
-    create_task(
-        send_slack_message(
-            channel="#error-logs",
-            icon_emoji=":collision:",
-            sender_name="님들오류남빨리안고치면인생망함",
-            message=error_message + "<!channel>",
+
+    if IS_PROD:
+        error_message = f"""
+        {datetime.now()} {request.method} {str(request.url)}[{exc.__class__.__name__}]
+        message - {str(exc)} 
+        #################### trace_info ####################
+        {trace_info}
+        """
+        logger.error(error_message)
+        create_task(
+            send_slack_message(
+                channel="#error-logs",
+                icon_emoji=":collision:",
+                sender_name="님들오류남빨리안고치면인생망함",
+                message=error_message + "<!channel>",
+            )
         )
-    )
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
