@@ -196,7 +196,7 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     response_model=FeedSoftDeleteResponse,
 )
 @auth_required
-@only_mine # TODO 삭제예정
+@only_mine  # TODO 삭제예정
 async def soft_delete_feed(request: Request, feed_id: int):
     feed = Feed.get_by_id(feed_id)
 
