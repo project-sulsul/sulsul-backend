@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -12,7 +12,8 @@ class FeedCreateRequest(BaseModel):
     content: str
     represent_image: str
     images: List[str]
-    tags: List[str]
+    classify_tags: List[str]
+    user_tags: Optional[List[str]]
     score: float
 
 
@@ -23,7 +24,8 @@ class FeedResponse(BaseModel):
     content: str
     represent_image: str
     images: List[str]
-    tags: List[str]
+    classify_tags: List[str]
+    user_tags: Optional[List[str]]
     is_liked: bool = False
     view_count: int = 0
     likes_count: int = 0
@@ -107,7 +109,8 @@ class RelatedFeedResponse(BaseModel):
     title: str
     represent_image: str
     score: float
-    tags: List[str]
+    user_tags: Optional[List[str]]
+    classify_tags: List[str]
     is_liked: bool = False
 
     @classmethod

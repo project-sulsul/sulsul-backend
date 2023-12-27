@@ -5,6 +5,7 @@ from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
 from api.config.middleware import auth, auth_required, only_mine
+from api.descriptions.feed_api_descriptions import GET_RELATED_FEEDS_BY_FEED_ID_DESC
 from core.config.orm_config import transactional, read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
 from core.domain.comment_model import Comment
@@ -56,7 +57,7 @@ async def search_feeds(keyword: str):
     query_results = Feed.select().where(
         (
             Feed.content.contains(keyword)
-            | (Feed.tags.contains(keyword))
+            | (Feed.user_tags.contains(keyword))
             | (Feed.title.contains(keyword))
         )
     )
@@ -155,7 +156,9 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
         content=request_body.content,
         represent_image=request_body.represent_image,
         images=request_body.images,
-        tags=request_body.tags,
+        score=request_body.score,
+        classify_tags=request_body.classify_tags,
+        user_tags=request_body.user_tags,
     )
     return FeedResponse.from_orm(feed).model_dump()
 
