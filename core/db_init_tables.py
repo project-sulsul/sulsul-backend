@@ -1,28 +1,41 @@
-import os, inspect, importlib
+import importlib
+import inspect
+import os
+
 from peewee import Model
 from playhouse import signals
 
 from core.config.orm_config import db
 from core.domain.base_entity import BaseEntity
 
-models = list()
-for filename in os.listdir("core/domain"):
-    if "_model.py" not in filename:
-        continue
 
-    model_module = "core.domain." + filename.split(".")[0]
-    model = importlib.import_module(model_module)
-    models.extend(
-        [
-            obj
-            for _, obj in inspect.getmembers(model)
-            if inspect.isclass(obj)
-            and issubclass(obj, Model)
-            and obj is not Model
-            and obj is not signals.Model
-            and obj is not BaseEntity
-        ]
-    )
+def scan_domain_models():
+    models = list()
+    model_package_paths = list()
+    domain_root = "core/domain"
+    for root, dirs, files in os.walk(domain_root):
+        for dir_name in dirs:
+            dir = f"{domain_root}/{dir_name}"
+            for file in os.listdir(dir):
+                if file.endswith("_model.py"):
+                    model_package_paths.append(f"{dir_name}.{file.split('.')[0]}")
+
+    for package_path in model_package_paths:
+        model_module = "core.domain." + package_path
+        model = importlib.import_module(model_module)
+        models.extend(
+            [
+                obj
+                for _, obj in inspect.getmembers(model)
+                if inspect.isclass(obj)
+                and issubclass(obj, Model)
+                and obj is not Model
+                and obj is not signals.Model
+                and obj is not BaseEntity
+            ]
+        )
+    return models
+
 
 db.connect()
 
@@ -30,6 +43,7 @@ from admin.model import Admin
 
 db.create_tables([Admin], safe=True)
 
+models = scan_domain_models()
 db.drop_tables(models, cascade=True)
 db.create_tables(models)
 
