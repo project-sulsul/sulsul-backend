@@ -8,7 +8,7 @@ from api.config.middleware import auth_required
 from api.descriptions.user_api_descriptions import *
 from core.client.nickname_generator_client import NicknameGeneratorClient
 from core.config.orm_config import transactional, read_only
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 from core.dto.user_dto import NicknameResponse
 from core.dto.user_dto import NicknameValidationResponse
 from core.dto.user_dto import UserNicknameUpdateRequest

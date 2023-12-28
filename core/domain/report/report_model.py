@@ -1,7 +1,7 @@
 import peewee
 
 from core.domain.base_entity import BaseEntity
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 
 
 class Report(BaseEntity):

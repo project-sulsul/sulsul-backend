@@ -33,7 +33,7 @@ db.create_tables([Admin], safe=True)
 db.drop_tables(models, cascade=True)
 db.create_tables(models)
 
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 
 user_data = [
     {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
@@ -42,7 +42,7 @@ user_data = [
 ]
 User.bulk_create([User(**data) for data in user_data])
 
-from core.domain.feed_model import Feed
+from core.domain.feed.feed_model import Feed
 
 feed_data = [
     {
@@ -172,7 +172,7 @@ feed_data = [
 ]
 Feed.bulk_create([Feed(**data) for data in feed_data])
 
-from core.domain.feed_like_model import FeedLike
+from core.domain.feed.feed_like_model import FeedLike
 
 feed_like_data = [
     {"user_id": 1, "feed_id": 1},
@@ -184,7 +184,7 @@ feed_like_data = [
 ]
 FeedLike.bulk_create([FeedLike(**data) for data in feed_like_data])
 
-from core.domain.comment_model import Comment
+from core.domain.comment.comment_model import Comment
 
 comment_data = [
     {"user_id": 1, "feed_id": 1, "content": "댓글1", "parent_comment_id": None},
@@ -200,7 +200,7 @@ comment_data = [
 ]
 Comment.bulk_create([Comment(**data) for data in comment_data])
 
-from core.domain.pairing_model import Pairing
+from core.domain.pairing.pairing_model import Pairing
 
 pairing_data = [
     {
@@ -457,7 +457,7 @@ pairing_data = [
 ]
 Pairing.bulk_create([Pairing(**data) for data in pairing_data])
 
-from core.domain.combination_model import Combination
+from core.domain.combination.combination_model import Combination
 
 combination_data = [
     {"alcohol": 2, "food": 15, "count": 15469},

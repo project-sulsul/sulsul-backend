@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Depends
 
-from api.config.middleware import auth, auth_required
 from api.descriptions.pairing_api_descriptions import REQUEST_PAIRING_BY_USER_DESC
 from core.config.orm_config import transactional, read_only
-from core.domain.pairing_model import Pairing, PairingRequest
+from core.domain.pairing.pairing_model import Pairing, PairingRequest
 from core.dto.pairing_dto import PairingListResponse
 from core.dto.pairing_dto import PairingResponse
 from core.dto.pairing_dto import (

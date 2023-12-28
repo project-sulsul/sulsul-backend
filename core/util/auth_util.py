@@ -1,7 +1,7 @@
 from typing import Optional
 from starlette.requests import Request
 
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 
 
 def get_login_user_id(request: Request) -> int:

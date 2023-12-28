@@ -1,5 +1,5 @@
-from core.domain.combination_model import Combination
-from core.domain.pairing_model import Pairing
+from core.domain.combination.combination_model import Combination
+from core.domain.pairing.pairing_model import Pairing
 
 
 def fetch_combination_ranking(order_by_popular: bool) -> list:

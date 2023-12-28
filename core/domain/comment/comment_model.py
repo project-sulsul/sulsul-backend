@@ -1,8 +1,9 @@
 import peewee
 
+from api.config.exceptions import ForbiddenException
 from core.domain.base_entity import BaseEntity
-from core.domain.feed_model import Feed
-from core.domain.user_model import User
+from core.domain.feed.feed_model import Feed
+from core.domain.user.user_model import User
 
 
 class Comment(BaseEntity):
@@ -16,3 +17,11 @@ class Comment(BaseEntity):
 
     class Meta:
         table_name = "comment"
+
+    def update_content(self, content):
+        self.content = content
+        self.save()
+
+    def check_if_owner(self, user_id: int):
+        if self.user.id != user_id:
+            raise ForbiddenException(f"comment(id:{self.id}) is not yours")

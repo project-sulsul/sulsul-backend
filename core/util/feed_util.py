@@ -1,24 +1,10 @@
 from typing import List, Optional
 
-from fastapi import HTTPException
-from starlette import status
-
-from core.domain.feed_model import Feed
-from core.domain.feed_query_function import fetch_feeds_likes_to_dict
-from core.domain.user_model import User
+from core.domain.feed.feed_model import Feed
+from core.domain.feed.feed_query_function import fetch_feeds_likes_to_dict
+from core.domain.user.user_model import User
 from core.dto.feed_dto import RelatedFeedResponse
 from core.dto.page_dto import CursorPageResponse
-
-
-class FeedValidator:
-    @staticmethod
-    def check_if_exist(feed_id: int):
-        feed = Feed.get_or_none(feed_id)
-        if feed is None or feed.is_deleted is True:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"feed(id:{feed_id}) is not found",
-            )
 
 
 class FeedResponseBuilder:

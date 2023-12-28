@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
-from core.domain.combination_model import Combination
+from core.domain.combination.combination_model import Combination
 from core.dto.pairing_dto import PairingResponse
 
 

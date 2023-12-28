@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse
 
 from api.config.middleware import auth_required
 from core.config.orm_config import transactional
-from core.domain.report_model import Report
-from core.domain.user_model import User
+from core.domain.report.report_model import Report
+from core.domain.user.user_model import User
 from core.dto.report_dto import ReportRegisterResponse, ReportRegisterRequest
 
 router = APIRouter(

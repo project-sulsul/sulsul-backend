@@ -1,28 +1,6 @@
-from typing import Optional, List
+from typing import List
 
-from fastapi import HTTPException
-from starlette import status
-
-from core.domain.comment_model import Comment
 from core.dto.comment_dto import CommentResponse, CommentDto
-
-
-class CommentValidator:
-    @staticmethod
-    def check_if_writeable(
-        comment_id: int, comment: Optional[Comment], login_user_id: int
-    ):
-        if comment is None or comment.is_deleted is True:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"comment(id:{comment_id}) is not found",
-            )
-
-        if comment.user_id != login_user_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"comment(id:{comment_id}) is not yours",
-            )
 
 
 class CommentBuilder:
