@@ -1,3 +1,5 @@
+from enum import Enum
+
 import peewee
 
 from core.domain.base_entity import BaseEntity
@@ -21,3 +23,8 @@ class PairingRequest(BaseEntity):
 
     class Meta:
         table_name = "pairing_request"
+
+
+class PairingType(str, Enum):
+    술 = "술"
+    안주 = "안주"
