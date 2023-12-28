@@ -62,16 +62,6 @@ class FeedUpdateRequest(BaseModel):
     content: str
 
 
-class FeedListResponse(BaseModel):
-    feeds: List[FeedResponse]
-
-    @classmethod
-    def from_orm(cls, entities: List[Feed]):
-        return FeedListResponse(
-            feeds=[FeedResponse.from_orm(entity) for entity in entities]
-        )
-
-
 class FeedSearchResultResponse(BaseModel):
     id: int
     title: str
@@ -119,4 +109,35 @@ class RelatedFeedResponse(BaseModel):
             **feed.__data__,
             feed_id=feed.id,
             is_liked=is_liked,
+        )
+
+
+class RandomFeedDto(BaseModel):
+    feed_id: int
+    title: str
+    content: str
+    represent_image: str
+    user_id: int
+    user_nickname: str
+    user_image: Optional[str]
+    comments_count: int
+    likes_count: int
+    updated_at: datetime
+    is_liked: bool = False
+
+    def __eq__(self, other):
+        return self.feed_id == other.feed_id
+
+
+class RandomFeedListResponse(BaseModel):
+    ids_list: List[int]
+    ids_string: str
+    feeds: List["RandomFeedDto"]
+
+    @classmethod
+    def of_query_dto(cls, feeds: List["RandomFeedDto"]):
+        return RandomFeedListResponse(
+            ids_list=[feed.feed_id for feed in feeds],
+            ids_string=",".join([str(feed.feed_id) for feed in feeds]),
+            feeds=feeds,
         )

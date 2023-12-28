@@ -14,6 +14,7 @@ from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_feed_id,
     fetch_feeds_liked_by_me,
     fetch_my_feeds,
+    fetch_feeds_randomly,
 )
 from core.domain.user.user_model import User
 from core.dto.feed_dto import (
@@ -21,6 +22,7 @@ from core.dto.feed_dto import (
     FeedUpdateRequest,
     FeedCreateRequest,
     FeedSoftDeleteResponse,
+    RandomFeedListResponse,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import get_login_user_id, get_login_user_or_none
@@ -66,6 +68,24 @@ async def get_all_liked_feeds_by_me(
         get_login_user_id(request), next_feed_id, size
     )
     return CursorPageResponse.of_feeds(feeds_liked_by_me)
+
+
+@router.get(
+    "/random",
+    dependencies=[Depends(read_only)],
+    response_model=RandomFeedListResponse,
+)
+@auth
+async def get_random_feeds(
+    request: Request,
+    exclude_feed_ids: str = "",  # separated by comma ex. 1,2,3
+    size: int = DEFAULT_PAGE_SIZE,
+):
+    exclude_feed_ids = [int(i) for i in exclude_feed_ids.split(",") if i != ""]
+    random_feeds = fetch_feeds_randomly(
+        size, exclude_feed_ids, get_login_user_id(request)
+    )
+    return RandomFeedListResponse.of_query_dto(random_feeds)
 
 
 @router.get(
