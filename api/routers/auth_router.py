@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from core.client.oauth_client import OAuthClient
 from core.config.orm_config import transactional
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 from core.dto.auth_dto import AppleCredentialsRequest
 from core.dto.auth_dto import GoogleCredentialsRequest
 from core.dto.auth_dto import KakaoCredentialsRequest

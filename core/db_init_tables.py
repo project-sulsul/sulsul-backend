@@ -1,28 +1,41 @@
-import os, inspect, importlib
+import importlib
+import inspect
+import os
+
 from peewee import Model
 from playhouse import signals
 
 from core.config.orm_config import db
 from core.domain.base_entity import BaseEntity
 
-models = list()
-for filename in os.listdir("core/domain"):
-    if "_model.py" not in filename:
-        continue
 
-    model_module = "core.domain." + filename.split(".")[0]
-    model = importlib.import_module(model_module)
-    models.extend(
-        [
-            obj
-            for _, obj in inspect.getmembers(model)
-            if inspect.isclass(obj)
-            and issubclass(obj, Model)
-            and obj is not Model
-            and obj is not signals.Model
-            and obj is not BaseEntity
-        ]
-    )
+def scan_domain_models():
+    models = list()
+    model_package_paths = list()
+    domain_root = "core/domain"
+    for root, dirs, files in os.walk(domain_root):
+        for dir_name in dirs:
+            dir = f"{domain_root}/{dir_name}"
+            for file in os.listdir(dir):
+                if file.endswith("_model.py"):
+                    model_package_paths.append(f"{dir_name}.{file.split('.')[0]}")
+
+    for package_path in model_package_paths:
+        model_module = "core.domain." + package_path
+        model = importlib.import_module(model_module)
+        models.extend(
+            [
+                obj
+                for _, obj in inspect.getmembers(model)
+                if inspect.isclass(obj)
+                and issubclass(obj, Model)
+                and obj is not Model
+                and obj is not signals.Model
+                and obj is not BaseEntity
+            ]
+        )
+    return models
+
 
 db.connect()
 
@@ -30,10 +43,11 @@ from admin.model import Admin
 
 db.create_tables([Admin], safe=True)
 
+models = scan_domain_models()
 db.drop_tables(models, cascade=True)
 db.create_tables(models)
 
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 
 user_data = [
     {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
@@ -42,7 +56,7 @@ user_data = [
 ]
 User.bulk_create([User(**data) for data in user_data])
 
-from core.domain.feed_model import Feed
+from core.domain.feed.feed_model import Feed
 
 feed_data = [
     {
@@ -172,7 +186,7 @@ feed_data = [
 ]
 Feed.bulk_create([Feed(**data) for data in feed_data])
 
-from core.domain.feed_like_model import FeedLike
+from core.domain.feed.feed_like_model import FeedLike
 
 feed_like_data = [
     {"user_id": 1, "feed_id": 1},
@@ -184,7 +198,7 @@ feed_like_data = [
 ]
 FeedLike.bulk_create([FeedLike(**data) for data in feed_like_data])
 
-from core.domain.comment_model import Comment
+from core.domain.comment.comment_model import Comment
 
 comment_data = [
     {"user_id": 1, "feed_id": 1, "content": "댓글1", "parent_comment_id": None},
@@ -200,7 +214,7 @@ comment_data = [
 ]
 Comment.bulk_create([Comment(**data) for data in comment_data])
 
-from core.domain.pairing_model import Pairing
+from core.domain.pairing.pairing_model import Pairing
 
 pairing_data = [
     {
@@ -457,7 +471,7 @@ pairing_data = [
 ]
 Pairing.bulk_create([Pairing(**data) for data in pairing_data])
 
-from core.domain.combination_model import Combination
+from core.domain.combination.combination_model import Combination
 
 combination_data = [
     {"alcohol": 2, "food": 15, "count": 15469},

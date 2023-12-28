@@ -1,7 +1,7 @@
 import peewee
 
 from core.domain.base_entity import BaseEntity
-from core.domain.pairing_model import Pairing
+from core.domain.pairing.pairing_model import Pairing
 
 
 class Combination(BaseEntity):

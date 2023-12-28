@@ -3,7 +3,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from core.config.var_config import DEFAULT_PAGE_SIZE
-from core.domain.feed_model import Feed
+from core.domain.feed.feed_model import Feed
 from core.dto.feed_dto import FeedResponse, RelatedFeedResponse
 
 

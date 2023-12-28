@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from core.domain.report_model import Report
+from core.domain.report.report_model import Report
 
 
 class ReportRegisterRequest(BaseModel):

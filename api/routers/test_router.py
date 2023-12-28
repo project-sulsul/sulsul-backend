@@ -7,10 +7,9 @@ from ai.inference import classify
 from api.config.exceptions import ForbiddenException
 from core.config.orm_config import transactional
 from core.config.var_config import IS_PROD
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 from core.dto.auth_dto import TokenResponse
 from core.util.jwt import build_token
-from core.util.logger import logger
 
 router = APIRouter(prefix="/test", tags=["테스트용 API"])
 

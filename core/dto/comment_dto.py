@@ -1,11 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
-from pydantic.v1 import root_validator
-from pydantic.v1.datetime_parse import parse_datetime
+from pydantic import BaseModel
 
-from core.domain.comment_model import Comment
+from core.domain.comment.comment_model import Comment
 from core.dto.user_dto import UserSimpleInfoResponse
 
 

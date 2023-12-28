@@ -4,8 +4,8 @@ from api.config.middleware import auth_required, auth
 from api.descriptions.ranking_api_descriptions import GET_TAGS_RELATED_FEEDS_DESC
 from core.config.orm_config import read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
-from core.domain import combination_query_function
-from core.domain.feed_query_function import (
+from core.domain.combination import combination_query_function
+from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_classify_tags,
 )
 from core.dto.combination_dto import CombinationResponse, CombinationListResponse

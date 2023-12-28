@@ -5,8 +5,9 @@ from starlette.requests import Request
 
 from api.config.middleware import auth, auth_required
 from core.config.orm_config import read_only, transactional
-from core.domain.comment_model import Comment
-from core.domain.user_model import User
+from core.domain.comment.comment_model import Comment
+from core.domain.feed.feed_model import Feed
+from core.domain.user.user_model import User
 from core.dto.comment_dto import (
     CommentResponse,
     CommentListResponse,
@@ -15,8 +16,7 @@ from core.dto.comment_dto import (
     CommentDto,
 )
 from core.util.auth_util import get_login_user_id
-from core.util.comment_util import CommentValidator, CommentBuilder
-from core.util.feed_util import FeedValidator
+from core.util.comment_util import CommentBuilder
 
 router = APIRouter(
     prefix="/feeds/{feed_id}/comments",
@@ -33,9 +33,9 @@ router = APIRouter(
 async def create_comment(
     request: Request, feed_id: int, request_body: CommentCreateRequest
 ):
-    FeedValidator.check_if_exist(feed_id)
+    Feed.get_or_raise(feed_id)
 
-    login_user = User.get_by_id(get_login_user_id(request))
+    login_user = User.get_or_raise(get_login_user_id(request))
     comment = Comment.create(
         user=login_user,
         feed=feed_id,
@@ -57,14 +57,13 @@ async def create_comment(
 async def update_comment(
     request: Request, feed_id: int, comment_id: int, request_body: CommentUpdateRequest
 ):
-    FeedValidator.check_if_exist(feed_id)
+    Feed.get_or_raise(feed_id)
 
-    comment = Comment.get_or_none(comment_id)
+    comment = Comment.get_or_raise(comment_id)
 
-    CommentValidator.check_if_writeable(comment_id, comment, get_login_user_id(request))
+    comment.check_if_owner(get_login_user_id(request))
 
-    comment.content = request_body.content
-    comment.save()
+    comment.update_content(request_body.content)
 
     return CommentResponse.of(
         comment=comment,
@@ -79,14 +78,12 @@ async def update_comment(
 )
 @auth_required
 async def soft_delete_comment(request: Request, feed_id: int, comment_id: int):
-    FeedValidator.check_if_exist(feed_id)
+    Feed.get_or_raise(feed_id)
 
-    comment = Comment.get_or_none(comment_id)
+    comment = Comment.get_or_raise(comment_id)
+    comment.check_if_owner(get_login_user_id(request))
 
-    CommentValidator.check_if_writeable(comment_id, comment, get_login_user_id(request))
-
-    comment.is_deleted = True
-    comment.save()
+    comment.soft_delete()
 
     return CommentResponse.of(
         comment=comment,

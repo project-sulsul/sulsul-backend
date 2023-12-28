@@ -4,28 +4,23 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
-from api.config.middleware import auth, auth_required, only_mine
-from api.descriptions.feed_api_descriptions import GET_RELATED_FEEDS_BY_FEED_ID_DESC
+from api.config.middleware import auth, auth_required
 from core.config.orm_config import transactional, read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
-from core.domain.comment_model import Comment
-from core.domain.feed_like_model import FeedLike
-from core.domain.feed_model import Feed
-from core.domain.feed_query_function import (
+from core.domain.comment.comment_model import Comment
+from core.domain.feed.feed_like_model import FeedLike
+from core.domain.feed.feed_model import Feed
+from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_feed_id,
-    fetch_feeds_likes_to_dict,
     fetch_feeds_liked_by_me,
     fetch_my_feeds,
 )
-from core.domain.user_model import User
+from core.domain.user.user_model import User
 from core.dto.feed_dto import (
     FeedResponse,
     FeedUpdateRequest,
-    FeedSearchResultListResponse,
-    FeedSearchResultResponse,
     FeedCreateRequest,
     FeedSoftDeleteResponse,
-    RelatedFeedResponse,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import get_login_user_id, get_login_user_or_none
@@ -36,8 +31,6 @@ router = APIRouter(
     tags=["Feed"],
 )
 
-from ai.inference import classify, ClassificationResultDto
-
 
 @router.post(
     "/classifications",
@@ -45,31 +38,6 @@ from ai.inference import classify, ClassificationResultDto
 )
 async def classify_image_by_ai(image_url: str):
     return classify(image_url)
-
-
-# Not used at MVP
-@router.get(
-    "/search",
-    dependencies=[Depends(read_only)],
-    response_model=FeedSearchResultListResponse,
-)
-async def search_feeds(keyword: str):
-    query_results = Feed.select().where(
-        (
-            Feed.content.contains(keyword)
-            | (Feed.user_tags.contains(keyword))
-            | (Feed.title.contains(keyword))
-        )
-    )
-    data = [
-        FeedSearchResultResponse.from_orm(feed).model_dump() for feed in query_results
-    ]
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=FeedSearchResultListResponse(
-            results=data, keyword=keyword
-        ).model_dump(),
-    )
 
 
 @router.get(
@@ -107,8 +75,8 @@ async def get_all_liked_feeds_by_me(
 )
 @auth
 async def get_feed_by_id(request: Request, feed_id: int):
-    login_user = User.get_or_none(get_login_user_id(request))
-    feed = Feed.get_by_id(feed_id)
+    login_user = User.get_or_raise(get_login_user_id(request))
+    feed = Feed.get_or_raise(feed_id)
     likes = FeedLike.select().where(FeedLike.feed == feed)
     comments_count = (
         Comment.select()
@@ -149,7 +117,7 @@ async def get_related_feeds(
 )
 @auth_required
 async def create_feed(request: Request, request_body: FeedCreateRequest):
-    login_user = User.get_by_id(get_login_user_id(request))
+    login_user = User.get_or_raise(get_login_user_id(request))
     feed = Feed.create(
         user=login_user,
         title=request_body.title,
@@ -168,8 +136,9 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
     dependencies=[Depends(transactional)],
     response_model=FeedResponse,
 )
+# TODO
 async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRequest):
-    feed = Feed.get_by_id(feed_id)
+    feed = Feed.get_or_raise(feed_id)
     feed.content = request_body.content
     feed.save()
     return JSONResponse(
@@ -183,16 +152,14 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     response_model=FeedSoftDeleteResponse,
 )
 @auth_required
-@only_mine  # TODO 삭제예정
 async def soft_delete_feed(request: Request, feed_id: int):
-    feed = Feed.get_by_id(feed_id)
+    feed: Feed = Feed.get_or_raise(feed_id)
+    feed.check_if_owner(get_login_user_id(request))
 
-    Feed.update(is_deleted=True).where(Feed.id == feed_id).execute()
+    feed.soft_delete()
     deleted_comment_count = (
         Comment.update(is_deleted=True).where(Comment.feed == feed).execute()
     )
-    deleted_likes_count = (
-        FeedLike.update(is_deleted=True).where(FeedLike.feed == feed).execute()
-    )
+    deleted_likes_count = FeedLike.delete().where(FeedLike.feed == feed).execute()
 
     return FeedSoftDeleteResponse.of(feed, deleted_comment_count, deleted_likes_count)

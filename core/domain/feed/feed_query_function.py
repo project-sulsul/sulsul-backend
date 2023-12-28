@@ -1,15 +1,15 @@
 from typing import Optional, List
 
 
-from core.domain.feed_like_model import FeedLike
-from core.domain.feed_model import Feed
-from core.domain.user_model import User
+from core.domain.feed.feed_like_model import FeedLike
+from core.domain.feed.feed_model import Feed
+from core.domain.user.user_model import User
 
 
 def fetch_related_feeds_by_feed_id(
     feed_id: int, next_feed_id: int, size: int
 ) -> List[Feed]:
-    feed = Feed.get_by_id(feed_id)
+    feed = Feed.get_or_raise(feed_id)
     return (
         Feed.select()
         .where(

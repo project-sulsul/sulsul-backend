@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from core.domain.pairing_model import Pairing
+from core.domain.pairing.pairing_model import Pairing
 from core.dto.base_dto import BaseDTO
 
 

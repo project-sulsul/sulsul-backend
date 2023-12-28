@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from core.domain.feed_model import Feed
+from core.domain.feed.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
 
 

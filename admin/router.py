@@ -10,7 +10,7 @@ from core.util.jwt import build_token
 from core.config.orm_config import transactional
 from admin.model import Admin, AdminSigninModel
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
-from core.domain.pairing_model import Pairing
+from core.domain.pairing.pairing_model import Pairing
 from core.dto.pairing_dto import (
     PairingCreateRequest,
     PairingUpdateRequest,
