@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends
 
 from api.descriptions.pairing_api_descriptions import REQUEST_PAIRING_BY_USER_DESC
 from core.config.orm_config import transactional, read_only
-from core.domain.pairing.pairing_model import Pairing, PairingRequest
+from core.domain.pairing.pairing_model import Pairing
+from core.domain.pairing.pairing_request_model import PairingRequest
 from core.dto.pairing_dto import PairingListResponse
 from core.dto.pairing_dto import PairingResponse
 from core.dto.pairing_dto import (
@@ -35,7 +36,7 @@ async def get_pairings(type: PairingSearchType):
     response_model=PairingResponse,
 )
 async def get_pairing_by_id(pairing_id: int):
-    pairing = Pairing.get_by_id(pairing_id)
+    pairing = Pairing.get_or_raise(pairing_id)
     return PairingResponse.from_orm(pairing)
 
 
