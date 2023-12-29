@@ -50,9 +50,24 @@ db.create_tables(models)
 from core.domain.user.user_model import User
 
 user_data = [
-    {"uid": "ahdwjdtprtm@gmail.com", "social_type": "google", "nickname": "user1"},
-    {"uid": "iee785@daum.net", "social_type": "kakao", "nickname": "user2"},
-    {"uid": "tmlee@pluszero.co.kr", "social_type": "google", "nickname": "user3"},
+    {
+        "uid": "ahdwjdtprtm@gmail.com",
+        "social_type": "google",
+        "nickname": "user1",
+        "device_type": "IOS",
+    },
+    {
+        "uid": "iee785@daum.net",
+        "social_type": "kakao",
+        "nickname": "user2",
+        "device_type": "IOS",
+    },
+    {
+        "uid": "tmlee@pluszero.co.kr",
+        "social_type": "google",
+        "nickname": "user3",
+        "device_type": "IOS",
+    },
 ]
 User.bulk_create([User(**data) for data in user_data])
 

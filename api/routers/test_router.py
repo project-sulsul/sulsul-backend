@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
+from fastapi_events.dispatcher import dispatch
 
 from ai.inference import classify
 from api.config.exceptions import ForbiddenException
@@ -9,6 +10,7 @@ from core.config.orm_config import transactional
 from core.config.var_config import IS_PROD
 from core.domain.user.user_model import User
 from core.dto.auth_dto import TokenResponse
+from core.event.events import CommentEvents, CreateCommentPayload
 from core.util.jwt import build_token
 
 router = APIRouter(prefix="/test", tags=["테스트용 API"])
@@ -47,3 +49,13 @@ async def get_inference_from_image(img_url: str):
 @router.post("/error")
 async def occur_unexpected_error(test_params: Optional[str] = None):
     raise Exception("Unexpected Error")
+
+
+@router.post("/push")
+async def send_push_notification():
+    payload = CreateCommentPayload(
+        comment_id=1,
+        feed_owner_user_id=1,
+        comment_writer_user_id=1,
+    )
+    dispatch(CommentEvents.CREATE_COMMENT, payload.model_dump())
