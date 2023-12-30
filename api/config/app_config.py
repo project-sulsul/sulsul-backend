@@ -1,6 +1,8 @@
 import os
 import importlib
 
+from fastapi_events.handlers.local import local_handler
+from fastapi_events.middleware import EventHandlerASGIMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi import Request
 from fastapi.responses import RedirectResponse, FileResponse
@@ -14,19 +16,19 @@ import logging
 
 # Routers
 from admin.router import router as admim_router
+from core.event.push_event_handler import handle_create_comment_send_push_handler
 
 app.include_router(admim_router)
 
 for filename in os.listdir("api/routers"):
     if "_router.py" not in filename:
         continue
-    if filename == "test_router.py" and IS_PROD:
-        continue
+    # if filename == "test_router.py" and IS_PROD:
+    #     continue
 
     module = importlib.import_module("api.routers." + filename.split(".")[0])
     if hasattr(module, "router"):
         app.include_router(module.router)
-
 
 # Middlewares
 app.add_middleware(
@@ -38,6 +40,7 @@ app.add_middleware(
     allowed_cidrs=[],
 )
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
+app.add_middleware(EventHandlerASGIMiddleware, handlers=[local_handler])
 
 
 @app.on_event("startup")
@@ -58,7 +61,6 @@ async def redirect_to_docs(request: Request):
 
 # Exception handlers
 from api.config import exception_handler
-
 
 # static path config
 app.mount("/static", StaticFiles(directory="admin/static"), name="static")

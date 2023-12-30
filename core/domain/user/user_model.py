@@ -11,6 +11,8 @@ class User(BaseEntity):
     image = peewee.CharField(null=True, default=None)
     preference = BinaryJSONField(default={})
     status = peewee.CharField(max_length=10, default="active")
+    device_type = peewee.CharField(null=True)
+    push_token = peewee.CharField(null=True)
 
     class Meta:
         table_name = "user"
