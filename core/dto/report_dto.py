@@ -17,11 +17,5 @@ class ReportRegisterResponse(BaseModel):
     reason: str
 
     @classmethod
-    def from_orm(cls, entity: Report):
-        return ReportRegisterResponse(
-            id=entity.id,
-            type=entity.type,
-            reporter_id=entity.reporter.id,
-            target_id=entity.target_id,
-            reason=entity.reason,
-        )
+    def of(cls, report: Report):
+        return ReportRegisterResponse(reporter_id=report.reporter.id, **report.__data__)

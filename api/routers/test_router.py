@@ -1,16 +1,15 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi_events.dispatcher import dispatch
 
 from ai.inference import classify
-from api.config.exceptions import ForbiddenException
 from core.config.orm_config import transactional
-from core.config.var_config import IS_PROD
 from core.domain.user.user_model import User
 from core.dto.auth_dto import TokenResponse
 from core.event.events import CommentEvents, CreateCommentPayload
+from core.util.file_util import upload_file_to_s3
 from core.util.jwt import build_token
 
 router = APIRouter(prefix="/test", tags=["테스트용 API"])
@@ -41,9 +40,10 @@ async def get_jwt_for_test(user_id: int):
     )
 
 
-@router.get("/ai")
-async def get_inference_from_image(img_url: str):
-    return classify(img_url)
+@router.post("/ai")
+async def get_inference_from_image(image: UploadFile):
+    url = upload_file_to_s3(image, "images")
+    return classify(url)
 
 
 @router.post("/error")

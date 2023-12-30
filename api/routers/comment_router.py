@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
 from api.config.middleware import auth, auth_required
+from api.descriptions.responses_dict import NOT_FOUND_RESPONSE, UNAUTHORIZED_RESPONSE
 from core.config.orm_config import read_only, transactional
 from core.domain.comment.comment_model import Comment
 from core.domain.feed.feed_model import Feed
@@ -28,6 +29,7 @@ router = APIRouter(
     "",
     dependencies=[Depends(transactional)],
     response_model=CommentResponse,
+    responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
 @auth_required
 async def create_comment(
@@ -52,6 +54,7 @@ async def create_comment(
     "/{comment_id}",
     dependencies=[Depends(transactional)],
     response_model=CommentResponse,
+    responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
 @auth_required
 async def update_comment(
@@ -75,6 +78,7 @@ async def update_comment(
     "/{comment_id}",
     dependencies=[Depends(transactional)],
     response_model=CommentResponse,
+    responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
 @auth_required
 async def soft_delete_comment(request: Request, feed_id: int, comment_id: int):

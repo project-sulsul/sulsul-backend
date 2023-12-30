@@ -5,6 +5,21 @@ from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
 from api.config.middleware import auth, auth_required
+from api.descriptions.feed_api_descriptions import (
+    GET_RELATED_FEEDS_DESC,
+    DELETE_FEED_DESC,
+    GET_RANDOM_FEEDS_DESC,
+    GET_FEEDS_LIKED_BY_ME_DESC,
+    GET_FEEDS_BY_ME_DESC,
+    CLASSIFY_IMAGE_DESC,
+    CREATE_FEED_DESC,
+    GET_FEED_DESC,
+)
+from api.descriptions.responses_dict import (
+    UNAUTHORIZED_RESPONSE,
+    NOT_FOUND_RESPONSE,
+    FORBIDDEN_RESPONSE,
+)
 from core.config.orm_config import transactional, read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
 from core.domain.comment.comment_model import Comment
@@ -37,6 +52,7 @@ router = APIRouter(
 @router.post(
     "/classifications",
     response_model=ClassificationResultDto,
+    description=CLASSIFY_IMAGE_DESC,
 )
 async def classify_image_by_ai(image_url: str):
     return classify(image_url)
@@ -46,6 +62,8 @@ async def classify_image_by_ai(image_url: str):
     "/by-me",
     dependencies=[Depends(read_only)],
     response_model=CursorPageResponse,
+    description=GET_FEEDS_BY_ME_DESC,
+    responses=UNAUTHORIZED_RESPONSE,
 )
 @auth_required
 async def get_all_my_feeds(
@@ -59,6 +77,8 @@ async def get_all_my_feeds(
     "/liked-by-me",
     dependencies=[Depends(read_only)],
     response_model=CursorPageResponse,
+    description=GET_FEEDS_LIKED_BY_ME_DESC,
+    responses=UNAUTHORIZED_RESPONSE,
 )
 @auth_required
 async def get_all_liked_feeds_by_me(
@@ -74,6 +94,7 @@ async def get_all_liked_feeds_by_me(
     "/random",
     dependencies=[Depends(read_only)],
     response_model=RandomFeedListResponse,
+    description=GET_RANDOM_FEEDS_DESC,
 )
 @auth
 async def get_random_feeds(
@@ -92,6 +113,8 @@ async def get_random_feeds(
     "/{feed_id}",
     dependencies=[Depends(read_only)],
     response_model=FeedResponse,
+    description=GET_FEED_DESC,
+    responses=NOT_FOUND_RESPONSE,
 )
 @auth
 async def get_feed_by_id(request: Request, feed_id: int):
@@ -118,6 +141,8 @@ async def get_feed_by_id(request: Request, feed_id: int):
     "/{feed_id}/related-feeds",
     dependencies=[Depends(read_only)],
     response_model=CursorPageResponse,
+    description=GET_RELATED_FEEDS_DESC,
+    responses=NOT_FOUND_RESPONSE,
 )
 @auth
 async def get_related_feeds(
@@ -134,6 +159,8 @@ async def get_related_feeds(
     "",
     dependencies=[Depends(transactional)],
     response_model=FeedResponse,
+    description=CREATE_FEED_DESC,
+    responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
 @auth_required
 async def create_feed(request: Request, request_body: FeedCreateRequest):
@@ -155,6 +182,7 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
     "/{feed_id}",
     dependencies=[Depends(transactional)],
     response_model=FeedResponse,
+    deprecated=True,
 )
 # TODO
 async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRequest):
@@ -170,6 +198,8 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
     "/{feed_id}",
     dependencies=[Depends(transactional)],
     response_model=FeedSoftDeleteResponse,
+    description=DELETE_FEED_DESC,
+    responses={**UNAUTHORIZED_RESPONSE, **NOT_FOUND_RESPONSE, **FORBIDDEN_RESPONSE},
 )
 @auth_required
 async def soft_delete_feed(request: Request, feed_id: int):

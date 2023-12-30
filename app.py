@@ -3,16 +3,11 @@ from core.config.var_config import IS_PROD
 
 app_desc = f"""
 ### 술술 REST API 문서입니다  
-열심히 개발중이에요  
+*로그인 필수*라고 붙은 것은 jwt 토큰이 없으면 401 에러가 납니다.
 
-**대충 진행상황**
-- 회원가입 플로우에 있는 '없는 안주 등록 요청' api 추가 > GET /pairings/requests
-- 피드 검색 api 추가 but, mvp 검색은 pairing 검색이므로 일단 사용 x
-- 이미지 업로드 api 추가 (S3에 저장 됩니다.) > POST /files/upload
-
-
-**몇가지 사용법**
+**몇 가지 사용법**
 - 로그인이 필요한 API는 '<token_type> <access_token>' 형태의 값을 Authorization 헤더에 포함하여 요청합니다.
+- 테스트용 API 중 jwt를 사용하면 개발용 jwt를 발급받을 수 있습니다. (user_id: 1)
 
 [**관리자 페이지**]({'http://sulsul-env.eba-gvmvk4bq.ap-northeast-2.elasticbeanstalk.com/admin' if IS_PROD else 'http://localhost:8000/admin'})
 """
