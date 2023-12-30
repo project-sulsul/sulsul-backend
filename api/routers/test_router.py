@@ -22,10 +22,10 @@ router = APIRouter(prefix="/test", tags=["테스트용 API"])
     response_model=TokenResponse,
 )
 async def get_jwt_for_test(user_id: int):
-    if IS_PROD:
-        raise ForbiddenException(
-            "This API is only available in development environment"
-        )
+    # if IS_PROD:
+    #     raise ForbiddenException(
+    #         "This API is only available in development environment"
+    #     )
 
     user = User.get_by_id(user_id)
 
