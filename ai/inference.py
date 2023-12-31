@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from ai.dataset import Padding
 from ai.quantize import ptq_serving, qat_serving
-from torch import no_grad, Tensor
+from torch import no_grad, Tensor, sigmoid
 from torch.nn import Module
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 
@@ -81,7 +81,7 @@ def inference(src: Tensor, model: Module, threshold: float = 0.5) -> Dict:
     result_list = {"foods": [], "alcohols": []}
     with no_grad():
         outputs = model(src)
-        result = outputs[0].detach().numpy()
+        result = sigmoid(outputs[0]).detach().numpy()
         indices = np.where(result > threshold)[0]
 
         food_indices = indices[indices <= 24]
@@ -103,6 +103,11 @@ def load_model(
         from ai.models.resnet import resnet18
 
         model = resnet18(num_classes=num_classes, pre_trained=False, quantize=q)
+
+    elif model_name == "resnet34":
+        from ai.models.resnet import resnet34
+
+        model = resnet34(num_classes=num_classes, pre_trained=False, quantize=q)
 
     elif model_name == "resnet50":
         from ai.models.resnet import resnet50
