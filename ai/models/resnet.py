@@ -317,6 +317,26 @@ def resnet18(
     return resnet18
 
 
+def resnet34(
+    num_classes: int = 39, pre_trained: bool = True, quantize: bool = False
+) -> ResNet:
+    resnet34 = ResNet(
+        block=BasicBlock,
+        layers=[3, 4, 6, 3],
+        num_classes=1000 if pre_trained else num_classes,
+        quantize=quantize,
+    )
+
+    if pre_trained:
+        pretrained_model = models.resnet34(
+            weights=models.ResNet34_Weights.IMAGENET1K_V1
+        )
+        resnet34.load_state_dict(pretrained_model.state_dict())
+        resnet34.fc = nn.Linear(resnet34.fc.in_features, num_classes, bias=True)
+
+    return resnet34
+
+
 def resnet50(
     num_classes: int = 39, pre_trained: bool = True, quantize: bool = False
 ) -> ResNet:
