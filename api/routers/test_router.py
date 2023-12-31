@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional
 
 from fastapi import APIRouter, Depends, status, UploadFile
@@ -40,10 +41,17 @@ async def get_jwt_for_test(user_id: int):
     )
 
 
+class AiModel(Enum):
+    RESNET_18 = "resnet18"
+    RESNET_34 = "resnet34"
+    RESNET_50 = "resnet50"
+
+
 @router.post("/ai")
-async def get_inference_from_image(image: UploadFile):
+async def get_inference_from_image(image: UploadFile, model_name: AiModel):
     url = upload_file_to_s3(image, "images")
-    return classify(url)
+    weight_file_path = f"ai/weights/{model_name.value}_qat.pt"
+    return classify(url, weight_file_path=weight_file_path, model_name=model_name.value)
 
 
 @router.post("/error")
