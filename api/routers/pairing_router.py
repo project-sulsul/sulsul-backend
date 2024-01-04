@@ -47,5 +47,21 @@ async def get_pairing_by_id(pairing_id: int):
     description=REQUEST_PAIRING_BY_USER_DESC,
 )
 async def save_pairing_request_by_user(request_body: PairingRequestByUserRequest):
-    pairing_request = PairingRequest.create(**request_body.model_dump())
+    found_pairing_requests = list(
+        PairingRequest.select()
+        .where(
+            PairingRequest.subtype == request_body.subtype,
+            PairingRequest.name == request_body.name,
+            PairingRequest.is_deleted == False,
+        )
+        .execute()
+    )
+
+    if found_pairing_requests:
+        pairing_request = found_pairing_requests[0]
+        pairing_request.requested_count += 1
+        pairing_request.save()
+    else:
+        pairing_request = PairingRequest.create(**request_body.model_dump())
+
     return PairingRequestByUserResponse.from_orm(pairing_request)

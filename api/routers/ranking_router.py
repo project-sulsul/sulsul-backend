@@ -1,9 +1,13 @@
+from datetime import datetime, timedelta
+
 from fastapi import APIRouter, Depends, Request
+from peewee import fn
 
 from api.config.middleware import auth_required, auth
 from api.descriptions.ranking_api_descriptions import GET_TAGS_RELATED_FEEDS_DESC
 from core.config.orm_config import read_only
-from core.config.var_config import DEFAULT_PAGE_SIZE
+from core.config.var_config import DEFAULT_PAGE_SIZE, KST
+from core.domain.feed.feed_model import Feed
 from core.domain.combination import combination_query_function
 from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_classify_tags,
@@ -42,7 +46,20 @@ async def get_combination_ranking(request: Request, order_by_popular: bool = Tru
 )
 @auth_required
 async def get_alcohol_ranking(request: Request):
-    return
+    # 이번 주 기간(금~목)
+    today = datetime.now(KST).replace(hour=0, minute=0, second=0, microsecond=0)
+    start = today - timedelta(days=today.weekday() + 3)
+    end = start + timedelta(days=7)
+
+    query = (
+        Feed.select(
+            fn.unnest(Feed.classify_tags).alias("tag"),
+            fn.count(Feed.id).alias("tag_count"),
+        )
+        .where(Feed.created_at.between(lo=start, hi=end))
+        .group_by(fn.unnest(Feed.classify_tags).alias("tag"))
+    )
+    return {record.tag: record.tag_count for record in query.execute()}
 
 
 @router.get(

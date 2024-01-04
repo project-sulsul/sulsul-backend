@@ -6,7 +6,11 @@ from fastapi import UploadFile, HTTPException
 from starlette import status
 
 from core.client.aws_client import S3Client
-from core.config.var_config import S3_BUCKET_NAME, MAX_UPLOAD_FILE_MIB_SIZE, MAX_UPLOAD_FILE_BYTE_SIZE
+from core.config.var_config import (
+    S3_BUCKET_NAME,
+    MAX_UPLOAD_FILE_MIB_SIZE,
+    MAX_UPLOAD_FILE_BYTE_SIZE,
+)
 
 directories = ["images"]
 
@@ -20,8 +24,8 @@ def upload_file_to_s3(file: UploadFile, directory: str) -> str:
         )
     if file.size > MAX_UPLOAD_FILE_BYTE_SIZE:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail=f"File size must be less than {MAX_UPLOAD_FILE_MIB_SIZE}MiB"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File size must be less than {MAX_UPLOAD_FILE_MIB_SIZE}MiB",
         )
 
     filename = f"{str(uuid.uuid4())}.jpg"

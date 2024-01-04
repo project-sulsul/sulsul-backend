@@ -47,17 +47,27 @@ class AiModel(Enum):
     RESNET_50 = "resnet50"
 
 
-@router.post("/ai", description="""
+@router.post(
+    "/ai",
+    description="""
 AI 모델 성능 테스트용 API (측정 완료되면 삭제 예정)
 모델을 바꿔가면서 성능 측정 부탁드립니다! 최대한 직접 찍은 사진이면 좋아요 ㅎㅎ 현재로써는 34모델이 성능이 젤 좋습니다.
 
 - threshold : 0.5 디폴트로 이 값을 변경함으로써 성능을 또 다르게 측정할 수 있어요. 요 값도 요리조리 변경해보시면서 측정 해주시면 감사드립니다! (0~1 사이값)
 - 이미지가 실제로 클라우드에 올라가서, 이상한 사진은 올리지 말아주세용 !
-""")
-async def get_inference_from_image(image: UploadFile, model_name: AiModel, threshold: float = 0.5):
+""",
+)
+async def get_inference_from_image(
+    image: UploadFile, model_name: AiModel, threshold: float = 0.5
+):
     url = upload_file_to_s3(image, "images")
     weight_file_path = f"ai/weights/{model_name.value}_qat.pt"
-    return classify(url, weight_file_path=weight_file_path, model_name=model_name.value, threshold=threshold)
+    return classify(
+        url,
+        weight_file_path=weight_file_path,
+        model_name=model_name.value,
+        threshold=threshold,
+    )
 
 
 @router.post("/error")
