@@ -1,6 +1,9 @@
+from enum import Enum
+
 from fastapi import UploadFile, APIRouter
 from starlette.responses import JSONResponse
 
+from api.descriptions.file_api_descriptions import UPLOAD_FILE_DESC
 from core.util.file_util import upload_file_to_s3
 
 router = APIRouter(
@@ -8,10 +11,12 @@ router = APIRouter(
     tags=["File (이미지 업로드)"],
 )
 
-directories = ["images"]
+
+class FileDirectory(Enum):
+    IMAGES = "images"
 
 
-@router.post("/upload")
-async def upload(file: UploadFile, directory: str):
-    url = upload_file_to_s3(file, directory)
+@router.post("/upload", description=UPLOAD_FILE_DESC)
+async def upload(file: UploadFile, directory: FileDirectory):
+    url = upload_file_to_s3(file, directory.value)
     return JSONResponse(content={"url": url})
