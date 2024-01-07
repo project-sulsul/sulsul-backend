@@ -110,14 +110,14 @@ async def get_random_feeds(
 
 @router.get(
     "/{feed_id}",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(transactional)],  # 조회수 증가 처리
     response_model=FeedResponse,
     description=GET_FEED_DESC,
     responses=NOT_FOUND_RESPONSE,
 )
 @auth
 async def get_feed_by_id(request: Request, feed_id: int):
-    login_user = User.get_or_raise(get_login_user_id(request))
+    login_user = User.get_or_none(get_login_user_id(request))
     feed = Feed.get_or_raise(feed_id)
     likes = FeedLike.select().where(FeedLike.feed == feed)
     comments_count = (
@@ -125,6 +125,8 @@ async def get_feed_by_id(request: Request, feed_id: int):
         .where(Comment.feed == feed, Comment.is_deleted == False)
         .count()
     )
+
+    feed.add_view_count()
 
     return FeedResponse.of(
         feed=feed,
