@@ -6,7 +6,11 @@ from fastapi import status, Request, HTTPException
 from fastapi.responses import JSONResponse
 from peewee import DoesNotExist
 
-from api.config.exceptions import ForbiddenException, NotFoundException
+from api.config.exceptions import (
+    ForbiddenException,
+    NotFoundException,
+    UnauthorizedException,
+)
 from app import app
 from core.util.logger import logger
 from core.util.slack import send_slack_message
@@ -84,6 +88,17 @@ async def handle_forbidden_exception(request: Request, exc: ForbiddenException):
 async def handle_not_found_exception(request: Request, exc: NotFoundException):
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
+        content={
+            "error": f"{exc.__class__.__name__}",
+            "message": exc.detail,
+        },
+    )
+
+
+@app.exception_handler(UnauthorizedException)
+async def handle_unauthorized_exception(request: Request, exc: UnauthorizedException):
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
         content={
             "error": f"{exc.__class__.__name__}",
             "message": exc.detail,

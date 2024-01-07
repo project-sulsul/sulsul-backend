@@ -3,7 +3,6 @@ from typing import List
 from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
-from api.config.middleware import auth, auth_required
 from api.descriptions.responses_dict import NOT_FOUND_RESPONSE, UNAUTHORIZED_RESPONSE
 from core.config.orm_config import read_only, transactional
 from core.domain.comment.comment_model import Comment
@@ -16,7 +15,7 @@ from core.dto.comment_dto import (
     CommentUpdateRequest,
     CommentDto,
 )
-from core.util.auth_util import get_login_user_id
+from core.util.auth_util import get_login_user_id, AuthRequired, AuthOptional
 from core.util.comment_util import CommentBuilder
 
 router = APIRouter(
@@ -27,11 +26,10 @@ router = APIRouter(
 
 @router.post(
     "",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=CommentResponse,
     responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
-@auth_required
 async def create_comment(
     request: Request, feed_id: int, request_body: CommentCreateRequest
 ):
@@ -52,11 +50,10 @@ async def create_comment(
 
 @router.put(
     "/{comment_id}",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=CommentResponse,
     responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
-@auth_required
 async def update_comment(
     request: Request, feed_id: int, comment_id: int, request_body: CommentUpdateRequest
 ):
@@ -76,11 +73,10 @@ async def update_comment(
 
 @router.delete(
     "/{comment_id}",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=CommentResponse,
     responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
-@auth_required
 async def soft_delete_comment(request: Request, feed_id: int, comment_id: int):
     Feed.get_or_raise(feed_id)
 
@@ -97,10 +93,9 @@ async def soft_delete_comment(request: Request, feed_id: int, comment_id: int):
 
 @router.get(
     "",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=CommentListResponse,
 )
-@auth
 async def get_all_comments_of_feed(request: Request, feed_id: int):
     comments: List[CommentDto] = (
         Comment.select(Comment, User)
