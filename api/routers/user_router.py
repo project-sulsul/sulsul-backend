@@ -14,6 +14,7 @@ from core.dto.user_dto import NicknameValidationResponse
 from core.dto.user_dto import UserNicknameUpdateRequest
 from core.dto.user_dto import UserPreferenceUpdateRequest
 from core.dto.user_dto import UserResponse
+from core.util.auth_util import AuthRequired
 
 router = APIRouter(
     prefix="/users",
@@ -23,11 +24,10 @@ router = APIRouter(
 
 @router.get(
     "/nickname",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=NicknameResponse,
     description=GENERATE_RANDOM_NICKNAME_DESC,
 )
-@auth_required
 async def generate_random_nickname(request: Request):
     nicknames = NicknameGeneratorClient.generate_random_nickname()
     for nickname in nicknames:
@@ -58,11 +58,10 @@ async def get_user_by_id(user_id: int):
 
 @router.get(
     "/validation",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthRequired())],
     response_model=NicknameValidationResponse,
     description=VALIDATE_USER_NICKNAME_DESC,
 )
-@auth_required
 async def validate_user_nickname(request: Request, nickname: str):
     if len(nickname) > USER_NICKNAME_MAX_LENGTH:
         return JSONResponse(
@@ -93,11 +92,10 @@ async def validate_user_nickname(request: Request, nickname: str):
 
 @router.put(
     "/{user_id}/nickname",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=UserResponse,
     description=UPDATE_USER_NICKNAME_DESC,
 )
-@auth_required
 async def update_user_nickname(
     request: Request, user_id: int, form: UserNicknameUpdateRequest
 ):
@@ -112,11 +110,10 @@ async def update_user_nickname(
 
 @router.put(
     "/{user_id}/image",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=UserResponse,
     description=UPDATE_USER_IMAGE_DESC,
 )
-@auth_required
 async def update_user_image(request: Request, user_id: int, image_url: str):
     login_user: User = User.get_by_id(request.state.token_info["id"])
     if login_user.id != user_id:
@@ -130,11 +127,10 @@ async def update_user_image(request: Request, user_id: int, image_url: str):
 
 @router.put(
     "/{user_id}/preference",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=UserResponse,
     description=UPDATE_USER_PREFERENCE_DESC,
 )
-@auth_required
 async def update_user_preference(
     request: Request, user_id: int, form: UserPreferenceUpdateRequest
 ):
@@ -147,8 +143,9 @@ async def update_user_preference(
     return UserResponse.from_orm(login_user)
 
 
-@router.delete("/{user_id}", dependencies=[Depends(transactional)])
-@auth_required
+@router.delete(
+    "/{user_id}", dependencies=[Depends(transactional), Depends(AuthRequired())]
+)
 async def delete_user(request: Request, user_id: int):
     login_user = User.get_by_id(request.state.token_info["id"])
     if login_user.id != user_id:

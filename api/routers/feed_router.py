@@ -65,12 +65,11 @@ async def classify_image_by_ai(image_url: str):
 
 @router.get(
     "/by-me",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthRequired())],
     response_model=CursorPageResponse,
     description=GET_FEEDS_BY_ME_DESC,
     responses=UNAUTHORIZED_RESPONSE,
 )
-@auth_required
 async def get_all_my_feeds(
     request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
@@ -80,12 +79,11 @@ async def get_all_my_feeds(
 
 @router.get(
     "/liked-by-me",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthRequired())],
     response_model=CursorPageResponse,
     description=GET_FEEDS_LIKED_BY_ME_DESC,
     responses=UNAUTHORIZED_RESPONSE,
 )
-@auth_required
 async def get_all_liked_feeds_by_me(
     request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
@@ -97,11 +95,10 @@ async def get_all_liked_feeds_by_me(
 
 @router.get(
     "/random",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=RandomFeedListResponse,
     description=GET_RANDOM_FEEDS_DESC,
 )
-@auth
 async def get_random_feeds(
     request: Request,
     exclude_feed_ids: str = "",  # separated by comma ex. 1,2,3
@@ -116,12 +113,11 @@ async def get_random_feeds(
 
 @router.get(
     "/{feed_id}",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=FeedResponse,
     description=GET_FEED_DESC,
     responses=NOT_FOUND_RESPONSE,
 )
-@auth
 async def get_feed_by_id(request: Request, feed_id: int):
     login_user = User.get_or_raise(get_login_user_id(request))
     feed = Feed.get_or_raise(feed_id)
@@ -149,7 +145,6 @@ async def get_feed_by_id(request: Request, feed_id: int):
     description=GET_RELATED_FEEDS_DESC,
     responses=NOT_FOUND_RESPONSE,
 )
-# @auth
 async def get_related_feeds(
     request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
@@ -167,7 +162,6 @@ async def get_related_feeds(
     description=CREATE_FEED_DESC,
     responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
-# @auth_required
 async def create_feed(request: Request, request_body: FeedCreateRequest):
     login_user = User.get_or_raise(get_login_user_id(request))
     feed = Feed.create(
@@ -201,12 +195,11 @@ async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRe
 
 @router.delete(
     "/{feed_id}",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=FeedSoftDeleteResponse,
     description=DELETE_FEED_DESC,
     responses={**UNAUTHORIZED_RESPONSE, **NOT_FOUND_RESPONSE, **FORBIDDEN_RESPONSE},
 )
-@auth_required
 async def soft_delete_feed(request: Request, feed_id: int):
     feed: Feed = Feed.get_or_raise(feed_id)
     feed.check_if_owner(get_login_user_id(request))
