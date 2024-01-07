@@ -183,7 +183,6 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
     response_model=FeedResponse,
     description=UPDATE_FEED_DESC,
 )
-@auth_required
 async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRequest):
     login_user_id = get_login_user_id(request)
     feed = Feed.get_or_raise(feed_id)
