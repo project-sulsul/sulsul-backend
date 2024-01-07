@@ -59,7 +59,10 @@ class FeedResponse(BaseModel):
 
 
 class FeedUpdateRequest(BaseModel):
-    content: str
+    title: Optional[str]
+    content: Optional[str]
+    images: Optional[List[str]]
+    user_tags: Optional[List[str]]
 
 
 class FeedSearchResultResponse(BaseModel):
