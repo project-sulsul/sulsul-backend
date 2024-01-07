@@ -44,7 +44,7 @@ from core.util.auth_util import (
     AuthRequired,
     AuthOptional,
 )
-from core.util.feed_util import FeedResponseBuilder
+from core.util.feed_util import FeedResponseBuilder, parse_user_tags
 
 router = APIRouter(
     prefix="/feeds",
@@ -172,7 +172,7 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
         images=request_body.images,
         score=request_body.score,
         classify_tags=request_body.classify_tags,
-        user_tags=request_body.user_tags,
+        user_tags=parse_user_tags(request_body.user_tags_raw_string),
     )
     return FeedResponse.from_orm(feed).model_dump()
 

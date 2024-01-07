@@ -27,3 +27,15 @@ class FeedResponseBuilder:
             size=size,
             is_last=len(feeds_response) < size,
         )
+
+
+def parse_user_tags(user_tags_raw_string: Optional[str]) -> Optional[List[str]]:
+    if user_tags_raw_string is None:
+        return None
+
+    user_tags = []
+    for tag in user_tags_raw_string.split(" "):
+        if tag.startswith("#"):
+            user_tags.append(tag)
+
+    return user_tags if len(user_tags) != 0 else None

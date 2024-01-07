@@ -13,7 +13,7 @@ class FeedCreateRequest(BaseModel):
     represent_image: str
     images: List[str]
     classify_tags: List[str]
-    user_tags: Optional[List[str]]
+    user_tags_raw_string: Optional[str]
     score: float
 
 
