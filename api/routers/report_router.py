@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request, Depends
 
-from api.config.middleware import auth_required
 from api.descriptions.report_api_descriptions import REGISTER_REPORT_DESC
 from api.descriptions.responses_dict import UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE
 from core.config.orm_config import transactional

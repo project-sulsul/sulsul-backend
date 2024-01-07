@@ -107,6 +107,7 @@ forbidden_response = JSONResponse(
 )
 
 
+# TODO : deprecated
 def auth(call_next: RequestResponseEndpoint):
     """
     사용자 로그인 정보를 request.state.token_info에 바인딩 하기 위한 미들웨어
@@ -145,6 +146,7 @@ def auth(call_next: RequestResponseEndpoint):
     return wrapper
 
 
+# TODO : deprecated
 def auth_required(call_next: RequestResponseEndpoint):
     @wraps(call_next)
     async def wrapper(*args, **kwargs):

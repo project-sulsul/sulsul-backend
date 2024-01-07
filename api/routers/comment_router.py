@@ -3,7 +3,6 @@ from typing import List
 from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
-from api.config.middleware import auth, auth_required
 from api.descriptions.responses_dict import NOT_FOUND_RESPONSE, UNAUTHORIZED_RESPONSE
 from core.config.orm_config import read_only, transactional
 from core.domain.comment.comment_model import Comment

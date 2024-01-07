@@ -4,7 +4,6 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
-from api.config.middleware import auth, auth_required
 from api.descriptions.feed_api_descriptions import (
     GET_RELATED_FEEDS_DESC,
     DELETE_FEED_DESC,

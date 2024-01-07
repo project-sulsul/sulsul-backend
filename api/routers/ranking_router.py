@@ -3,18 +3,17 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, Request
 from peewee import fn
 
-from api.config.middleware import auth_required, auth
 from api.descriptions.ranking_api_descriptions import GET_TAGS_RELATED_FEEDS_DESC
 from core.config.orm_config import read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE, KST
-from core.domain.feed.feed_model import Feed
 from core.domain.combination import combination_query_function
+from core.domain.feed.feed_model import Feed
 from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_classify_tags,
 )
 from core.dto.combination_dto import CombinationResponse, CombinationListResponse
 from core.dto.page_dto import CursorPageResponse
-from core.util.auth_util import get_login_user_or_none
+from core.util.auth_util import get_login_user_or_none, AuthRequired, AuthOptional
 from core.util.feed_util import FeedResponseBuilder
 
 router = APIRouter(
@@ -25,10 +24,9 @@ router = APIRouter(
 
 @router.get(
     path="/combinations",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthRequired())],
     response_model=CombinationListResponse,
 )
-@auth_required
 async def get_combination_ranking(request: Request, order_by_popular: bool = True):
     combinations = [
         CombinationResponse(**record)
@@ -41,10 +39,9 @@ async def get_combination_ranking(request: Request, order_by_popular: bool = Tru
 
 @router.get(
     path="/alcohol",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthRequired())],
     # response_model=
 )
-@auth_required
 async def get_alcohol_ranking(request: Request):
     # 이번 주 기간(금~목)
     today = datetime.now(KST).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -64,11 +61,10 @@ async def get_alcohol_ranking(request: Request):
 
 @router.get(
     path="/related-feeds",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=CursorPageResponse,
     description=GET_TAGS_RELATED_FEEDS_DESC,
 )
-@auth
 async def get_related_feeds_by_classify_tags(
     request: Request,
     tags: str,  # comma separated tags

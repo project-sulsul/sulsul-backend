@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, Request, status, HTTPException
 from fastapi.responses import JSONResponse
 from peewee import DoesNotExist
 
-from api.config.middleware import auth_required
 from api.descriptions.user_api_descriptions import *
 from core.client.nickname_generator_client import NicknameGeneratorClient
 from core.config.orm_config import transactional, read_only
