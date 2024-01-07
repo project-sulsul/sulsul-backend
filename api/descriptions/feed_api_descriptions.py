@@ -11,9 +11,18 @@ CREATE_FEED_DESC = """
 피드 생성
 *로그인 필수*
 
-- represent_image : 피드 대표 이미지 url을 images 중 하나로 넣어주세요
+- represent_image : 피드 대표 이미지 url
+- images : 대표이미지를 제외한! 나머지 이미지들 url (받드시 대표이미지는 빼고 넣어야함. 수정할 때 삭제되기 때문)
 - classify_tags : 모델이 추론한 음식 태그입니다. 순서상관없이 넣어주세요
 - user_tags : 유저가 추가적으로 입력한 태그입니다. nullable
+"""
+
+UPDATE_FEED_DESC = """
+피드 수정
+*로그인 필수*
+
+- null로 보내면 수정하지 않고 그대로 유지됩니다.
+- request body에 필드는 포함되어야합니다. (ex. user_tags 수정 X -> user_tags: null로 보내야함 / user_tags를 아예 안 보내면 에러)
 """
 
 GET_FEED_DESC = """

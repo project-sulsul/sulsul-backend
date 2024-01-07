@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends
-from starlette import status
 from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from ai.inference import classify, ClassificationResultDto
 from api.config.middleware import auth, auth_required
@@ -14,6 +12,7 @@ from api.descriptions.feed_api_descriptions import (
     CLASSIFY_IMAGE_DESC,
     CREATE_FEED_DESC,
     GET_FEED_DESC,
+    UPDATE_FEED_DESC,
 )
 from api.descriptions.responses_dict import (
     UNAUTHORIZED_RESPONSE,
@@ -182,16 +181,20 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
     "/{feed_id}",
     dependencies=[Depends(transactional)],
     response_model=FeedResponse,
-    deprecated=True,
+    description=UPDATE_FEED_DESC,
 )
-# TODO
+@auth_required
 async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRequest):
+    login_user_id = get_login_user_id(request)
     feed = Feed.get_or_raise(feed_id)
-    feed.content = request_body.content
-    feed.save()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK, content=FeedResponse.from_orm(feed).model_dump()
+    feed.check_if_owner(login_user_id)
+    feed.update_feed(
+        request_body.title,
+        request_body.content,
+        request_body.images,
+        request_body.user_tags,
     )
+    return FeedResponse.from_orm(feed).model_dump()
 
 
 @router.delete(
