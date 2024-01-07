@@ -40,7 +40,12 @@ from core.dto.feed_dto import (
     RandomFeedListResponse,
 )
 from core.dto.page_dto import CursorPageResponse
-from core.util.auth_util import get_login_user_id, get_login_user_or_none
+from core.util.auth_util import (
+    get_login_user_id,
+    get_login_user_or_none,
+    AuthRequired,
+    AuthOptional,
+)
 from core.util.feed_util import FeedResponseBuilder
 
 router = APIRouter(
@@ -139,12 +144,12 @@ async def get_feed_by_id(request: Request, feed_id: int):
 
 @router.get(
     "/{feed_id}/related-feeds",
-    dependencies=[Depends(read_only)],
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=CursorPageResponse,
     description=GET_RELATED_FEEDS_DESC,
     responses=NOT_FOUND_RESPONSE,
 )
-@auth
+# @auth
 async def get_related_feeds(
     request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
@@ -157,12 +162,12 @@ async def get_related_feeds(
 
 @router.post(
     "",
-    dependencies=[Depends(transactional)],
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
     response_model=FeedResponse,
     description=CREATE_FEED_DESC,
     responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
-@auth_required
+# @auth_required
 async def create_feed(request: Request, request_body: FeedCreateRequest):
     login_user = User.get_or_raise(get_login_user_id(request))
     feed = Feed.create(
