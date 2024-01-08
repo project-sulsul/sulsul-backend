@@ -15,8 +15,11 @@ class Feed(BaseEntity):
     score = DoubleField(default=0.0)
     represent_image = CharField(null=False)
     images = ArrayField(CharField, null=False)
-    classify_tags = ArrayField(
-        CharField, null=False
+    alcohol_pairing_ids = ArrayField(
+        IntegerField, null=False
+    )  # 모델이 추론한 or 유저가 보정한 사진에 대한 술,안주 분류 태그
+    food_pairing_ids = ArrayField(
+        IntegerField, null=False
     )  # 모델이 추론한 or 유저가 보정한 사진에 대한 술,안주 분류 태그
     user_tags = ArrayField(CharField, null=True)
     view_count = IntegerField(default=0)

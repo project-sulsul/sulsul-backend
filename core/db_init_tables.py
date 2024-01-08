@@ -78,7 +78,8 @@ feed_data = [
         "user_id": 1,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -89,7 +90,8 @@ feed_data = [
         "user_id": 1,
         "title": "회쏘굳1",
         "content": "회는 굳잡맨 맛나요 짱짱 굳1",
-        "classify_tags": ["회", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
@@ -100,7 +102,8 @@ feed_data = [
         "user_id": 2,
         "title": "회쏘굳2",
         "content": "회는 굳잡맨 맛나요 짱짱 굳2",
-        "classify_tags": ["회", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fb2c56315-9726-4bc4-a7d7-f7d20e303fc1.jpg",
@@ -111,7 +114,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "user_tags": ["삼겹살은_진리지"],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
@@ -123,7 +127,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -134,7 +139,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -145,7 +151,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -156,7 +163,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -167,7 +175,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -178,7 +187,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "user_tags": ["삼겹살은_진리지"],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
@@ -190,7 +200,8 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "classify_tags": ["삼겹살", "소주"],
+        "alcohol_pairing_ids": [1, 2],
+        "food_pairing_ids": [13, 14],
         "user_tags": ["삼겹살은_진리지"],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [

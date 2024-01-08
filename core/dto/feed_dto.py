@@ -12,7 +12,8 @@ class FeedCreateRequest(BaseModel):
     content: str
     represent_image: str
     images: List[str]
-    classify_tags: List[str]
+    alcohol_pairing_ids: List[int]
+    food_pairing_ids: List[int]
     user_tags_raw_string: Optional[str]
     score: float
 
@@ -24,7 +25,8 @@ class FeedResponse(BaseModel):
     content: str
     represent_image: str
     images: List[str]
-    classify_tags: List[str]
+    alcohol_pairing_ids: List[int]
+    food_pairing_ids: List[int]
     user_tags: Optional[List[str]]
     is_liked: bool = False
     view_count: int = 0

@@ -171,7 +171,8 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
         represent_image=request_body.represent_image,
         images=request_body.images,
         score=request_body.score,
-        classify_tags=request_body.classify_tags,
+        alcohol_pairing_ids=sorted(request_body.alcohol_pairing_ids),
+        food_pairing_ids=sorted(request_body.food_pairing_ids),
         user_tags=parse_user_tags(request_body.user_tags_raw_string),
     )
     return FeedResponse.from_orm(feed).model_dump()
