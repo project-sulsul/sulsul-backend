@@ -35,11 +35,12 @@ def fetch_related_feeds_by_classify_tags(
     return (
         Feed.select()
         .where(
-            Feed.classify_tags.contains(tags),
+            Feed.alcohol_pairing_ids.contains(tags),
+            Feed.food_pairing_ids.contains(tags),
             Feed.id > next_feed_id,
             Feed.is_deleted == False,
         )
-        .order_by(Feed.id)
+        .order_by(Feed.id.desc())
         .limit(size)
     )
 

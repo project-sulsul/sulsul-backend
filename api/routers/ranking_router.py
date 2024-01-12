@@ -6,12 +6,14 @@ from peewee import fn
 from api.descriptions.ranking_api_descriptions import GET_TAGS_RELATED_FEEDS_DESC
 from core.config.orm_config import read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE, KST
-from core.domain.combination import combination_query_function
+from core.domain.pairing.pairing_query_function import fetch_pairings_by_multiple_ids
+from core.domain.ranking.ranking_query_function import fetch_like_counts_group_by_combination
 from core.domain.feed.feed_model import Feed
 from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_classify_tags,
 )
-from core.dto.combination_dto import CombinationResponse, CombinationListResponse
+from core.dto.pairing_dto import PairingResponse
+from core.dto.ranking_dto import CombinationRankResponse, CombinationRankingResponse
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import get_login_user_or_none, AuthRequired, AuthOptional
 from core.util.feed_util import FeedResponseBuilder
@@ -24,22 +26,34 @@ router = APIRouter(
 
 @router.get(
     path="/combinations",
-    dependencies=[Depends(read_only), Depends(AuthRequired())],
-    response_model=CombinationListResponse,
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
+    response_model=CombinationRankingResponse,
 )
 async def get_combination_ranking(request: Request, order_by_popular: bool = True):
-    combinations = [
-        CombinationResponse(**record)
-        for record in combination_query_function.fetch_combination_ranking(
-            order_by_popular
-        )
-    ]
-    return CombinationListResponse(combinations=combinations)
+    # TODO 현재는 라이브 쿼리로 가져오나 이후에는 배치에서 랭킹 테이블을 업데이트하고 해당 테이블에 쿼리하는 방식으로 변경
+    data = []
+    pairing_ids = set()
+    for row in fetch_like_counts_group_by_combination(
+        order_by_popular=order_by_popular
+    ): 
+        data.append(row.combined_ids)
+        pairing_ids.update(row.combined_ids)
+    
+    pairings_dict = {pairing.id: pairing for pairing in fetch_pairings_by_multiple_ids(pairing_ids=pairing_ids)}
+
+    ranking_response = CombinationRankingResponse()
+    for idx, pairing_ids in enumerate(data):
+        rank_response = CombinationRankResponse(rank=idx + 1)
+        for pairing_id in pairing_ids:
+            rank_response.pairings.append(PairingResponse.from_orm(pairings_dict[pairing_id]))
+        ranking_response.ranking.append(rank_response)
+    
+    return ranking_response
 
 
 @router.get(
     path="/alcohol",
-    dependencies=[Depends(read_only), Depends(AuthRequired())],
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
     # response_model=
 )
 async def get_alcohol_ranking(request: Request):
