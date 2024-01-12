@@ -4,13 +4,21 @@ from api.descriptions.ranking_api_descriptions import GET_TAGS_RELATED_FEEDS_DES
 from core.config.orm_config import read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
 from core.domain.pairing.pairing_query_function import fetch_pairings_by_multiple_ids
-from core.domain.ranking.ranking_query_function import fetch_like_counts_group_by_combination, fetch_like_counts_group_by_alcohol
+from core.domain.ranking.ranking_query_function import (
+    fetch_like_counts_group_by_combination,
+    fetch_like_counts_group_by_alcohol,
+)
 from core.domain.feed.feed_model import Feed
 from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_classify_tags,
 )
 from core.dto.pairing_dto import PairingResponse
-from core.dto.ranking_dto import CombinationRankResponse, CombinationRankingResponse, AlcoholRankResponse, AlcoholRankingResponse
+from core.dto.ranking_dto import (
+    CombinationRankResponse,
+    CombinationRankingResponse,
+    AlcoholRankResponse,
+    AlcoholRankingResponse,
+)
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import get_login_user_or_none, AuthRequired, AuthOptional
 from core.util.feed_util import FeedResponseBuilder
@@ -32,26 +40,31 @@ async def get_combination_ranking(request: Request, order_by_popular: bool = Tru
     pairing_ids = set()
     for row in fetch_like_counts_group_by_combination(
         order_by_popular=order_by_popular
-    ): 
+    ):
         data.append(row.combined_ids)
         pairing_ids.update(row.combined_ids)
-    
-    pairings_dict = {pairing.id: pairing for pairing in fetch_pairings_by_multiple_ids(pairing_ids=pairing_ids)}
+
+    pairings_dict = {
+        pairing.id: pairing
+        for pairing in fetch_pairings_by_multiple_ids(pairing_ids=pairing_ids)
+    }
 
     ranking_response = CombinationRankingResponse()
     for idx, pairing_ids in enumerate(data):
         rank_response = CombinationRankResponse(rank=idx + 1)
         for pairing_id in pairing_ids:
-            rank_response.pairings.append(PairingResponse.from_orm(pairings_dict[pairing_id]))
+            rank_response.pairings.append(
+                PairingResponse.from_orm(pairings_dict[pairing_id])
+            )
         ranking_response.ranking.append(rank_response)
-    
+
     return ranking_response
 
 
 @router.get(
     path="/alcohol",
     dependencies=[Depends(read_only), Depends(AuthOptional())],
-    response_model=AlcoholRankingResponse
+    response_model=AlcoholRankingResponse,
 )
 async def get_alcohol_ranking(request: Request):
     # 이번 주 기간(금~목)
@@ -63,8 +76,10 @@ async def get_alcohol_ranking(request: Request):
     alcohol_ids = []
     for row in fetch_like_counts_group_by_alcohol():
         alcohol_ids.append(row.alcohol_id)
-    
-    alcohols_dict = {pairing.id: pairing for pairing in fetch_pairings_by_multiple_ids(alcohol_ids)}
+
+    alcohols_dict = {
+        pairing.id: pairing for pairing in fetch_pairings_by_multiple_ids(alcohol_ids)
+    }
 
     ranking_response = AlcoholRankingResponse()
     for idx, alcohol_id in enumerate(alcohol_ids):
