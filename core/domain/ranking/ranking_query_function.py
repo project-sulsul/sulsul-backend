@@ -21,3 +21,22 @@ def fetch_like_counts_group_by_combination(
         .limit(limit)
     )
     return query.execute()
+
+
+def fetch_like_counts_group_by_alcohol():
+    query = (
+        Feed.select(
+            fn.unnest(Feed.alcohol_pairing_ids).alias("alcohol_id"),
+            fn.count(Feed.id).alias("like_count"),
+        )
+        .join(FeedLike, on=(Feed.id == FeedLike.feed_id))
+        .group_by(SQL('alcohol_id'))
+        .order_by(SQL('like_count').desc())
+        # Feed.select(
+        #     fn.unnest(Feed.alcohol_pairing_ids).alias("tag"),
+        #     fn.count(Feed.id).alias("tag_count"),
+        # )
+        # .where(Feed.created_at.between(lo=start, hi=end))
+        # .group_by(fn.unnest(Feed.alcohol_pairing_ids).alias("tag"))
+    )
+    return query.execute()

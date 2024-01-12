@@ -12,3 +12,13 @@ class CombinationRankResponse(BaseModel):
 
 class CombinationRankingResponse(BaseModel):
     ranking: List[CombinationRankResponse] = []
+
+
+class AlcoholRankResponse(BaseModel):
+    rank: int = 1
+    alcohol: PairingResponse
+    description: Optional[str] = None
+
+
+class AlcoholRankingResponse(BaseModel):
+    ranking: List[AlcoholRankResponse] = []
