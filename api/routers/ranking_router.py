@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends, Request
 
-from api.descriptions.ranking_api_descriptions import GET_TAGS_RELATED_FEEDS_DESC
+from api.descriptions.ranking_api_descriptions import (
+    GET_COMBINATION_RANKING_DESC,
+    GET_ALCOHOL_RANKING_DESC,
+    GET_TAGS_RELATED_FEEDS_DESC,
+)
 from core.config.orm_config import read_only
 from core.config.var_config import DEFAULT_PAGE_SIZE
 from core.domain.pairing.pairing_query_function import fetch_pairings_by_multiple_ids
@@ -33,6 +37,7 @@ router = APIRouter(
     path="/combinations",
     dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=CombinationRankingResponse,
+    description=GET_COMBINATION_RANKING_DESC,
 )
 async def get_combination_ranking(request: Request, order_by_popular: bool = True):
     # TODO 현재는 라이브 쿼리로 가져오나 이후에는 배치에서 랭킹 테이블을 업데이트하고 해당 테이블에 쿼리하는 방식으로 변경
@@ -65,6 +70,7 @@ async def get_combination_ranking(request: Request, order_by_popular: bool = Tru
     path="/alcohol",
     dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=AlcoholRankingResponse,
+    description=GET_ALCOHOL_RANKING_DESC,
 )
 async def get_alcohol_ranking(request: Request):
     # 이번 주 기간(금~목)
