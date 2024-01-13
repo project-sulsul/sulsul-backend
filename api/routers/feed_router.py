@@ -1,5 +1,8 @@
+import random
 from typing import List
+
 from fastapi import APIRouter, Depends
+from peewee import fn
 from starlette.requests import Request
 
 from ai.inference import classify, ClassificationResultDto
@@ -13,7 +16,7 @@ from api.descriptions.feed_api_descriptions import (
     CREATE_FEED_DESC,
     GET_FEED_DESC,
     UPDATE_FEED_DESC,
-    GET_FEEDS_ORDER_BY_FEED_LIKE,
+    GET_FEEDS_ORDER_BY_FEED_LIKE, GET_FEEDS_BY_PREFERENCES_DESC,
 )
 from api.descriptions.responses_dict import (
     UNAUTHORIZED_RESPONSE,
@@ -39,8 +42,7 @@ from core.dto.feed_dto import (
     FeedCreateRequest,
     FeedSoftDeleteResponse,
     RandomFeedListResponse,
-    PopularFeedDto,
-    PopularFeedListResponse,
+    PopularFeedListResponse, FeedByPreferenceListResponse,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import (
@@ -74,7 +76,7 @@ async def classify_image_by_ai(image_url: str):
     responses=UNAUTHORIZED_RESPONSE,
 )
 async def get_all_my_feeds(
-    request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+        request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     my_feeds = fetch_my_feeds(get_login_user_id(request), next_feed_id, size)
     return CursorPageResponse.of_feeds(my_feeds)
@@ -88,7 +90,7 @@ async def get_all_my_feeds(
     responses=UNAUTHORIZED_RESPONSE,
 )
 async def get_all_liked_feeds_by_me(
-    request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+        request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     feeds_liked_by_me = fetch_feeds_liked_by_me(
         get_login_user_id(request), next_feed_id, size
@@ -103,9 +105,9 @@ async def get_all_liked_feeds_by_me(
     description=GET_RANDOM_FEEDS_DESC,
 )
 async def get_random_feeds(
-    request: Request,
-    exclude_feed_ids: str = "",  # separated by comma ex. 1,2,3
-    size: int = DEFAULT_PAGE_SIZE,
+        request: Request,
+        exclude_feed_ids: str = "",  # separated by comma ex. 1,2,3
+        size: int = DEFAULT_PAGE_SIZE,
 ):
     exclude_feed_ids = [int(i) for i in exclude_feed_ids.split(",") if i != ""]
     random_feeds = fetch_feeds_randomly(
@@ -125,6 +127,39 @@ async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool 
         row for row in fetch_feeds_order_by_feed_like(order_by_popular=order_by_popular)
     ]
     return PopularFeedListResponse(feeds=feeds)
+
+
+@router.get(
+    path="/by-preferences",
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
+    response_model=FeedByPreferenceListResponse,
+    description=GET_FEEDS_BY_PREFERENCES_DESC,
+)
+async def get_feeds_by_preferences(request: Request):
+    def get_randomly(pairings: List[int]) -> List[int]:
+        return random.sample(pairings, random.randint(1, len(pairings)))
+
+    size = 5
+    login_user = get_login_user_or_none(request)
+    feeds = [feed for feed in Feed.select().order_by(fn.Random()).limit(size * 2)]  # 넉넉하게 size 2배만큼 랜덤 피드를 가져온다
+
+    if login_user is None:
+        using_preference = False
+        feeds = feeds[:size]  # 로그인 되어있지 않으면 랜덤피드를 size만큼 내린다
+    else:
+        using_preference = True
+        alcohols = get_randomly(login_user.preference["alcohols"])
+        foods = get_randomly(login_user.preference["foods"])
+        feeds_by_preferences = [feed for feed in Feed.select().where(
+            Feed.alcohol_pairing_ids.contains(alcohols) |
+            Feed.food_pairing_ids.contains(foods)
+        ).order_by(fn.Random()).limit(size)]
+
+        if len(feeds_by_preferences) < size:  # 만약 취향으로 가져온 피드 size보다 적으면 나머지는 랜덤피드로 채워넣는다
+            using_preference = False
+            feeds_by_preferences.extend(feeds[:size - len(feeds_by_preferences)])
+
+    return FeedByPreferenceListResponse.of(feeds, using_preference)
 
 
 @router.get(
@@ -164,7 +199,7 @@ async def get_feed_by_id(request: Request, feed_id: int):
     responses=NOT_FOUND_RESPONSE,
 )
 async def get_related_feeds(
-    request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+        request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     return FeedResponseBuilder.related_feeds(
         feeds=fetch_related_feeds_by_feed_id(feed_id, next_feed_id, size),
