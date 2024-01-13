@@ -121,10 +121,9 @@ async def get_random_feeds(
     description=GET_FEEDS_ORDER_BY_FEED_LIKE,
 )
 async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool = True):
-    feeds: List[PopularFeedDto] = [
+    feeds = [
         row for row in fetch_feeds_order_by_feed_like(order_by_popular=order_by_popular)
     ]
-
     return PopularFeedListResponse(feeds=feeds)
 
 

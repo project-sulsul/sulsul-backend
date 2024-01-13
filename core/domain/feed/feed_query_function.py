@@ -139,7 +139,7 @@ def fetch_feeds_randomly(
 def fetch_feeds_order_by_feed_like(
     size: int = 3,
     order_by_popular: bool = True,
-):
+) -> List[PopularFeedDto]:
     return (
         Feed.select(
             Feed.id.alias("feed_id"),
