@@ -146,3 +146,20 @@ class RandomFeedListResponse(BaseModel):
             ids_string=",".join([str(feed.feed_id) for feed in feeds]),
             feeds=feeds,
         )
+
+
+class PopularFeedDto(BaseModel):
+    feed_id: int
+    title: str
+    content: str
+    represent_image: str
+    user_id: int
+    user_nickname: str
+    user_image: Optional[str]
+    like_count: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class PopularFeedListResponse(BaseModel):
+    feeds: List[PopularFeedDto] = []

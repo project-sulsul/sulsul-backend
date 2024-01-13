@@ -39,13 +39,11 @@ router = APIRouter(
     response_model=CombinationRankingResponse,
     description=GET_COMBINATION_RANKING_DESC,
 )
-async def get_combination_ranking(request: Request, order_by_popular: bool = True):
-    # TODO 현재는 라이브 쿼리로 가져오나 이후에는 배치에서 랭킹 테이블을 업데이트하고 해당 테이블에 쿼리하는 방식으로 변경
+async def get_combination_ranking(request: Request):
+    # TODO 현재는 라이브 쿼리로 가져오나 이후에는 배치를 통해 집계된 데이터 조회하도록 변경
     data = []
     pairing_ids = set()
-    for row in fetch_like_counts_group_by_combination(
-        order_by_popular=order_by_popular
-    ):
+    for row in fetch_like_counts_group_by_combination(limit=10):
         data.append(row.combined_ids)
         pairing_ids.update(row.combined_ids)
 

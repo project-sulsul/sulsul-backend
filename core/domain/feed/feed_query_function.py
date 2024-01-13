@@ -1,12 +1,12 @@
 from typing import Optional, List
 
-from peewee import fn, Case
+from peewee import fn, Case, SQL
 
 from core.domain.comment.comment_model import Comment
 from core.domain.feed.feed_like_model import FeedLike
 from core.domain.feed.feed_model import Feed
 from core.domain.user.user_model import User
-from core.dto.feed_dto import RandomFeedDto
+from core.dto.feed_dto import RandomFeedDto, PopularFeedDto
 
 
 def fetch_related_feeds_by_feed_id(
@@ -133,4 +133,33 @@ def fetch_feeds_randomly(
         .limit(size)
         .order_by(fn.Random())
         .objects(constructor=RandomFeedDto)
+    )
+
+
+def fetch_feeds_order_by_feed_like(
+    size: int = 3,
+    order_by_popular: bool = True,
+):
+    return (
+        Feed.select(
+            Feed.id.alias("feed_id"),
+            Feed.title,
+            Feed.content,
+            Feed.represent_image,
+            Feed.created_at,
+            Feed.updated_at,
+            fn.COUNT(FeedLike.id).alias("like_count"),
+            User.id.alias("user_id"),
+            User.nickname.alias("user_nickname"),
+            User.image.alias("user_image"),
+        )
+        .join(FeedLike, on=(Feed.id == FeedLike.feed_id))
+        .join(User, on=(Feed.user == User.id))
+        .where(Feed.is_deleted == False)
+        .group_by(Feed.id, User.id)
+        .order_by(
+            SQL("like_count").desc() if order_by_popular else SQL("like_count").asc()
+        )
+        .limit(size)
+        .objects(constructor=PopularFeedDto)
     )

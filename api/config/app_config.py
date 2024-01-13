@@ -10,13 +10,13 @@ from fastapi.staticfiles import StaticFiles
 
 from app import app
 from api.config.middleware import EnhancedTrustedHostMiddleware
-from core.config.var_config import IS_PROD
 
 import logging
 
 # Routers
 from admin.router import router as admim_router
-from core.event.push_event_handler import handle_create_comment_send_push_handler
+
+# from core.event.push_event_handler import handle_create_comment_send_push_handler
 
 app.include_router(admim_router)
 
