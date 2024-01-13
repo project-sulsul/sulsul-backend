@@ -146,7 +146,7 @@ class RandomFeedListResponse(BaseModel):
             ids_string=",".join([str(feed.feed_id) for feed in feeds]),
             feeds=feeds,
         )
-    
+
 
 class PopularFeedDto(BaseModel):
     feed_id: int

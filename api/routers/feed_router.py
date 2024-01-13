@@ -29,7 +29,7 @@ from core.domain.feed.feed_query_function import (
     fetch_feeds_liked_by_me,
     fetch_my_feeds,
     fetch_feeds_randomly,
-    fetch_feeds_order_by_feed_like
+    fetch_feeds_order_by_feed_like,
 )
 from core.domain.user.user_model import User
 from core.dto.feed_dto import (
