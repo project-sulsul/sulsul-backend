@@ -13,6 +13,7 @@ from api.descriptions.feed_api_descriptions import (
     CREATE_FEED_DESC,
     GET_FEED_DESC,
     UPDATE_FEED_DESC,
+    GET_FEEDS_ORDER_BY_FEED_LIKE,
 )
 from api.descriptions.responses_dict import (
     UNAUTHORIZED_RESPONSE,
@@ -117,7 +118,7 @@ async def get_random_feeds(
     path="/popular",
     dependencies=[Depends(read_only), Depends(AuthOptional())],
     response_model=PopularFeedListResponse,
-    description="",
+    description=GET_FEEDS_ORDER_BY_FEED_LIKE,
 )
 async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool = True):
     feeds: List[PopularFeedDto] = [
