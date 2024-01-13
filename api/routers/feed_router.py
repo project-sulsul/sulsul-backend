@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
@@ -28,6 +29,7 @@ from core.domain.feed.feed_query_function import (
     fetch_feeds_liked_by_me,
     fetch_my_feeds,
     fetch_feeds_randomly,
+    fetch_feeds_order_by_feed_like
 )
 from core.domain.user.user_model import User
 from core.dto.feed_dto import (
@@ -36,6 +38,8 @@ from core.dto.feed_dto import (
     FeedCreateRequest,
     FeedSoftDeleteResponse,
     RandomFeedListResponse,
+    PopularFeedDto,
+    PopularFeedListResponse,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import (
@@ -107,6 +111,20 @@ async def get_random_feeds(
         size, exclude_feed_ids, get_login_user_id(request)
     )
     return RandomFeedListResponse.of_query_dto(random_feeds)
+
+
+@router.get(
+    path="/popular",
+    dependencies=[Depends(read_only), Depends(AuthOptional())],
+    response_model=PopularFeedListResponse,
+    description="",
+)
+async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool = True):
+    feeds: List[PopularFeedDto] = [
+        row for row in fetch_feeds_order_by_feed_like(order_by_popular=order_by_popular)
+    ]
+
+    return PopularFeedListResponse(feeds=feeds)
 
 
 @router.get(

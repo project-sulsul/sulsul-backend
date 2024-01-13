@@ -1,12 +1,12 @@
 from typing import Optional, List
 
-from peewee import fn, Case
+from peewee import fn, Case, SQL
 
 from core.domain.comment.comment_model import Comment
 from core.domain.feed.feed_like_model import FeedLike
 from core.domain.feed.feed_model import Feed
 from core.domain.user.user_model import User
-from core.dto.feed_dto import RandomFeedDto
+from core.dto.feed_dto import RandomFeedDto, PopularFeedDto
 
 
 def fetch_related_feeds_by_feed_id(
@@ -134,3 +134,73 @@ def fetch_feeds_randomly(
         .order_by(fn.Random())
         .objects(constructor=RandomFeedDto)
     )
+
+
+def fetch_feeds_order_by_feed_like(
+    size: int = 3,
+    order_by_popular: bool = True,
+):
+    return (
+        Feed.select(
+            Feed.id.alias("feed_id"),
+            Feed.title,
+            Feed.content,
+            Feed.represent_image,
+            Feed.created_at,
+            Feed.updated_at,
+            fn.COUNT(FeedLike.id).alias("like_count"),
+            User.id.alias("user_id"),
+            User.nickname.alias("user_nickname"),
+            User.image.alias("user_image"),
+        )
+        .join(FeedLike, on=(Feed.id == FeedLike.feed_id))
+        .join(User, on=(Feed.user == User.id))
+        .where(Feed.is_deleted == False)
+        .group_by(Feed.id, User.id)
+        .order_by(
+            SQL("like_count").desc() if order_by_popular else SQL("like_count").asc()
+        )
+        .limit(size)
+        .objects(constructor=PopularFeedDto)
+    )
+
+# (
+#     'SELECT 
+#         "t1"."id", 
+#         "t1"."created_at", 
+#         "t1"."updated_at", 
+#         "t1"."is_deleted", 
+#         "t1"."user_id", 
+#         "t1"."title", 
+#         "t1"."content", 
+#         "t1"."score", 
+#         "t1"."represent_image", 
+#         "t1"."images", 
+#         "t1"."alcohol_pairing_ids", 
+#         "t1"."food_pairing_ids", 
+#         "t1"."user_tags", 
+#         "t1"."view_count", 
+#         "t2"."id", 
+#         "t2"."created_at", 
+#         "t2"."updated_at", 
+#         "t2"."is_deleted", 
+#         "t2"."uid", 
+#         "t2"."social_type", 
+#         "t2"."nickname", 
+#         "t2"."image", 
+#         "t2"."preference", 
+#         "t2"."status", 
+#         "t2"."device_type", 
+#         "t2"."push_token", 
+#         COUNT("t3"."id") AS "like_count" 
+#     FROM 
+#         "sulsul"."feed" AS "t1" 
+#     INNER JOIN 
+#         "sulsul"."feed_like" AS "t3" ON ("t1"."id" = "t3"."feed_id") 
+#     INNER JOIN 
+#         "sulsul"."user" AS "t2" ON ("t1"."user_id" = "t2"."id") 
+#     GROUP BY 
+#         "t1"."id" 
+#     ORDER BY 
+#         like_count DESC', []
+# )
