@@ -5,7 +5,7 @@ from core.domain.feed.feed_like_model import FeedLike
 
 
 def fetch_like_counts_group_by_combination(
-    order_by_popular: bool = True, limit: str = 3
+    order_by_popular: bool = True, limit: int = 3
 ):
     query = (
         Feed.select(
