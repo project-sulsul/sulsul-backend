@@ -163,3 +163,33 @@ class PopularFeedDto(BaseModel):
 
 class PopularFeedListResponse(BaseModel):
     feeds: List[PopularFeedDto] = []
+
+
+class FeedByPreferenceResponse(BaseModel):
+    feed_id: int
+    title: str
+    represent_image: str
+    score: float
+    alcohol_pairing_ids: List[int]
+    food_pairing_ids: List[int]
+    writer_nickname: str
+
+    @classmethod
+    def of(cls, feed: Feed):
+        return FeedByPreferenceResponse(
+            feed_id=feed.id,
+            **feed.__data__,
+            writer_nickname=feed.user.nickname,
+        )
+
+
+class FeedByPreferenceListResponse(BaseModel):
+    using_preference: bool
+    feeds: List[FeedByPreferenceResponse] = []
+
+    @classmethod
+    def of(cls, feeds: List[Feed], using_preference: bool):
+        return FeedByPreferenceListResponse(
+            using_preference=using_preference,
+            feeds=sorted([FeedByPreferenceResponse.of(feed) for feed in feeds], key=lambda x: x.score, reverse=True)
+        )

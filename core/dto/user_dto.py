@@ -23,7 +23,7 @@ class UserPreferenceUpdateRequest(BaseDTO):
     - foods (List[int]): 취향으로 등록할 안주(pairing)들의 ID 목록
     """
 
-    alcohol: List[int]
+    alcohols: List[int]
     foods: List[int]
 
 
