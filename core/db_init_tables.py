@@ -28,10 +28,10 @@ def scan_domain_models():
                 obj
                 for _, obj in inspect.getmembers(model)
                 if inspect.isclass(obj)
-                   and issubclass(obj, Model)
-                   and obj is not Model
-                   and obj is not signals.Model
-                   and obj is not BaseEntity
+                and issubclass(obj, Model)
+                and obj is not Model
+                and obj is not signals.Model
+                and obj is not BaseEntity
             ]
         )
     return models
@@ -58,7 +58,7 @@ user_data = [
         "preference": {
             "alcohols": [1, 2, 3],
             "foods": [13, 22, 4, 12],
-        }
+        },
     },
     {
         "uid": "iee785@daum.net",
@@ -118,7 +118,7 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "alcohol_pairing_ids": [2],
+        "alcohol_pairing_ids": [10],
         "food_pairing_ids": [14],
         "user_tags": ["삼겹살은_진리지"],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -168,7 +168,7 @@ feed_data = [
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
         "alcohol_pairing_ids": [5],
-        "food_pairing_ids": [13, 22],
+        "food_pairing_ids": [14, 22],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -180,7 +180,7 @@ feed_data = [
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
         "alcohol_pairing_ids": [1, 2],
-        "food_pairing_ids": [13, 14],
+        "food_pairing_ids": [16, 14],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
         "images": [
             "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -191,7 +191,7 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "alcohol_pairing_ids": [1, 2],
+        "alcohol_pairing_ids": [11],
         "food_pairing_ids": [22, 14],
         "user_tags": ["삼겹살은_진리지"],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",
@@ -204,7 +204,7 @@ feed_data = [
         "user_id": 3,
         "title": "삼쏘굳",
         "content": "삼겹살이 맛나요 짱짱 굳",
-        "alcohol_pairing_ids": [3],
+        "alcohol_pairing_ids": [12],
         "food_pairing_ids": [13, 22],
         "user_tags": ["삼겹살은_진리지"],
         "represent_image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa1402cd7-2bac-4863-ab71-6df75acfe25f.jpg",

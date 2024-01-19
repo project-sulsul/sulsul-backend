@@ -163,3 +163,14 @@ def fetch_feeds_order_by_feed_like(
         .limit(size)
         .objects(constructor=PopularFeedDto)
     )
+
+
+def fetch_all_by_alcohol_ids(alcohol_ids: List[int], size: int) -> List[Feed]:
+    return (
+        Feed.select()
+        .where(
+            Feed.alcohol_pairing_ids.contains_any(alcohol_ids), Feed.is_deleted == False
+        )
+        .order_by(fn.Random())
+        .limit(size)
+    )

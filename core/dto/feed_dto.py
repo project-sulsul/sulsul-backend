@@ -1,10 +1,12 @@
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel
 
 from core.domain.feed.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
+from core.util.cache import pairing_cache_store
 
 
 class FeedCreateRequest(BaseModel):
@@ -170,26 +172,60 @@ class FeedByPreferenceResponse(BaseModel):
     title: str
     represent_image: str
     score: float
-    alcohol_pairing_ids: List[int]
-    food_pairing_ids: List[int]
+    alcohols: List[str]
+    foods: List[str]
     writer_nickname: str
 
     @classmethod
     def of(cls, feed: Feed):
+        from_cache = pairing_cache_store.get_all_names_by_ids
         return FeedByPreferenceResponse(
             feed_id=feed.id,
+            alcohols=from_cache(feed.alcohol_pairing_ids),
+            foods=from_cache(feed.food_pairing_ids),
             **feed.__data__,
             writer_nickname=feed.user.nickname,
         )
 
 
 class FeedByPreferenceListResponse(BaseModel):
-    using_preference: bool
     feeds: List[FeedByPreferenceResponse] = []
 
     @classmethod
-    def of(cls, feeds: List[Feed], using_preference: bool):
+    def of(cls, feeds: List[Feed]):
         return FeedByPreferenceListResponse(
-            using_preference=using_preference,
-            feeds=sorted([FeedByPreferenceResponse.of(feed) for feed in feeds], key=lambda x: x.score, reverse=True)
+            feeds=sorted(
+                [FeedByPreferenceResponse.of(feed) for feed in feeds],
+                key=lambda x: x.score,
+                reverse=True,
+            ),
         )
+
+
+class FeedByAlcoholResponse(BaseModel):
+    subtype: str
+    feed_id: int
+    title: str
+    represent_image: str
+    foods: List[str]
+    score: float
+    writer_nickname: str
+
+    @classmethod
+    def of(cls, subtype: str, feed: Feed, foods: List[str]):
+        return FeedByAlcoholResponse(
+            subtype=subtype,
+            feed_id=feed.id,
+            foods=foods,
+            **feed.__data__,
+            writer_nickname=feed.user.nickname,
+        )
+
+
+class FeedByAlcoholListResponse(BaseModel):
+    subtypes: List[str]
+    feeds: List[FeedByAlcoholResponse] = []
+
+    @classmethod
+    def of(cls, feeds: List[FeedByAlcoholResponse], subtypes: List[str]):
+        return FeedByAlcoholListResponse(subtypes=subtypes, feeds=feeds)

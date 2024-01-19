@@ -12,8 +12,8 @@ class CombinationRankResponse(BaseModel):
 
 # TODO : start_date, end_date 필드 추가
 class CombinationRankingResponse(BaseModel):
-    start_date: str = '12/01'
-    end_date: str = '12/07'
+    start_date: str = "12/01"
+    end_date: str = "12/07"
     ranking: List[CombinationRankResponse] = []
 
 
@@ -24,6 +24,6 @@ class AlcoholRankResponse(BaseModel):
 
 
 class AlcoholRankingResponse(BaseModel):
-    start_date: str = '12/01'
-    end_date: str = '12/07'
+    start_date: str = "12/01"
+    end_date: str = "12/07"
     ranking: List[AlcoholRankResponse] = []
