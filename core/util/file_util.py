@@ -28,7 +28,7 @@ def upload_file_to_s3(file: UploadFile, directory: str) -> str:
             detail=f"File size must be less than {MAX_UPLOAD_FILE_MIB_SIZE}MiB",
         )
 
-    filename = f"{str(uuid.uuid4())}.jpg"
+    filename = f"{str(uuid.uuid4())}.png"
     s3_key = f"{directory}/{filename}"
 
     try:
