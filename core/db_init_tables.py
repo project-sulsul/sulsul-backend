@@ -251,14 +251,14 @@ pairing_data = [
         "type": "술",
         "subtype": "소주",
         "name": "처음처럼",
-        "image": "https://company.lottechilsung.co.kr/common/images/product_view0201_bh3.jpg",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Ffc7ce2b5-5888-415f-bdbf-4f8b6968f77d.png",
         "description": "처음처럼입니다",
     },
     {
         "type": "술",
         "subtype": "소주",
         "name": "참이슬",
-        "image": "https://i.namu.wiki/i/ZVfJTwmV_vCcRZNbdsvAGMGvZwiAOOjLrtMWleBZw_OU7ESw598EcldhTBekyA2Xu93s711gVFA7-avlPgFvuG--xRqH5deJbh_X47v-dRZcRE3EzyuRnpWF9ZpFDdoGewaPBaaeqBuL5tKeoP3q4Q.webp",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F03b22078-628b-4efe-88fd-1b687f5ec472.png",
         "description": "참이슬입니다",
     },
     {
@@ -274,7 +274,7 @@ pairing_data = [
         "type": "술",
         "subtype": "맥주",
         "name": "카스",
-        "image": "https://i.namu.wiki/i/fKo1mq_4u-VpRRswz6kcdSAMucQy0xlHTk8zVRmw4IP2F4yUKOpSlo68_8ba1W_S76LB9vFjIPWci7XCntq7XimPXMCrbT-q6BSkwevELkZpcDfyxQw7SPe5aRJnY3BxNJdmvASMMsxaYafWRIfDvA.webp",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fe338c936-7565-4106-b43d-f85e11b4072c.png",
         "description": "카스입니다",
     },
     {
@@ -396,7 +396,7 @@ pairing_data = [
         "type": "안주",
         "subtype": "튀김류",
         "name": "치킨",
-        "image": None,
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F7e0daa65-eca8-4ca9-a922-4c50b40071bf.png",
         "description": "치킨입니다",
     },
     {
