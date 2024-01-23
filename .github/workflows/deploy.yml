@@ -56,18 +56,20 @@ jobs:
 
       - name: Deploy Ranking batch workflow to AWS Lambda
         run: |
-          zip -jr ranking.zip ./batch/ranking
+          cp -R core/ batch/ranking/core/ && cd batch/ranking
+          zip -r ranking.zip . && cd ../../
           aws lambda update-function-code \
             --function-name ranking \
             --region ap-northeast-2 \
             --zip-file fileb://ranking.zip \
             --publish
           
-      # - name: Deploy Search volume batch workflow to AWS Lambda
-      #   run: |
-      #     zip -jr search-volume.zip ./batch/search-volume
-      #     aws lambda update-function-code \
-      #       --function-name search-volume \
-      #       --region ap-northeast-2 \
-      #       --zip-file fileb://search-volume.zip \
-      #       --publish
+      - name: Deploy Search volume batch workflow to AWS Lambda
+        run: |
+          cp -R core/ batch/search-volume/core/ && cd batch/search-volume
+          zip -r search-volume.zip . && cd ../../
+          aws lambda update-function-code \
+            --function-name search-volume \
+            --region ap-northeast-2 \
+            --zip-file fileb://search-volume.zip \
+            --publish

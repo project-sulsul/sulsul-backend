@@ -80,3 +80,4 @@ varname==0.12.2
 Werkzeug==3.0.1
 yarl==1.9.4
 zipp==3.17.0
+pandas~=2.0.3
