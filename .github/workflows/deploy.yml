@@ -61,7 +61,7 @@ jobs:
           aws lambda update-function-code \
             --function-name ranking \
             --region ap-northeast-2 \
-            --zip-file fileb://ranking.zip \
+            --zip-file fileb://batch/ranking/ranking.zip \
             --publish
           
       - name: Deploy Search volume batch workflow to AWS Lambda
@@ -71,5 +71,5 @@ jobs:
           aws lambda update-function-code \
             --function-name search-volume \
             --region ap-northeast-2 \
-            --zip-file fileb://search-volume.zip \
+            --zip-file fileb://batch/search-volume/search-volume.zip \
             --publish
