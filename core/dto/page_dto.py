@@ -32,3 +32,10 @@ class CursorPageResponse(BaseModel):
             size=DEFAULT_PAGE_SIZE,
             is_last=len(related_feeds_response) < DEFAULT_PAGE_SIZE,
         )
+
+
+class NormalPageResponse(BaseModel):
+    total_count: int
+    size: int
+    is_last: bool
+    content: list
