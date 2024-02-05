@@ -165,7 +165,7 @@ async def get_all_reports(
         total_count=total_count,
         size=size,
         is_last=(page + 1) * size >= total_count,
-        content=[ReportResponse.of(report) for report in reports],
+        content=sorted([ReportResponse.of(report) for report in reports], key=lambda x: x.id, reverse=True)
     )
 
 
