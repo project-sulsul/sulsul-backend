@@ -1,22 +1,25 @@
-from fastapi import APIRouter, Depends, Request, status
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import JSONResponse, PlainTextResponse
+from datetime import datetime
+from typing import Optional
 
 import bcrypt
-from datetime import datetime
+from fastapi import APIRouter, Depends, Request, status
+from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.templating import Jinja2Templates
 
-from api.config.middleware import admin
-from core.util.jwt import build_token
-from core.config.orm_config import transactional
 from admin.model import Admin, AdminSigninModel
+from api.config.middleware import admin
+from core.config.orm_config import transactional, read_only
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
 from core.domain.pairing.pairing_model import Pairing
+from core.domain.report.report_model import Report, ReportStatus
+from core.dto.page_dto import NormalPageResponse
 from core.dto.pairing_dto import (
     PairingCreateRequest,
     PairingUpdateRequest,
     PairingAdminResponse,
 )
-
+from core.dto.report_dto import ReportResponse
+from core.util.jwt import build_token
 
 router = APIRouter(
     prefix="/admin",
@@ -132,3 +135,62 @@ async def update_pairing(request: Request, pairing_id: int, form: PairingUpdateR
         .execute()
     )
     return JSONResponse(status_code=status.HTTP_200_OK, content={})
+
+
+"""
+신고 ADMIN API
+"""
+
+
+@router.get(
+    "/reports",
+    dependencies=[Depends(read_only)],
+    response_model=NormalPageResponse,
+)
+@admin
+async def get_all_reports(
+    request: Request,
+    report_status: Optional[ReportStatus] = None,
+    page: int = 0,
+    size: int = 10,
+):
+    if report_status:
+        query = Report.select().where(Report.status == report_status)
+        total_count = query.count()
+        reports = query.paginate(page, size)
+    else:
+        total_count = Report.select().count()
+        reports = Report.select().paginate(page, size)
+    return NormalPageResponse(
+        total_count=total_count,
+        size=size,
+        is_last=(page + 1) * size >= total_count,
+        content=[ReportResponse.of(report) for report in reports],
+    )
+
+
+@router.get(
+    "/reports/{report_id}",
+    dependencies=[Depends(read_only)],
+    response_model=ReportResponse,
+)
+@admin
+async def get_report_detail(
+    request: Request,
+    report_id: int,
+):
+    return ReportResponse.of(Report.get_or_raise(report_id))
+
+
+@router.put(
+    "/reports/{report_id}/status",
+    dependencies=[Depends(transactional)],
+    response_model=ReportResponse,
+)
+@admin
+async def update_report_status(
+    request: Request,
+    report_id: int,
+    report_status: ReportStatus,
+):
+    Report.update(status=report_status).where(Report.id == report_id).execute()

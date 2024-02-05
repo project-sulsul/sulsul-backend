@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, Depends
 from api.descriptions.report_api_descriptions import REGISTER_REPORT_DESC
 from api.descriptions.responses_dict import UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE
 from core.config.orm_config import transactional
-from core.domain.report.report_model import Report
+from core.domain.report.report_model import Report, ReportStatus
 from core.domain.user.user_model import User
 from core.dto.report_dto import ReportRegisterResponse, ReportRegisterRequest
 from core.util.auth_util import get_login_user_id, AuthRequired
@@ -28,5 +28,6 @@ async def register_report(request: Request, request_body: ReportRegisterRequest)
         type=request_body.type,
         target_id=request_body.target_id,
         reason=request_body.reason,
+        status=ReportStatus.PENDING,
     )
     return ReportRegisterResponse.of(report)
