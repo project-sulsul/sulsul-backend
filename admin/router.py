@@ -157,15 +157,15 @@ async def get_all_reports(
     if report_status:
         query = Report.select().where(Report.status == report_status)
         total_count = query.count()
-        reports = query.paginate(page, size)
+        reports = query.paginate(page, size).order_by(Report.id.desc())
     else:
         total_count = Report.select().count()
-        reports = Report.select().paginate(page, size)
+        reports = Report.select().paginate(page, size).order_by(Report.id.desc())
     return NormalPageResponse(
         total_count=total_count,
         size=size,
         is_last=(page + 1) * size >= total_count,
-        content=sorted([ReportResponse.of(report) for report in reports], key=lambda x: x.id, reverse=True)
+        content=[ReportResponse.of(report) for report in reports],
     )
 
 

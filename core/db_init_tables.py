@@ -1,6 +1,7 @@
 import importlib
 import inspect
 import os
+import random
 
 from peewee import Model
 from playhouse import signals
@@ -510,5 +511,33 @@ combination_data = [
     {"alcohol": 12, "food": 17, "count": 159},
 ]
 Combination.bulk_create([Combination(**data) for data in combination_data])
+
+
+"""
+어드민 관련 더미데이터
+"""
+from core.domain.report.report_model import Report, ReportStatus
+
+reporter_values = [1, 2, 3]
+type_values = ["feed", "comment"]
+target_id_values = [1, 2, 3]
+reason_values = ["욕설", "도배", "광고"]
+status_values = [ReportStatus.PENDING.value, ReportStatus.SOLVED.value]
+
+num_reports = 20
+
+report_data = [
+    {
+        "reporter": random.choice(reporter_values),
+        "type": random.choice(type_values),
+        "target_id": random.choice(target_id_values),
+        "reason": random.choice(reason_values),
+        "status": random.choice(status_values),
+    }
+    for _ in range(num_reports)
+]
+
+Report.bulk_create([Report(**data) for data in report_data])
+
 
 db.close()
