@@ -155,15 +155,18 @@ class PopularFeedDto(BaseModel):
     title: str
     content: str
     represent_image: str
+    pairing_ids: List[int]
+    images: List[str]
+    like_count: int
     user_id: int
     user_nickname: str
     user_image: Optional[str]
-    like_count: int
     created_at: datetime
     updated_at: datetime
 
 
-class PopularFeedListResponse(BaseModel):
+class PopularFeedListDto(BaseModel):
+    title: str
     feeds: List[PopularFeedDto] = []
 
 

@@ -35,10 +35,11 @@ from core.domain.feed.feed_query_function import (
     fetch_feeds_liked_by_me,
     fetch_my_feeds,
     fetch_feeds_randomly,
-    fetch_feeds_order_by_feed_like,
     fetch_all_by_alcohol_ids,
+    fetch_feeds_order_by_feed_like_and_cominations,
 )
 from core.domain.pairing.pairing_model import Pairing
+from core.domain.ranking.ranking_query_function import fetch_like_counts_group_by_combination
 from core.domain.user.user_model import User
 from core.dto.feed_dto import (
     FeedResponse,
@@ -46,7 +47,7 @@ from core.dto.feed_dto import (
     FeedCreateRequest,
     FeedSoftDeleteResponse,
     RandomFeedListResponse,
-    PopularFeedListResponse,
+    PopularFeedListDto,
     FeedByPreferenceListResponse,
     FeedByAlcoholListResponse,
     FeedByAlcoholResponse,
@@ -127,14 +128,29 @@ async def get_random_feeds(
 @router.get(
     path="/popular",
     dependencies=[Depends(read_only), Depends(AuthOptional())],
-    response_model=PopularFeedListResponse,
+    response_model=List[PopularFeedListDto],
     description=GET_FEEDS_ORDER_BY_FEED_LIKE,
 )
 async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool = True):
-    feeds = [
-        row for row in fetch_feeds_order_by_feed_like(order_by_popular=order_by_popular)
-    ]
-    return PopularFeedListResponse(feeds=feeds)
+    # TODO 나중에 배치에서 만든 테이블에 쿼리하도록
+    comb_ids_list = []
+    for row in fetch_like_counts_group_by_combination(order_by_popular=order_by_popular, limit=3):
+        comb_ids_list.append(row.combined_ids)
+    data = []
+    for idx, comb_ids in enumerate(comb_ids_list):
+        data.append(
+            PopularFeedListDto(
+                title=f"{idx + 1}번쨰",
+                feeds=[
+                    row for row in fetch_feeds_order_by_feed_like_and_cominations(
+                        combination_ids=comb_ids,
+                        order_by_popular=order_by_popular
+                    )
+                ],
+            )
+        )
+
+    return data
 
 
 @router.get(
