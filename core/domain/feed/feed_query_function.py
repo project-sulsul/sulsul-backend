@@ -136,9 +136,10 @@ def fetch_feeds_randomly(
     )
 
 
-def fetch_feeds_order_by_feed_like(
-    size: int = 3,
+def fetch_feeds_order_by_feed_like_and_cominations(
+    combination_ids: List[int],
     order_by_popular: bool = True,
+    size: int = 3,
 ) -> List[PopularFeedDto]:
     return (
         Feed.select(
@@ -146,6 +147,8 @@ def fetch_feeds_order_by_feed_like(
             Feed.title,
             Feed.content,
             Feed.represent_image,
+            fn.ARRAY_CAT(Feed.alcohol_pairing_ids, Feed.food_pairing_ids).alias("pairing_ids"),
+            Feed.images,
             Feed.created_at,
             Feed.updated_at,
             fn.COUNT(FeedLike.id).alias("like_count"),
@@ -153,9 +156,12 @@ def fetch_feeds_order_by_feed_like(
             User.nickname.alias("user_nickname"),
             User.image.alias("user_image"),
         )
-        .join(FeedLike, on=(Feed.id == FeedLike.feed_id))
+        .left_outer_join(FeedLike, on=(Feed.id == FeedLike.feed_id))
         .join(User, on=(Feed.user == User.id))
-        .where(Feed.is_deleted == False)
+        .where(
+            fn.ARRAY_CAT(Feed.alcohol_pairing_ids, Feed.food_pairing_ids) == SQL(f"ARRAY{combination_ids}"),
+            Feed.is_deleted == False,
+        )
         .group_by(Feed.id, User.id)
         .order_by(
             SQL("like_count").desc() if order_by_popular else SQL("like_count").asc()
