@@ -30,5 +30,12 @@ class PairingCacheStore:
             if pairing.type == pairing_type
         ]
 
+    def get_all_by_names(self, pairing_names: List[str]) -> List[Pairing]:
+        return [
+            pairing
+            for pairing in self._pairing_cache.values()
+            if pairing.name in pairing_names
+        ]
+
 
 pairing_cache_store = PairingCacheStore()

@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -7,6 +6,16 @@ from pydantic import BaseModel
 from core.domain.feed.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
 from core.util.cache import pairing_cache_store
+
+
+class PairingDto(BaseModel):
+    id: int
+    name: str
+
+
+class ClassificationResponse(BaseModel):
+    foods: List[PairingDto]
+    alcohols: List[PairingDto]
 
 
 class FeedCreateRequest(BaseModel):

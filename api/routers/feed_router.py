@@ -5,7 +5,9 @@ from fastapi import APIRouter, Depends
 from peewee import fn
 from starlette.requests import Request
 
-from ai.inference import classify, ClassificationResultDto
+from ai.inference import (
+    classify,
+)
 from api.descriptions.feed_api_descriptions import (
     GET_RELATED_FEEDS_DESC,
     DELETE_FEED_DESC,
@@ -39,7 +41,9 @@ from core.domain.feed.feed_query_function import (
     fetch_feeds_order_by_feed_like_and_cominations,
 )
 from core.domain.pairing.pairing_model import Pairing
-from core.domain.ranking.ranking_query_function import fetch_like_counts_group_by_combination
+from core.domain.ranking.ranking_query_function import (
+    fetch_like_counts_group_by_combination,
+)
 from core.domain.user.user_model import User
 from core.dto.feed_dto import (
     FeedResponse,
@@ -50,7 +54,7 @@ from core.dto.feed_dto import (
     PopularFeedListDto,
     FeedByPreferenceListResponse,
     FeedByAlcoholListResponse,
-    FeedByAlcoholResponse,
+    FeedByAlcoholResponse, ClassificationResponse, PairingDto,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import (
@@ -70,11 +74,17 @@ router = APIRouter(
 
 @router.post(
     "/classifications",
-    response_model=ClassificationResultDto,
+    response_model=ClassificationResponse,
     description=CLASSIFY_IMAGE_DESC,
 )
 async def classify_image_by_ai(image_url: str):
-    return classify(image_url)
+    classified_names = classify(image_url)
+    alcohols = pairing_cache_store.get_all_by_names(classified_names.alcohols)
+    foods = pairing_cache_store.get_all_by_names(classified_names.foods)
+    return ClassificationResponse(
+        alcohols=[PairingDto(id=alcohol.id, name=alcohol.name) for alcohol in alcohols],
+        foods=[PairingDto(id=food.id, name=food.name) for food in foods],
+    )
 
 
 @router.get(
@@ -134,7 +144,9 @@ async def get_random_feeds(
 async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool = True):
     # TODO 나중에 배치에서 만든 테이블에 쿼리하도록
     comb_ids_list = []
-    for row in fetch_like_counts_group_by_combination(order_by_popular=order_by_popular, limit=3):
+    for row in fetch_like_counts_group_by_combination(
+        order_by_popular=order_by_popular, limit=3
+    ):
         comb_ids_list.append(row.combined_ids)
     data = []
     for idx, comb_ids in enumerate(comb_ids_list):
@@ -142,9 +154,9 @@ async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool 
             PopularFeedListDto(
                 title=f"{idx + 1}번쨰",
                 feeds=[
-                    row for row in fetch_feeds_order_by_feed_like_and_cominations(
-                        combination_ids=comb_ids,
-                        order_by_popular=order_by_popular
+                    row
+                    for row in fetch_feeds_order_by_feed_like_and_cominations(
+                        combination_ids=comb_ids, order_by_popular=order_by_popular
                     )
                 ],
             )

@@ -147,7 +147,9 @@ def fetch_feeds_order_by_feed_like_and_cominations(
             Feed.title,
             Feed.content,
             Feed.represent_image,
-            fn.ARRAY_CAT(Feed.alcohol_pairing_ids, Feed.food_pairing_ids).alias("pairing_ids"),
+            fn.ARRAY_CAT(Feed.alcohol_pairing_ids, Feed.food_pairing_ids).alias(
+                "pairing_ids"
+            ),
             Feed.images,
             Feed.created_at,
             Feed.updated_at,
@@ -159,7 +161,8 @@ def fetch_feeds_order_by_feed_like_and_cominations(
         .left_outer_join(FeedLike, on=(Feed.id == FeedLike.feed_id))
         .join(User, on=(Feed.user == User.id))
         .where(
-            fn.ARRAY_CAT(Feed.alcohol_pairing_ids, Feed.food_pairing_ids) == SQL(f"ARRAY{combination_ids}"),
+            fn.ARRAY_CAT(Feed.alcohol_pairing_ids, Feed.food_pairing_ids)
+            == SQL(f"ARRAY{combination_ids}"),
             Feed.is_deleted == False,
         )
         .group_by(Feed.id, User.id)

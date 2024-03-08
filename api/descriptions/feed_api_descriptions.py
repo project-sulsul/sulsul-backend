@@ -14,6 +14,8 @@ CREATE_FEED_DESC = """
 - represent_image : 피드 대표 이미지 url
 - images : 대표이미지를 제외한! 나머지 이미지들 url (받드시 대표이미지는 빼고 넣어야함. 수정할 때 삭제되기 때문)
 - classify_tags : 모델이 추론한 음식 태그입니다. 순서상관없이 넣어주세요
+- alcohol_pairing_ids : 술(pairing) 태그 id 리스트
+- food_pairing_ids : 안주(pairing) 태그 id 리스트
 - user_tags_raw_string : 유저가 추가적으로 입력한 태그. 인풋 그대로 넣어주세요. (ex. "#맥주 #소주")
 """
 
