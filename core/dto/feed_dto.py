@@ -241,3 +241,12 @@ class FeedByAlcoholListResponse(BaseModel):
     @classmethod
     def of(cls, feeds: List[FeedByAlcoholResponse], subtypes: List[str]):
         return FeedByAlcoholListResponse(subtypes=subtypes, feeds=feeds)
+
+
+class FeedLikeResponse(BaseModel):
+    feed_id: int
+    is_liked: bool
+
+    @classmethod
+    def of(cls, feed_id: int, is_liked: bool):
+        return FeedLikeResponse(feed_id=feed_id, is_liked=is_liked)

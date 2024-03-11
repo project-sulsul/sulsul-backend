@@ -98,3 +98,7 @@ GET_FEEDS_BY_PREFERENCES_DESC = """
 GET_FEEDS_BY_ALCOHOLS_DESC = """
 비로그인 홈 화면 - 술 기준 랜덤 피드 조회
 """
+
+FEED_LIKE_DESC = """
+피드 좋아요 표시/취소
+"""

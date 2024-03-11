@@ -21,6 +21,7 @@ from api.descriptions.feed_api_descriptions import (
     GET_FEEDS_ORDER_BY_FEED_LIKE,
     GET_FEEDS_BY_PREFERENCES_DESC,
     GET_FEEDS_BY_ALCOHOLS_DESC,
+    FEED_LIKE_DESC,
 )
 from api.descriptions.responses_dict import (
     UNAUTHORIZED_RESPONSE,
@@ -54,7 +55,10 @@ from core.dto.feed_dto import (
     PopularFeedListDto,
     FeedByPreferenceListResponse,
     FeedByAlcoholListResponse,
-    FeedByAlcoholResponse, ClassificationResponse, PairingDto,
+    FeedByAlcoholResponse,
+    ClassificationResponse,
+    PairingDto,
+    FeedLikeResponse,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import (
@@ -342,3 +346,27 @@ async def soft_delete_feed(request: Request, feed_id: int):
     deleted_likes_count = FeedLike.delete().where(FeedLike.feed == feed).execute()
 
     return FeedSoftDeleteResponse.of(feed, deleted_comment_count, deleted_likes_count)
+
+
+@router.post(
+    "/{feed_id}/like",
+    dependencies=[Depends(transactional), Depends(AuthRequired())],
+    response_model=FeedLikeResponse,
+    description=FEED_LIKE_DESC,
+    responses={**UNAUTHORIZED_RESPONSE, **NOT_FOUND_RESPONSE, **FORBIDDEN_RESPONSE},
+)
+async def like_feed(request: Request, feed_id: int):
+    feed: Feed = Feed.get_or_raise(feed_id)
+    login_user_id = get_login_user_id(request)
+    feed_like: FeedLike = FeedLike.get_or_none(user=login_user_id, feed=feed)
+
+    if feed_like is None:
+        FeedLike.create(user=login_user_id, feed=feed)
+        is_liked = True
+    else:
+        feed_like.delete().where(
+            FeedLike.user == login_user_id, FeedLike.feed == feed
+        ).execute()
+        is_liked = False
+
+    return FeedLikeResponse.of(feed.id, is_liked)
