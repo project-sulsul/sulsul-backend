@@ -24,6 +24,7 @@ class CommentResponse(BaseModel):
     updated_at: datetime
     is_reported: bool = False
     is_writer: bool = False
+    is_deleted: bool = False
     children_comments: Optional[List["CommentResponse"]]
 
     @classmethod

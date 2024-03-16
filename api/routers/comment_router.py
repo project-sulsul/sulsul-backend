@@ -100,7 +100,7 @@ async def get_all_comments_of_feed(request: Request, feed_id: int):
     comments: List[CommentDto] = (
         Comment.select(Comment, User)
         .join(User)
-        .where(Comment.feed == feed_id, Comment.is_deleted == False)
+        .where(Comment.feed == feed_id)
         .objects(constructor=CommentDto)
     )
 
