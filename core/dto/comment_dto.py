@@ -25,6 +25,7 @@ class CommentResponse(BaseModel):
     is_reported: bool = False
     is_writer: bool = False
     is_deleted: bool = False
+    parent_comment_id: Optional[int] = None
     children_comments: Optional[List["CommentResponse"]]
 
     @classmethod
@@ -42,6 +43,7 @@ class CommentResponse(BaseModel):
                 nickname=comment.nickname,
                 image=comment.image,
             ),
+            parent_comment_id=comment.parent_comment,
             is_writer=is_writer,
             children_comments=children_comments,
         )
@@ -50,6 +52,7 @@ class CommentResponse(BaseModel):
     def of(
         cls,
         comment: Comment,
+        parent_comment_id: Optional[int] = None,
         children_comments: List["CommentResponse"] = None,
         is_writer=False,
     ):
@@ -61,6 +64,7 @@ class CommentResponse(BaseModel):
                 nickname=comment.user.nickname,
                 image=comment.user.image,
             ),
+            parent_comment_id=parent_comment_id,
             is_writer=is_writer,
             children_comments=children_comments,
         )

@@ -36,14 +36,24 @@ async def create_comment(
     Feed.get_or_raise(feed_id)
 
     login_user = User.get_or_raise(get_login_user_id(request))
-    comment = Comment.create(
-        user=login_user,
-        feed=feed_id,
-        content=request_body.content,
-    )
+    if request_body.parent_comment_id is not None:
+        Comment.get_or_raise(request_body.parent_comment_id)
+        comment = Comment.create(
+            user=login_user,
+            feed=feed_id,
+            content=request_body.content,
+            parent_comment=request_body.parent_comment_id,
+        )
+    else:
+        comment = Comment.create(
+            user=login_user,
+            feed=feed_id,
+            content=request_body.content,
+        )
 
     return CommentResponse.of(
         comment=comment,
+        parent_comment_id=request_body.parent_comment_id,
         is_writer=True,
     )
 
