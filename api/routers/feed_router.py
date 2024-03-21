@@ -22,6 +22,7 @@ from api.descriptions.feed_api_descriptions import (
     GET_FEEDS_BY_PREFERENCES_DESC,
     GET_FEEDS_BY_ALCOHOLS_DESC,
     FEED_LIKE_DESC,
+    SEARCH_FEED_DESC,
 )
 from api.descriptions.responses_dict import (
     UNAUTHORIZED_RESPONSE,
@@ -59,6 +60,7 @@ from core.dto.feed_dto import (
     ClassificationResponse,
     PairingDto,
     FeedLikeResponse,
+    FeedSearchListResponse,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import (
@@ -137,6 +139,25 @@ async def get_random_feeds(
         size, exclude_feed_ids, get_login_user_id(request)
     )
     return RandomFeedListResponse.of_query_dto(random_feeds)
+
+
+@router.get(
+    "/search",
+    dependencies=[Depends(read_only)],
+    description=SEARCH_FEED_DESC,
+    response_model=FeedSearchListResponse,
+)
+async def search_feeds(keyword: str):
+    keyword = keyword.strip()
+    feeds = (
+        Feed.select()
+        .where(
+            Feed.title.contains(keyword) | Feed.content.contains(keyword),
+            Feed.is_deleted == False,
+        )
+        .limit(15)
+    )
+    return FeedSearchListResponse.of(feeds)
 
 
 @router.get(

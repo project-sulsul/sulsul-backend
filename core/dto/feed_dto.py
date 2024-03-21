@@ -250,3 +250,34 @@ class FeedLikeResponse(BaseModel):
     @classmethod
     def of(cls, feed_id: int, is_liked: bool):
         return FeedLikeResponse(feed_id=feed_id, is_liked=is_liked)
+
+
+class FeedSearchResponse(BaseModel):
+    feed_id: int
+    title: str
+    content: str
+    tags: List[str]
+
+    @classmethod
+    def of(cls, feed: Feed, tags: List[str]):
+        return FeedSearchResponse(
+            feed_id=feed.id,
+            title=feed.title,
+            content=feed.content,
+            tags=tags,
+        )
+
+
+class FeedSearchListResponse(BaseModel):
+    results: List[FeedSearchResponse]
+
+    @classmethod
+    def of(cls, feeds: List[Feed]):
+        results = []
+        for feed in feeds:
+            alcohols = pairing_cache_store.get_all_names_by_ids(
+                feed.alcohol_pairing_ids
+            )
+            foods = pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids)
+            results.append(FeedSearchResponse.of(feed, alcohols + foods))
+        return FeedSearchListResponse(results=results)
