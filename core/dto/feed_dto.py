@@ -254,6 +254,7 @@ class FeedLikeResponse(BaseModel):
 
 class FeedSearchResponse(BaseModel):
     feed_id: int
+    represent_image: str
     title: str
     content: str
     tags: List[str]
@@ -262,6 +263,7 @@ class FeedSearchResponse(BaseModel):
     def of(cls, feed: Feed, tags: List[str]):
         return FeedSearchResponse(
             feed_id=feed.id,
+            represent_image=feed.represent_image,
             title=feed.title,
             content=feed.content,
             tags=tags,
