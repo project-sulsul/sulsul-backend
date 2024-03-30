@@ -23,6 +23,7 @@ class Feed(BaseEntity):
     )  # 모델이 추론한 or 유저가 보정한 사진에 대한 술,안주 분류 태그
     user_tags = ArrayField(CharField, null=True)
     view_count = IntegerField(default=0)
+    is_reported = BooleanField(default=False)
 
     def check_if_owner(self, user_id: int):
         if self.user.id != user_id:

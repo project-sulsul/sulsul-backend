@@ -283,3 +283,31 @@ class FeedSearchListResponse(BaseModel):
             foods = pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids)
             results.append(FeedSearchResponse.of(feed, alcohols + foods))
         return FeedSearchListResponse(results=results)
+
+
+class FeedAdminResponse(BaseModel):
+    feed_id: int
+    title: str
+    content: str
+    is_deleted: bool
+    user_id: int
+    score: float
+    represent_image: str
+    images: List[str]
+    alcohols: List[str]
+    foods: List[str]
+    user_tags: Optional[List[str]]
+    view_count: int
+    created_at: datetime
+    updated_at: datetime
+    is_reported: bool
+
+    @classmethod
+    def of(cls, feed: Feed):
+        return FeedAdminResponse(
+            **feed.__data__,
+            feed_id=feed.id,
+            user_id=feed.user.id,
+            alcohols=pairing_cache_store.get_all_names_by_ids(feed.alcohol_pairing_ids),
+            foods=pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids),
+        )

@@ -22,7 +22,7 @@ from core.dto.comment_dto import (
     CommentDto,
     CommentAdminUpdateRequest,
 )
-from core.dto.feed_dto import FeedResponse
+from core.dto.feed_dto import FeedResponse, FeedAdminResponse
 from core.dto.page_dto import NormalPageResponse
 from core.dto.pairing_dto import (
     PairingCreateRequest,
@@ -30,7 +30,11 @@ from core.dto.pairing_dto import (
     PairingAdminResponse,
 )
 from core.dto.report_dto import ReportResponse
-from core.dto.user_dto import UserResponse, UserAdminResponse, UserAdminStatusUpdateRequest
+from core.dto.user_dto import (
+    UserResponse,
+    UserAdminResponse,
+    UserAdminStatusUpdateRequest,
+)
 from core.util.jwt import build_token
 
 router = APIRouter(
@@ -253,7 +257,9 @@ async def update_user_status(
             User.update(status=UserStatus.BAN.value).where(User.id == user_id).execute()
     else:
         for user_id in user_ids:
-            User.update(status=UserStatus.ACTIVE.value).where(User.id == user_id).execute()
+            User.update(status=UserStatus.ACTIVE.value).where(
+                User.id == user_id
+            ).execute()
 
 
 @router.put("/users/{user_id}/nickname", dependencies=[Depends(transactional)])
@@ -289,6 +295,16 @@ async def get_all_feeds(
         is_last=(page + 1) * size >= Feed.select().count(),
         content=[FeedResponse.from_orm(feed) for feed in feed],
     )
+
+
+@router.get(
+    "/feeds/{feed_id}",
+    dependencies=[Depends(read_only)],
+    response_model=FeedAdminResponse,
+)
+@admin
+async def get_feed(request: Request, feed_id: int):
+    return FeedAdminResponse.of(Feed.get_or_raise(feed_id))
 
 
 @router.delete(
