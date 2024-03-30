@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 
+from core.domain.user.user_model import UserStatus
 from core.dto.base_dto import BaseDTO
 
 
@@ -30,10 +31,10 @@ class UserPreferenceUpdateRequest(BaseDTO):
 class UserResponse(BaseDTO):
     id: int
     uid: str
-    nickname: str
+    nickname: Optional[str]
     image: Optional[str]
     preference: Dict[str, List]
-    status: str
+    status: UserStatus
 
 
 class UserSimpleInfoResponse(BaseDTO):

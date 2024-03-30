@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import Optional
 
 import bcrypt
@@ -12,6 +13,7 @@ from core.config.orm_config import transactional, read_only
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
 from core.domain.pairing.pairing_model import Pairing
 from core.domain.report.report_model import Report, ReportStatus
+from core.domain.user.user_model import User, UserStatus
 from core.dto.page_dto import NormalPageResponse
 from core.dto.pairing_dto import (
     PairingCreateRequest,
@@ -19,12 +21,13 @@ from core.dto.pairing_dto import (
     PairingAdminResponse,
 )
 from core.dto.report_dto import ReportResponse
+from core.dto.user_dto import UserResponse
 from core.util.jwt import build_token
 
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"],
-    include_in_schema=False,
+    # include_in_schema=False,
 )
 
 templates = Jinja2Templates(directory="admin/templates")
@@ -137,6 +140,8 @@ async def update_pairing(request: Request, pairing_id: int, form: PairingUpdateR
     return JSONResponse(status_code=status.HTTP_200_OK, content={})
 
 
+ADMIN_DEFAULT_SIZE = 15
+
 """
 신고 ADMIN API
 """
@@ -152,7 +157,7 @@ async def get_all_reports(
     request: Request,
     report_status: Optional[ReportStatus] = None,
     page: int = 0,
-    size: int = 10,
+    size: int = ADMIN_DEFAULT_SIZE,
 ):
     if report_status:
         query = Report.select().where(Report.status == report_status)
@@ -194,3 +199,53 @@ async def update_report_status(
     report_status: ReportStatus,
 ):
     Report.update(status=report_status).where(Report.id == report_id).execute()
+
+
+"""
+어드민 유저 API
+"""
+
+
+@router.get(
+    "/users",
+    dependencies=[Depends(read_only)],
+    response_model=NormalPageResponse,
+)
+@admin
+async def get_all_users(
+    request: Request,
+    page: int = 0,
+    size: int = ADMIN_DEFAULT_SIZE,
+):
+    users = User.select().paginate(page, size).order_by(User.id.desc())
+    return NormalPageResponse(
+        total_count=User.select().count(),
+        size=size,
+        is_last=(page + 1) * size >= User.select().count(),
+        content=[UserResponse.from_orm(user) for user in users],
+    )
+
+
+@router.post("/users/{user_id}/status", dependencies=[Depends(transactional)])
+@admin
+async def update_user_status(
+    request: Request,
+    user_id: int,
+    user_status: UserStatus,
+):
+    user = User.get_or_raise(user_id)
+    # 일단 영구 정지만 구현
+    if user_status == UserStatus.BAN:
+        User.update(status=UserStatus.BAN.value).where(User.id == user_id).execute()
+    else:
+        User.update(status=UserStatus.ACTIVE.value).where(User.id == user_id).execute()
+
+
+@router.put("/users/{user_id}/nickname", dependencies=[Depends(transactional)])
+@admin
+async def update_user_nickname(
+    request: Request,
+    user_id: int,
+    nickname: str,
+):
+    User.update(nickname=nickname).where(User.id == user_id).execute()

@@ -1,7 +1,14 @@
+from enum import Enum
+
 import peewee
 from playhouse.postgres_ext import BinaryJSONField
 
 from core.domain.base_entity import BaseEntity
+
+
+class UserStatus(Enum):
+    BAN = "banned"
+    ACTIVE = "active"
 
 
 class User(BaseEntity):
@@ -10,7 +17,7 @@ class User(BaseEntity):
     nickname = peewee.CharField(max_length=30, null=True)
     image = peewee.CharField(null=True, default=None)
     preference = BinaryJSONField(default={})
-    status = peewee.CharField(max_length=10, default="active")
+    status = peewee.CharField(max_length=10, default=UserStatus.ACTIVE.value)
     device_type = peewee.CharField(null=True)
     push_token = peewee.CharField(null=True)
 

@@ -33,10 +33,7 @@ async def sign_in_with_google(
     status_code = status.HTTP_200_OK
     if not user:
         status_code = status.HTTP_201_CREATED
-        user = User.create(
-            uid=user_info["email"],
-            social_type="google",
-        )
+        user = User.create(uid=user_info["email"], social_type="google")
 
     token = build_token(
         id=user.id,
