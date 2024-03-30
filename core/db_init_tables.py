@@ -42,11 +42,8 @@ db.connect()
 
 from admin.model import Admin
 
-db.create_tables([Admin], safe=True)
 
 models = scan_domain_models()
-db.drop_tables(models, cascade=True)
-db.create_tables(models)
 
 from core.domain.user.user_model import User
 
@@ -74,7 +71,6 @@ user_data = [
         "device_type": "IOS",
     },
 ]
-User.bulk_create([User(**data) for data in user_data])
 
 from core.domain.feed.feed_model import Feed
 
@@ -215,7 +211,6 @@ feed_data = [
         ],
     },
 ]
-Feed.bulk_create([Feed(**data) for data in feed_data])
 
 from core.domain.feed.feed_like_model import FeedLike
 
@@ -227,7 +222,6 @@ feed_like_data = [
     {"user_id": 1, "feed_id": 4},
     {"user_id": 1, "feed_id": 5},
 ]
-FeedLike.bulk_create([FeedLike(**data) for data in feed_like_data])
 
 from core.domain.comment.comment_model import Comment
 
@@ -243,7 +237,6 @@ comment_data = [
     {"user_id": 1, "feed_id": 2, "content": "댓글1-2", "parent_comment_id": 1},
     {"user_id": 1, "feed_id": 2, "content": "댓글1-3", "parent_comment_id": 1},
 ]
-Comment.bulk_create([Comment(**data) for data in comment_data])
 
 from core.domain.pairing.pairing_model import Pairing
 
@@ -500,7 +493,6 @@ pairing_data = [
         "description": "오징어입니다",
     },
 ]
-Pairing.bulk_create([Pairing(**data) for data in pairing_data])
 
 from core.domain.combination.combination_model import Combination
 
@@ -510,7 +502,6 @@ combination_data = [
     {"alcohol": 8, "food": 26, "count": 38089},
     {"alcohol": 12, "food": 17, "count": 159},
 ]
-Combination.bulk_create([Combination(**data) for data in combination_data])
 
 
 """
@@ -537,7 +528,17 @@ report_data = [
     for _ in range(num_reports)
 ]
 
-Report.bulk_create([Report(**data) for data in report_data])
-
+# 더미데이터 생성용. 더미데이터 생성을 하고 싶으면 주석을 푼다.
+# db.drop_tables(models, cascade=True)
+# db.create_tables(models, safe=True)
+# db.create_tables([Admin], safe=True)
+#
+# User.bulk_create([User(**data) for data in user_data])
+# Feed.bulk_create([Feed(**data) for data in feed_data])
+# FeedLike.bulk_create([FeedLike(**data) for data in feed_like_data])
+# Comment.bulk_create([Comment(**data) for data in comment_data])
+# Pairing.bulk_create([Pairing(**data) for data in pairing_data])
+# Combination.bulk_create([Combination(**data) for data in combination_data])
+# Report.bulk_create([Report(**data) for data in report_data])
 
 db.close()
