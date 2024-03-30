@@ -12,11 +12,16 @@ from api.config.middleware import admin
 from core.config.orm_config import transactional, read_only
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
 from core.domain.comment.comment_model import Comment
+from core.domain.feed.feed_like_model import FeedLike
 from core.domain.feed.feed_model import Feed
 from core.domain.pairing.pairing_model import Pairing
 from core.domain.report.report_model import Report, ReportStatus
 from core.domain.user.user_model import User, UserStatus
-from core.dto.comment_dto import CommentsAdminResponse, CommentDto
+from core.dto.comment_dto import (
+    CommentsAdminResponse,
+    CommentDto,
+    CommentAdminUpdateRequest,
+)
 from core.dto.feed_dto import FeedResponse
 from core.dto.page_dto import NormalPageResponse
 from core.dto.pairing_dto import (
@@ -280,6 +285,26 @@ async def get_all_feeds(
     )
 
 
+@router.delete(
+    "/feeds/{feed_id}",
+    dependencies=[Depends(transactional)],
+)
+@admin
+async def delete_feed(
+    request: Request,
+    feed_id: int,
+    hard_delete: bool = False,
+):
+    if hard_delete:
+        Feed.delete().where(Feed.id == feed_id).execute()
+        FeedLike.delete().where(FeedLike.feed == feed_id).execute()
+        Comment.delete().where(Comment.feed == feed_id).execute()
+    else:
+        Feed.update(is_deleted=True).where(Feed.id == feed_id).execute()
+        FeedLike.update(is_deleted=True).where(FeedLike.feed == feed_id).execute()
+        Comment.update(is_deleted=True).where(Comment.feed == feed_id).execute()
+
+
 @router.get(
     "/feeds/{feed_id}/comments",
     dependencies=[Depends(read_only)],
@@ -294,3 +319,38 @@ async def get_all_comments_in_feed(
     return CommentsAdminResponse(
         comments=[CommentDto.of(comment) for comment in comments]
     )
+
+
+@router.put(
+    "/feeds/{feed_id}/comments/{comment_id}",
+    dependencies=[Depends(transactional)],
+)
+@admin
+async def update_comment_in_feed(
+    request: Request,
+    feed_id: int,
+    comment_id: int,
+    request_body: CommentAdminUpdateRequest,
+):
+    Feed.get_or_raise(feed_id)
+    Comment.update(content=request_body.content).where(
+        Comment.id == comment_id
+    ).execute()
+
+
+@router.delete(
+    "/feeds/{feed_id}/comments/{comment_id}",
+    dependencies=[Depends(transactional)],
+)
+@admin
+async def delete_comment_in_feed(
+    request: Request,
+    feed_id: int,
+    comment_id: int,
+    hard_delete: bool = False,
+):
+    Feed.get_or_raise(feed_id)
+    if hard_delete:
+        Comment.delete().where(Comment.id == comment_id).execute()
+    else:
+        Comment.update(is_deleted=True).where(Comment.id == comment_id).execute()

@@ -108,3 +108,7 @@ class CommentDto(BaseModel):
 
 class CommentsAdminResponse(BaseModel):
     comments: List[CommentDto]
+
+
+class CommentAdminUpdateRequest(BaseModel):
+    content: str
