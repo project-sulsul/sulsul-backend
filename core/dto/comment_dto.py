@@ -86,3 +86,25 @@ class CommentDto(BaseModel):
     updated_at: datetime
     nickname: str  # user_nickname
     image: Optional[str]  # user_profile_image
+
+    @classmethod
+    def of(cls, comment: Comment):
+        return CommentDto(
+            id=comment.id,
+            user=comment.user.id,
+            feed=comment.feed.id,
+            content=comment.content,
+            parent_comment=comment.parent_comment.id
+            if comment.parent_comment
+            else None,
+            is_reported=comment.is_reported,
+            is_deleted=comment.is_deleted,
+            created_at=comment.created_at,
+            updated_at=comment.updated_at,
+            nickname=comment.user.nickname,
+            image=comment.user.image,
+        )
+
+
+class CommentsAdminResponse(BaseModel):
+    comments: List[CommentDto]

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional
 
 from core.domain.user.user_model import UserStatus
@@ -41,3 +42,16 @@ class UserSimpleInfoResponse(BaseDTO):
     user_id: int
     nickname: str
     image: Optional[str]
+
+
+class UserAdminResponse(BaseDTO):
+    id: int
+    uid: str
+    nickname: Optional[str]
+    image: Optional[str]
+    preference: Dict[str, List]
+    social_type: Optional[str]
+    device_type: Optional[str]
+    status: UserStatus
+    created_at: datetime
+    updated_at: datetime

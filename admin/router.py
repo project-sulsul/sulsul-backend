@@ -11,9 +11,13 @@ from admin.model import Admin, AdminSigninModel
 from api.config.middleware import admin
 from core.config.orm_config import transactional, read_only
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
+from core.domain.comment.comment_model import Comment
+from core.domain.feed.feed_model import Feed
 from core.domain.pairing.pairing_model import Pairing
 from core.domain.report.report_model import Report, ReportStatus
 from core.domain.user.user_model import User, UserStatus
+from core.dto.comment_dto import CommentsAdminResponse, CommentDto
+from core.dto.feed_dto import FeedResponse
 from core.dto.page_dto import NormalPageResponse
 from core.dto.pairing_dto import (
     PairingCreateRequest,
@@ -21,7 +25,7 @@ from core.dto.pairing_dto import (
     PairingAdminResponse,
 )
 from core.dto.report_dto import ReportResponse
-from core.dto.user_dto import UserResponse
+from core.dto.user_dto import UserResponse, UserAdminResponse
 from core.util.jwt import build_token
 
 router = APIRouter(
@@ -222,7 +226,7 @@ async def get_all_users(
         total_count=User.select().count(),
         size=size,
         is_last=(page + 1) * size >= User.select().count(),
-        content=[UserResponse.from_orm(user) for user in users],
+        content=[UserAdminResponse.from_orm(user) for user in users],
     )
 
 
@@ -249,3 +253,44 @@ async def update_user_nickname(
     nickname: str,
 ):
     User.update(nickname=nickname).where(User.id == user_id).execute()
+
+
+"""
+어드민 피드 API
+"""
+
+
+@router.get(
+    "/feeds",
+    dependencies=[Depends(read_only)],
+    response_model=NormalPageResponse,
+)
+@admin
+async def get_all_feeds(
+    request: Request,
+    page: int = 0,
+    size: int = ADMIN_DEFAULT_SIZE,
+):
+    feed = Feed.select().paginate(page, size).order_by(Feed.id)
+    return NormalPageResponse(
+        total_count=Feed.select().count(),
+        size=size,
+        is_last=(page + 1) * size >= Feed.select().count(),
+        content=[FeedResponse.from_orm(feed) for feed in feed],
+    )
+
+
+@router.get(
+    "/feeds/{feed_id}/comments",
+    dependencies=[Depends(read_only)],
+    response_model=CommentsAdminResponse,
+)
+@admin
+async def get_all_comments_in_feed(
+    request: Request,
+    feed_id: int,
+):
+    comments = Comment.select().where(Comment.feed == feed_id).order_by(Comment.id)
+    return CommentsAdminResponse(
+        comments=[CommentDto.of(comment) for comment in comments]
+    )
