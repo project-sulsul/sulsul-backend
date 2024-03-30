@@ -14,6 +14,7 @@ from starlette.responses import (
 )
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from api.config.exceptions import UnauthorizedException
 from core.util.jwt import decode_token
 
 ENFORCE_DOMAIN_WILDCARD = "Domain wildcard patterns must be like '*.example.com'."
@@ -179,11 +180,11 @@ def admin(call_next: RequestResponseEndpoint):
         try:
             login_user = decode_token(access_token)
             if "is_admin_token" in login_user and login_user["is_admin_token"] != True:
-                raise Exception()
+                raise UnauthorizedException()
 
             request.state.admin = login_user
         except Exception:
-            return RedirectResponse("/admin/sign-in")
+            raise UnauthorizedException()
 
         return await call_next(*args, **kwargs)
 
