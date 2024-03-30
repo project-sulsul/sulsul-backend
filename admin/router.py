@@ -30,7 +30,7 @@ from core.dto.pairing_dto import (
     PairingAdminResponse,
 )
 from core.dto.report_dto import ReportResponse
-from core.dto.user_dto import UserResponse, UserAdminResponse
+from core.dto.user_dto import UserResponse, UserAdminResponse, UserAdminStatusUpdateRequest
 from core.util.jwt import build_token
 
 router = APIRouter(
@@ -235,19 +235,20 @@ async def get_all_users(
     )
 
 
-@router.post("/users/{user_id}/status", dependencies=[Depends(transactional)])
+@router.put("/users/status", dependencies=[Depends(transactional)])
 @admin
 async def update_user_status(
     request: Request,
-    user_id: int,
-    user_status: UserStatus,
+    request_body: UserAdminStatusUpdateRequest,
 ):
-    user = User.get_or_raise(user_id)
+    user_ids = request_body.user_ids
     # 일단 영구 정지만 구현
-    if user_status == UserStatus.BAN:
-        User.update(status=UserStatus.BAN.value).where(User.id == user_id).execute()
+    if request_body.status == UserStatus.BAN:
+        for user_id in user_ids:
+            User.update(status=UserStatus.BAN.value).where(User.id == user_id).execute()
     else:
-        User.update(status=UserStatus.ACTIVE.value).where(User.id == user_id).execute()
+        for user_id in user_ids:
+            User.update(status=UserStatus.ACTIVE.value).where(User.id == user_id).execute()
 
 
 @router.put("/users/{user_id}/nickname", dependencies=[Depends(transactional)])

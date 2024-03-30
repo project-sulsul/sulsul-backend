@@ -55,3 +55,8 @@ class UserAdminResponse(BaseDTO):
     status: UserStatus
     created_at: datetime
     updated_at: datetime
+
+
+class UserAdminStatusUpdateRequest(BaseDTO):
+    user_ids: List[int]
+    status: UserStatus
