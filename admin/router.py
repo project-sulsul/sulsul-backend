@@ -53,6 +53,11 @@ async def admin_index_template(request: Request):
     return templates.TemplateResponse("admin_index.html", {"request": request})
 
 
+@router.get("/ping")
+async def ping():
+    return PlainTextResponse("pong")
+
+
 @router.get("/pairing")
 @admin
 async def admin_pairing_template(request: Request):
