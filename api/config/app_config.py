@@ -36,9 +36,13 @@ app.add_middleware(
     EnhancedTrustedHostMiddleware,
     allowed_hosts=[
         "localhost",
-        "sulsul-env.eba-gvmvk4bq.ap-northeast-2.elasticbeanstalk.com",
+        # "sulsul-env.eba-gvmvk4bq.ap-northeast-2.elasticbeanstalk.com",
+        "sulsul-env-1.eba-7i2eztxj.ap-northeast-2.elasticbeanstalk.com",
+        "sulsul.link"
     ],
-    allowed_cidrs=[],
+    allowed_cidrs=[
+        "10.0.0.0/16", # VPC
+    ],
 )
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 app.add_middleware(EventHandlerASGIMiddleware, handlers=[local_handler])
