@@ -34,7 +34,7 @@ jobs:
       - name: Deploy AWS ElasticBeanstalk
         run: |
           eb init -r ap-northeast-2 -p Python sulsul
-          eb deploy -l "GitHubActions-$(date +%s)" Sulsul-env
+          eb deploy -l "GitHubActions-$(date +%s)" Sulsul-env-1
 
 
   deploy-lambda:
