@@ -46,7 +46,8 @@ app.add_middleware(EventHandlerASGIMiddleware, handlers=[local_handler])
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "https://sul-sul-admin.vercel.app/"
+    "https://sul-sul-admin.vercel.app/",
+    "https://sul-sul-admin.vercel.app"
 ]
 app.add_middleware(
     CORSMiddleware,
