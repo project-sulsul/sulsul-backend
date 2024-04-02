@@ -176,9 +176,17 @@ def admin(call_next: RequestResponseEndpoint):
     @wraps(call_next)
     async def wrapper(*args, **kwargs):
         request: Request = kwargs["request"]
-        access_token = request.cookies.get("access_token")
+        auth_header = request.headers.get("Authorization")
         try:
-            login_user = decode_token(access_token)
+            if not auth_header:
+                raise UnauthorizedException()
+
+            token_type, token = auth_header.split(" ")
+
+            if token_type != "Bearer":
+                return invalid_token_response
+
+            login_user = decode_token(token)
             if "is_admin_token" in login_user and login_user["is_admin_token"] != True:
                 raise UnauthorizedException()
 
