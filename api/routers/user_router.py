@@ -146,9 +146,10 @@ async def update_user_preference(
     "/{user_id}", dependencies=[Depends(transactional), Depends(AuthRequired())]
 )
 async def delete_user(request: Request, user_id: int):
-    login_user = User.get_by_id(request.state.token_info["id"])
+    login_user: User = User.get_by_id(request.state.token_info["id"])
     if login_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-    login_user.is_deleted = True
-    login_user.save()
+    # login_user.is_deleted = True
+    # login_user.save()
+    login_user.delete()
     return {"result": True}
