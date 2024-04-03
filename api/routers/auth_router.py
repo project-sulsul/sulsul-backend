@@ -57,10 +57,10 @@ async def sign_in_with_kakao(
     request: Request, kakao_credentials: KakaoCredentialsRequest
 ):
     user_info = OAuthClient.verify_kakao_token(kakao_credentials)
-
+    print(user_info)
     user = User.get_or_none(
         User.uid == user_info["kakao_account"]["email"], 
-        User.is_deleted == False
+        User.is_deleted == False,
     )
     status_code = status.HTTP_200_OK
     if not user:

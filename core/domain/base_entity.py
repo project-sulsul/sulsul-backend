@@ -35,11 +35,6 @@ class BaseEntity(peewee.Model):
         self.save()
 
     @classmethod
-    def get_or_none(cls, *query, **filters):
-        query = tuple(*query, cls.is_deleted == False)
-        return super(cls).get_or_none(*query, **filters)
-
-    @classmethod
     def get_or_raise(cls, entity_id: int) -> "BaseEntity":
         entity = cls.get_or_none(entity_id)
         if entity is None or entity.is_deleted is True:

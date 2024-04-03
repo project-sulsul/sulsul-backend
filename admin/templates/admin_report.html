@@ -4,14 +4,73 @@
 
 
 {% block content %}
-<div>
-나가주세요
+<div class="p-3">
+
+    <div style="width: 70%;">
+        <div id="report-table" class="w-100"></div>
+        <button id="view-more-btn" class="btn btn-light w-100" onclick="handleClickViewMore()">더보기</button>
+    </div>
+
 </div>
 {% endblock %}
 
 
 {% block js %}
 <script>
+
+let currentPage = 1
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("theme") === "dark")
+        document.getElementById("report-table").classList.toggle("table-dark");
+
+    getReportData(currentPage);
+});
+
+const reportTable = new Tabulator("#report-table", {
+    data: [],
+    layout: "fitDataTable",
+    minHeight: 100,
+    maxHeight: 800,
+    columns: [
+        {title: "ID", field: "id", vertAlign: "middle"},
+        {title: "ReporterID", field: "reporter_id", vertAlign: "middle"},
+        {title: "TargetID", field: "target_id", vertAlign: "middle"},
+        {title: "Type", field: "type", vertAlign: "middle"},
+        {title: "Reason", field: "reason", vertAlign: "middle"},
+        {title: "Status", field: "status", vertAlign: "middle", formatter: (cell, formatterParams) => {
+            return cell.getData().status.split(".")[1];
+        }},
+        {title: "CreatedAt", field: "created_at", vertAlign: "middle", formatter: (cell, formatterParams) => {
+            const [date, time] = cell.getData().created_at.split("T");
+            return `${date}&nbsp&nbsp${time}`;
+        }},
+        // {title: "UpdatedAt", field: "updated_at", vertAlign: "middle", formatter: (cell, formatterParams) => {
+        //     const [date, time] = cell.getData().updated_at.split("T");
+        //     return `${date}&nbsp&nbsp${time}`;
+        // }},
+        // {title: "IsDeleted", field: "is_deleted", vertAlign: "middle"},
+    ],
+    // selectable: 1,
+});
+reportTable.on("")
+
+const getReportData = async (page) => {
+    fetch(`/admin/reports?page=${page}`)
+        .then(res => {return res.json()})
+        .then(data => {
+            console.log(data);
+            reportTable.addData(data.content);
+            if (data.content.length == 0) {
+                document.getElementById("view-more-btn").style.display = "none";
+            }
+        })
+        .catch(e => console.error(e));
+}
+const handleClickViewMore = async () => {
+    currentPage += 1
+    getReportData(currentPage);
+}
 
 </script>
 {% endblock %}
