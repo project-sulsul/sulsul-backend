@@ -1,4 +1,5 @@
 import re
+import time
 
 from fastapi import APIRouter, Depends, Request, status, HTTPException
 from fastapi.responses import JSONResponse
@@ -8,6 +9,9 @@ from api.descriptions.user_api_descriptions import *
 from core.client.nickname_generator_client import NicknameGeneratorClient
 from core.config.orm_config import transactional, read_only
 from core.domain.user.user_model import User
+from core.domain.feed.feed_model import Feed
+from core.domain.feed.feed_like_model import FeedLike
+from core.domain.comment.comment_model import Comment
 from core.dto.user_dto import NicknameResponse
 from core.dto.user_dto import NicknameValidationResponse
 from core.dto.user_dto import UserNicknameUpdateRequest
@@ -149,7 +153,20 @@ async def delete_user(request: Request, user_id: int):
     login_user: User = User.get_by_id(request.state.token_info["id"])
     if login_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-    # login_user.is_deleted = True
-    # login_user.save()
-    login_user.delete()
+    login_user.uid = f"DELETED-{login_user.uid}+{time.time()}"
+    login_user.is_deleted = True
+    (FeedLike
+     .update(is_deleted=True)
+     .where(FeedLike.user_id == login_user.id)
+     .execute())
+    (Feed
+     .update(is_deleted=True)
+     .where(Feed.user_id == login_user.id)
+     .execute())
+    (Comment
+     .update(is_deleted=True)
+     .where(Comment.user_id == login_user.id)
+     .execute())
+    login_user.save()
+    
     return {"result": True}
