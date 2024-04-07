@@ -155,18 +155,13 @@ async def delete_user(request: Request, user_id: int):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     login_user.uid = f"DELETED-{login_user.uid}+{time.time()}"
     login_user.is_deleted = True
-    (FeedLike
-     .update(is_deleted=True)
-     .where(FeedLike.user_id == login_user.id)
-     .execute())
-    (Feed
-     .update(is_deleted=True)
-     .where(Feed.user_id == login_user.id)
-     .execute())
-    (Comment
-     .update(is_deleted=True)
-     .where(Comment.user_id == login_user.id)
-     .execute())
+    (
+        FeedLike.update(is_deleted=True)
+        .where(FeedLike.user_id == login_user.id)
+        .execute()
+    )
+    (Feed.update(is_deleted=True).where(Feed.user_id == login_user.id).execute())
+    (Comment.update(is_deleted=True).where(Comment.user_id == login_user.id).execute())
     login_user.save()
-    
+
     return {"result": True}

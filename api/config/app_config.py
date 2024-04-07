@@ -37,10 +37,10 @@ app.add_middleware(
     allowed_hosts=[
         "localhost",
         "sulsul-env-1.eba-7i2eztxj.ap-northeast-2.elasticbeanstalk.com",
-        "sulsul.link"
+        "sulsul.link",
     ],
     allowed_cidrs=[
-        "10.0.0.0/16", # VPC
+        "10.0.0.0/16",  # VPC
     ],
 )
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])

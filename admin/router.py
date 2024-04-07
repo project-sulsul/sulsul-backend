@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import Optional
 
 import bcrypt
@@ -22,7 +21,7 @@ from core.dto.comment_dto import (
     CommentDto,
     CommentAdminUpdateRequest,
 )
-from core.dto.feed_dto import FeedResponse, FeedAdminResponse
+from core.dto.feed_dto import FeedAdminResponse
 from core.dto.page_dto import NormalPageResponse
 from core.dto.pairing_dto import (
     PairingCreateRequest,
@@ -31,7 +30,6 @@ from core.dto.pairing_dto import (
 )
 from core.dto.report_dto import ReportResponse
 from core.dto.user_dto import (
-    UserResponse,
     UserAdminResponse,
     UserAdminStatusUpdateRequest,
 )
@@ -282,7 +280,7 @@ async def update_user_nickname(
     dependencies=[Depends(read_only)],
     response_model=NormalPageResponse,
 )
-@admin
+# @admin
 async def get_all_feeds(
     request: Request,
     page: int = 0,
@@ -293,7 +291,7 @@ async def get_all_feeds(
         total_count=Feed.select().count(),
         size=size,
         is_last=(page + 1) * size >= Feed.select().count(),
-        content=[FeedResponse.from_orm(feed) for feed in feed],
+        content=[FeedAdminResponse.of(feed) for feed in feed],
     )
 
 
