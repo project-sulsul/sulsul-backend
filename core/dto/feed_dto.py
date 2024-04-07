@@ -333,6 +333,7 @@ class FeedAdminResponse(BaseModel):
     content: str
     is_deleted: bool
     user_id: int
+    user_nickname: Optional[str]
     score: float
     represent_image: str
     images: List[str]
@@ -350,6 +351,7 @@ class FeedAdminResponse(BaseModel):
             **feed.__data__,
             feed_id=feed.id,
             user_id=feed.user.id,
+            user_nickname=feed.user.nickname,
             alcohols=pairing_cache_store.get_all_names_by_ids(feed.alcohol_pairing_ids),
             foods=pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids),
         )

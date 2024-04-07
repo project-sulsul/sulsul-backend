@@ -280,7 +280,7 @@ async def update_user_nickname(
     dependencies=[Depends(read_only)],
     response_model=NormalPageResponse,
 )
-# @admin
+@admin
 async def get_all_feeds(
     request: Request,
     page: int = 0,
