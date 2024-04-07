@@ -10,6 +10,7 @@ from api.config.exceptions import (
     ForbiddenException,
     NotFoundException,
     UnauthorizedException,
+    BadRequestException,
 )
 from app import app
 from core.util.logger import logger
@@ -99,6 +100,17 @@ async def handle_not_found_exception(request: Request, exc: NotFoundException):
 async def handle_unauthorized_exception(request: Request, exc: UnauthorizedException):
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
+        content={
+            "error": f"{exc.__class__.__name__}",
+            "message": exc.detail,
+        },
+    )
+
+
+@app.exception_handler(BadRequestException)
+async def handle_bad_request_exception(request: Request, exc: BadRequestException):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
         content={
             "error": f"{exc.__class__.__name__}",
             "message": exc.detail,

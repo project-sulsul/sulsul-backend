@@ -316,6 +316,7 @@ async def get_related_feeds(
 )
 async def create_feed(request: Request, request_body: FeedCreateRequest):
     login_user = User.get_or_raise(get_login_user_id(request))
+    request_body.validate_input()
     feed = Feed.create(
         user=login_user,
         title=request_body.title,
@@ -338,6 +339,7 @@ async def create_feed(request: Request, request_body: FeedCreateRequest):
 )
 async def update_feed(request: Request, feed_id: int, request_body: FeedUpdateRequest):
     login_user_id = get_login_user_id(request)
+    request_body.validate_input()
     feed = Feed.get_or_raise(feed_id)
     feed.check_if_owner(login_user_id)
     feed.update_feed(

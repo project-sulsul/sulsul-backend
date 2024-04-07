@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+from api.config.exceptions import BadRequestException
 from core.domain.feed.feed_model import Feed
 from core.dto.user_dto import UserSimpleInfoResponse
 from core.util.cache import pairing_cache_store
@@ -27,6 +28,28 @@ class FeedCreateRequest(BaseModel):
     food_pairing_ids: List[int]
     user_tags_raw_string: Optional[str]
     score: float
+
+    def validate_input(self):
+        if len(self.title) > 100:
+            raise BadRequestException("제목은 100자 이하로 입력해주세요.")
+
+        if len(self.content) > 500:
+            raise BadRequestException("내용은 500자 이하로 입력해주세요.")
+
+        if self.score < 0:
+            raise BadRequestException("점수는 0 이상으로 입력해주세요.")
+
+        for alcohol_id in self.alcohol_pairing_ids:
+            try:
+                pairing_cache_store.get_by_id(alcohol_id)
+            except:
+                raise BadRequestException(f"({alcohol_id}) 존재하지 않는 술 ID 입니다.")
+
+        for food_id in self.food_pairing_ids:
+            try:
+                pairing_cache_store.get_by_id(food_id)
+            except:
+                raise BadRequestException(f"({food_id}) 존재하지 않는 안주 ID 입니다.")
 
 
 class FeedResponse(BaseModel):
@@ -76,6 +99,25 @@ class FeedUpdateRequest(BaseModel):
     content: Optional[str]
     images: Optional[List[str]]
     user_tags: Optional[List[str]]
+
+    def validate_input(self):
+        if len(self.title) > 100:
+            raise BadRequestException("제목은 100자 이하로 입력해주세요.")
+
+        if len(self.content) > 500:
+            raise BadRequestException("내용은 500자 이하로 입력해주세요.")
+
+        for alcohol_id in self.alcohol_pairing_ids:
+            try:
+                pairing_cache_store.get_by_id(alcohol_id)
+            except:
+                raise BadRequestException(f"({alcohol_id}) 존재하지 않는 술 ID 입니다.")
+
+        for food_id in self.food_pairing_ids:
+            try:
+                pairing_cache_store.get_by_id(food_id)
+            except:
+                raise BadRequestException(f"({food_id}) 존재하지 않는 안주 ID 입니다.")
 
 
 class FeedSearchResultResponse(BaseModel):
