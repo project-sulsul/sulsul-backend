@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+from api.config.exceptions import BadRequestException
 from core.domain.comment.comment_model import Comment
 from core.dto.user_dto import UserSimpleInfoResponse
 
@@ -11,9 +12,17 @@ class CommentCreateRequest(BaseModel):
     content: str
     parent_comment_id: Optional[int] = None
 
+    def validate_input(self):
+        if len(self.content) > 1000:
+            raise BadRequestException("내용은 1000자 이하로 입력해주세요.")
+
 
 class CommentUpdateRequest(BaseModel):
     content: str
+
+    def validate_input(self):
+        if len(self.content) > 1000:
+            raise BadRequestException("내용은 1000자 이하로 입력해주세요.")
 
 
 class CommentResponse(BaseModel):

@@ -34,6 +34,7 @@ async def create_comment(
     request: Request, feed_id: int, request_body: CommentCreateRequest
 ):
     Feed.get_or_raise(feed_id)
+    request_body.validate_input()
 
     login_user = User.get_or_raise(get_login_user_id(request))
     if request_body.parent_comment_id is not None:
@@ -68,6 +69,7 @@ async def update_comment(
     request: Request, feed_id: int, comment_id: int, request_body: CommentUpdateRequest
 ):
     Feed.get_or_raise(feed_id)
+    request_body.validate_input()
 
     comment = Comment.get_or_raise(comment_id)
 

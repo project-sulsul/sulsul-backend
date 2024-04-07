@@ -39,3 +39,17 @@ NOT_FOUND_RESPONSE = {
         },
     }
 }
+
+BAD_REQUEST_RESPONSE = {
+    400: {
+        "description": "BadRequest",
+        "content": {
+            "application/json": {
+                "example": {
+                    "error": "BadRequestException",
+                    "message": "request body 유효성 검증 실패",
+                }
+            }
+        },
+    }
+}
