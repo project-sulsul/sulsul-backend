@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 
 from admin.model import Admin, AdminSigninModel
+from api.config.exceptions import NotFoundException
 from api.config.middleware import admin
 from core.config.orm_config import transactional, read_only
 from core.config.var_config import KST, TOKEN_TYPE, TOKEN_DURATION, JWT_COOKIE_OPTIONS
@@ -300,9 +301,13 @@ async def get_all_feeds(
     dependencies=[Depends(read_only)],
     response_model=FeedAdminResponse,
 )
-@admin
+# @admin
 async def get_feed(request: Request, feed_id: int):
-    return FeedAdminResponse.of(Feed.get_or_raise(feed_id))
+    feed = Feed.get_or_none(feed_id)
+    if feed is None:
+        raise NotFoundException(target_id=feed_id, target_entity=Feed, detail="피드를 찾을 수 없습니다.")
+
+    return FeedAdminResponse.of(feed)
 
 
 @router.delete(
