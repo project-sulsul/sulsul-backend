@@ -301,7 +301,7 @@ async def get_all_feeds(
     dependencies=[Depends(read_only)],
     response_model=FeedAdminResponse,
 )
-# @admin
+@admin
 async def get_feed(request: Request, feed_id: int):
     feed = Feed.get_or_none(feed_id)
     if feed is None:
