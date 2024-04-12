@@ -32,7 +32,7 @@ from core.dto.pairing_dto import (
 from core.dto.report_dto import ReportResponse
 from core.dto.user_dto import (
     UserAdminResponse,
-    UserAdminStatusUpdateRequest,
+    UserAdminStatusUpdateRequest, UserAdminNicknameUpdateRequest,
 )
 from core.util.jwt import build_token
 
@@ -266,9 +266,9 @@ async def update_user_status(
 async def update_user_nickname(
     request: Request,
     user_id: int,
-    nickname: str,
+    request_body: UserAdminNicknameUpdateRequest
 ):
-    User.update(nickname=nickname).where(User.id == user_id).execute()
+    User.update(nickname=request_body.nickname).where(User.id == user_id).execute()
 
 
 """

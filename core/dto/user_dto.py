@@ -60,3 +60,7 @@ class UserAdminResponse(BaseDTO):
 class UserAdminStatusUpdateRequest(BaseDTO):
     user_ids: List[int]
     status: UserStatus
+
+
+class UserAdminNicknameUpdateRequest(BaseDTO):
+    nickname: str
