@@ -2,7 +2,11 @@ from fastapi import APIRouter, Request, Depends
 
 from api.config.exceptions import BadRequestException
 from api.descriptions.report_api_descriptions import REGISTER_REPORT_DESC
-from api.descriptions.responses_dict import UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE, BAD_REQUEST_RESPONSE
+from api.descriptions.responses_dict import (
+    UNAUTHORIZED_RESPONSE,
+    NOT_FOUND_RESPONSE,
+    BAD_REQUEST_RESPONSE,
+)
 from core.config.orm_config import transactional
 from core.domain.comment.comment_model import Comment
 from core.domain.feed.feed_model import Feed

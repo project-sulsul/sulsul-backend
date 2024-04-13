@@ -32,7 +32,8 @@ from core.dto.pairing_dto import (
 from core.dto.report_dto import ReportResponse
 from core.dto.user_dto import (
     UserAdminResponse,
-    UserAdminStatusUpdateRequest, UserAdminNicknameUpdateRequest,
+    UserAdminStatusUpdateRequest,
+    UserAdminNicknameUpdateRequest,
 )
 from core.util.jwt import build_token
 
@@ -264,9 +265,7 @@ async def update_user_status(
 @router.put("/users/{user_id}/nickname", dependencies=[Depends(transactional)])
 @admin
 async def update_user_nickname(
-    request: Request,
-    user_id: int,
-    request_body: UserAdminNicknameUpdateRequest
+    request: Request, user_id: int, request_body: UserAdminNicknameUpdateRequest
 ):
     User.update(nickname=request_body.nickname).where(User.id == user_id).execute()
 
@@ -305,7 +304,9 @@ async def get_all_feeds(
 async def get_feed(request: Request, feed_id: int):
     feed = Feed.get_or_none(feed_id)
     if feed is None:
-        raise NotFoundException(target_id=feed_id, target_entity=Feed, detail="피드를 찾을 수 없습니다.")
+        raise NotFoundException(
+            target_id=feed_id, target_entity=Feed, detail="피드를 찾을 수 없습니다."
+        )
 
     return FeedAdminResponse.of(feed)
 
