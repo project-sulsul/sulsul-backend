@@ -29,7 +29,7 @@ from core.dto.pairing_dto import (
     PairingUpdateRequest,
     PairingAdminResponse,
 )
-from core.dto.report_dto import ReportResponse
+from core.dto.report_dto import ReportResponse, ReportAdminStatusUpdateRequest
 from core.dto.user_dto import (
     UserAdminResponse,
     UserAdminStatusUpdateRequest,
@@ -214,9 +214,9 @@ async def get_report_detail(
 async def update_report_status(
     request: Request,
     report_id: int,
-    report_status: ReportStatus,
+    request_body: ReportAdminStatusUpdateRequest,
 ):
-    Report.update(status=report_status).where(Report.id == report_id).execute()
+    Report.update(status=request_body.status).where(Report.id == report_id).execute()
 
 
 """

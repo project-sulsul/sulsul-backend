@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from core.domain.report.report_model import Report
+from core.domain.report.report_model import Report, ReportStatus
 
 
 class ReportRegisterRequest(BaseModel):
@@ -35,3 +35,7 @@ class ReportResponse(BaseModel):
     @classmethod
     def of(cls, report: Report):
         return ReportResponse(reporter_id=report.reporter.id, **report.__data__)
+
+
+class ReportAdminStatusUpdateRequest(BaseModel):
+    status: ReportStatus
