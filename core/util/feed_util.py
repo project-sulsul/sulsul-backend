@@ -15,12 +15,10 @@ class FeedResponseBuilder:
         is_liked_dict = {
             feed.id: any(like["feed"] == feed.id for like in likes) for feed in feeds
         }
-        print(f"likes: {likes}")
 
         feeds_response = [
             RelatedFeedResponse.of(feed, is_liked_dict[feed.id]) for feed in feeds
         ]
-        print(f"feeds_response: {feeds_response}")
 
         return CursorPageResponse(
             content=feeds_response,

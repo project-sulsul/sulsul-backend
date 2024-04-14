@@ -61,6 +61,8 @@ class FeedResponse(BaseModel):
     images: List[str]
     alcohol_pairing_ids: List[int]
     food_pairing_ids: List[int]
+    alcohol_tags: List[str]
+    food_tags: List[str]
     user_tags: Optional[List[str]]
     is_liked: bool = False
     view_count: int = 0
@@ -78,6 +80,10 @@ class FeedResponse(BaseModel):
             writer_info=UserSimpleInfoResponse(
                 user_id=feed.user.id, **feed.user.__data__
             ),
+            alcohol_tags=pairing_cache_store.get_all_names_by_ids(
+                feed.alcohol_pairing_ids
+            ),
+            food_tags=pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids),
             is_liked=is_liked,
             likes_count=likes_count,
             comments_count=comments_count,
@@ -91,6 +97,10 @@ class FeedResponse(BaseModel):
             writer_info=UserSimpleInfoResponse(
                 user_id=feed.user.id, **feed.user.__data__
             ),
+            alcohol_tags=pairing_cache_store.get_all_names_by_ids(
+                feed.alcohol_pairing_ids
+            ),
+            food_tags=pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids),
         )
 
 

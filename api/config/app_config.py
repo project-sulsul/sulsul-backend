@@ -76,7 +76,6 @@ logging_paths = [
     "/admin",
     "/auth",
     "/feeds",
-    "/files",
     "/pairings",
     "/ranks",
     "/reports",
