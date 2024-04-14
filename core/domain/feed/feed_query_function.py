@@ -18,7 +18,8 @@ def fetch_related_feeds_by_feed_id(
         .where(
             (
                 Feed.user_tags.contains(feed.user_tags)
-                | Feed.classify_tags.contains(feed.classify_tags)
+                | Feed.food_pairing_ids.contains(feed.food_pairing_ids)
+                | Feed.alcohol_pairing_ids.contains(feed.alcohol_pairing_ids)
             ),
             Feed.id != feed_id,
             Feed.is_deleted == False,

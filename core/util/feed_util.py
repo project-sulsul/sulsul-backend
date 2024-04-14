@@ -5,6 +5,7 @@ from core.domain.feed.feed_query_function import fetch_feeds_likes_to_dict
 from core.domain.user.user_model import User
 from core.dto.feed_dto import RelatedFeedResponse
 from core.dto.page_dto import CursorPageResponse
+from core.util.logger import logger
 
 
 class FeedResponseBuilder:
@@ -14,10 +15,12 @@ class FeedResponseBuilder:
         is_liked_dict = {
             feed.id: any(like["feed"] == feed.id for like in likes) for feed in feeds
         }
+        print(f"likes: {likes}")
 
         feeds_response = [
             RelatedFeedResponse.of(feed, is_liked_dict[feed.id]) for feed in feeds
         ]
+        print(f"feeds_response: {feeds_response}")
 
         return CursorPageResponse(
             content=feeds_response,

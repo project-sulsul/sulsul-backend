@@ -158,13 +158,18 @@ class RelatedFeedResponse(BaseModel):
     represent_image: str
     score: float
     user_tags: Optional[List[str]]
-    classify_tags: List[str]
+    alcohol_tags: List[str]
+    food_tags: List[str]
     is_liked: bool = False
 
     @classmethod
     def of(cls, feed: Feed, is_liked: bool):
         return RelatedFeedResponse(
             **feed.__data__,
+            alcohol_tags=pairing_cache_store.get_all_names_by_ids(
+                feed.alcohol_pairing_ids
+            ),
+            food_tags=pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids),
             feed_id=feed.id,
             is_liked=is_liked,
         )
