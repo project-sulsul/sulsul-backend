@@ -284,7 +284,7 @@ async def get_feed_by_id(request: Request, feed_id: int):
         feed=feed,
         likes_count=len(likes),
         comments_count=comments_count,
-        is_liked=any(like.user == login_user.feed_id for like in likes)
+        is_liked=any(like.user.id == login_user.id for like in likes)
         if login_user is not None
         else False,
     )
