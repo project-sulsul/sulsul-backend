@@ -104,9 +104,14 @@ async def request_response_logging_middleware(request: Request, call_next):
     response : {res_body.decode()}
     """
 
+    if str(response.status_code).startswith("4"):
+        channel = "#error-logs"
+    else:
+        channel = "#api-logs"
+
     create_task(
         send_slack_message(
-            channel="#api-logs",
+            channel=channel,
             icon_emoji=":collision:",
             sender_name="API 요청 알리미",
             message=message,
