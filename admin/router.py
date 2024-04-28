@@ -208,7 +208,6 @@ async def get_report_detail(
 @router.put(
     "/reports/{report_id}/status",
     dependencies=[Depends(transactional)],
-    response_model=ReportResponse,
 )
 @admin
 async def update_report_status(
