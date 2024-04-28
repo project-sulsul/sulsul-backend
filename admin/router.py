@@ -215,7 +215,7 @@ async def update_report_status(
     report_id: int,
     request_body: ReportAdminStatusUpdateRequest,
 ):
-    Report.update(status=request_body.status).where(Report.id == report_id).execute()
+    Report.update(status=request_body.status.name).where(Report.id == report_id).execute()
 
 
 """
