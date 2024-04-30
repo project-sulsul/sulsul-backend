@@ -33,7 +33,7 @@ router = APIRouter(
 async def create_comment(
     request: Request, feed_id: int, request_body: CommentCreateRequest
 ):
-    Feed.get_or_raise(feed_id)
+    feed = Feed.get_or_raise(feed_id)
     request_body.validate_input()
 
     login_user = User.get_or_raise(get_login_user_id(request))
@@ -55,7 +55,7 @@ async def create_comment(
     return CommentResponse.of(
         comment=comment,
         parent_comment_id=request_body.parent_comment_id,
-        is_writer=True,
+        is_writer=True if feed.user == comment.user else False,
     )
 
 
@@ -68,7 +68,7 @@ async def create_comment(
 async def update_comment(
     request: Request, feed_id: int, comment_id: int, request_body: CommentUpdateRequest
 ):
-    Feed.get_or_raise(feed_id)
+    feed = Feed.get_or_raise(feed_id)
     request_body.validate_input()
 
     comment = Comment.get_or_raise(comment_id)
@@ -79,7 +79,7 @@ async def update_comment(
 
     return CommentResponse.of(
         comment=comment,
-        is_writer=True,
+        is_writer=True if feed.user == comment.user else False,
     )
 
 
@@ -90,7 +90,7 @@ async def update_comment(
     responses={**NOT_FOUND_RESPONSE, **UNAUTHORIZED_RESPONSE},
 )
 async def soft_delete_comment(request: Request, feed_id: int, comment_id: int):
-    Feed.get_or_raise(feed_id)
+    feed = Feed.get_or_raise(feed_id)
 
     comment = Comment.get_or_raise(comment_id)
     comment.check_if_owner(get_login_user_id(request))
@@ -99,7 +99,7 @@ async def soft_delete_comment(request: Request, feed_id: int, comment_id: int):
 
     return CommentResponse.of(
         comment=comment,
-        is_writer=True,
+        is_writer=True if feed.user == comment.user else False,
     )
 
 

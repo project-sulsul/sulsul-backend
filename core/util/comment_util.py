@@ -1,5 +1,7 @@
 from typing import List
 
+from core.domain.feed.feed_model import Feed
+from core.domain.user.user_model import User
 from core.dto.comment_dto import CommentResponse, CommentDto
 
 
@@ -22,7 +24,8 @@ class CommentBuilder:
             parent_id = parent_comment.id
             children = parent_to_children[parent_id]
             children_comments = CommentBuilder._build_children(children, login_user_id)
-            is_writer = parent_comment.user == login_user_id
+            parent_comment_feed = Feed.get_or_raise(parent_comment.feed)
+            is_writer = User.get_or_raise(parent_comment.user) == parent_comment_feed.user
 
             parent_comment_response = CommentResponse.of_dto(
                 comment=parent_comment,
@@ -53,7 +56,8 @@ class CommentBuilder:
         children_comments = []
 
         for child in children:
-            is_writer = child.user == login_user_id
+            child_feed = Feed.get_or_raise(child.feed)
+            is_writer = User.get_or_raise(child.user) == child_feed.user
             child_comment = CommentResponse.of_dto(comment=child, is_writer=is_writer)
             children_comments.append(child_comment)
 
