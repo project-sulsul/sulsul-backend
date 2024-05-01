@@ -71,7 +71,7 @@ def fetch_my_feeds(login_user_id: int, next_feed_id: int, size: int) -> List[Fee
             Feed.id > next_feed_id,
         )
         .limit(size)
-        .order_by(Feed.id.asc())
+        .order_by(Feed.id.desc())
     )
 
 
@@ -88,7 +88,7 @@ def fetch_feeds_liked_by_me(
             Feed.id > next_feed_id,
         )
         .limit(size)
-        .order_by(Feed.id.asc())
+        .order_by(Feed.id.desc())
     )
 
 
