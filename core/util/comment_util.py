@@ -25,7 +25,9 @@ class CommentBuilder:
             children = parent_to_children[parent_id]
             children_comments = CommentBuilder._build_children(children, login_user_id)
             parent_comment_feed = Feed.get_or_raise(parent_comment.feed)
-            is_writer = User.get_or_raise(parent_comment.user) == parent_comment_feed.user
+            is_writer = (
+                User.get_or_raise(parent_comment.user) == parent_comment_feed.user
+            )
 
             parent_comment_response = CommentResponse.of_dto(
                 comment=parent_comment,
