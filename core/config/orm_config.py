@@ -39,6 +39,7 @@ if IS_PROD:
         max_connections=8,
         stale_timeout=300,
     )
+    db.set_time_zone("Asia/Seoul")
 else:
     from core.config import secrets
 
@@ -51,6 +52,7 @@ else:
         max_connections=8,
         stale_timeout=300,
     )
+    db.set_time_zone("Asia/Seoul")
 db._state = PeeweeConnectionState()
 
 
