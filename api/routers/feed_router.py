@@ -250,15 +250,16 @@ async def get_feeds_by_alcohols():
     size = 5
 
     total_feeds = []
-    alcohol_feeds_dict = {subtype: [] for subtype in alcohol_ids_dict.keys()}
     for subtype, alcohol_ids in alcohol_ids_dict.items():
         feeds = []
         for feed in fetch_all_by_alcohol_ids(alcohol_ids, size):
             food_names = pairing_cache_store.get_all_names_by_ids(feed.food_pairing_ids)
             feeds.append(FeedByAlcoholResponse.of(subtype, feed, food_names))
         total_feeds.extend(feeds)
+    # 정렬 순서 때문에 하드코딩
+    alcohol_subtypes = ["소주", "맥주", "막걸리", "하이볼", "와인"]
 
-    return FeedByAlcoholListResponse.of(total_feeds, list(alcohol_feeds_dict.keys()))
+    return FeedByAlcoholListResponse.of(total_feeds, alcohol_subtypes)
 
 
 @router.get(
