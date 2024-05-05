@@ -20,14 +20,17 @@ router = APIRouter(
 
 @router.get("", dependencies=[Depends(read_only)], response_model=PairingListResponse)
 async def get_pairings(type: PairingSearchType):
-    data = [
-        PairingResponse.from_orm(pairing)
-        for pairing in Pairing.select().where(Pairing.is_deleted == False)
-    ]
     if type is not PairingSearchType.전체:
-        data = [pairing for pairing in data if pairing.type == type]
+        pairings = Pairing.select().where(Pairing.is_deleted == False, Pairing.type == type).order_by(Pairing.order)
+    else:
+        pairings = Pairing.select().where(Pairing.is_deleted == False)
 
-    return PairingListResponse(pairings=data)
+    response = [
+        PairingResponse.from_orm(pairing)
+        for pairing in pairings
+    ]
+
+    return PairingListResponse(pairings=response)
 
 
 @router.get(

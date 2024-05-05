@@ -11,6 +11,7 @@ class Pairing(BaseEntity):
     name = peewee.CharField(max_length=100, null=False, unique=True)
     image = peewee.CharField(null=True, default=None)
     description = peewee.CharField(null=True)
+    order = peewee.IntegerField(null=True)
 
     class Meta:
         table_name = "pairing"
