@@ -24,6 +24,6 @@ class AlcoholRankResponse(BaseModel):
 
 
 class AlcoholRankingResponse(BaseModel):
-    start_date: str = "12/01"
-    end_date: str = "12/07"
+    start_date: str = get_start_of_week_and_end_of_week()[0].strftime("%m/%d")
+    end_date: str = get_start_of_week_and_end_of_week()[1].strftime("%m/%d")
     ranking: List[AlcoholRankResponse] = []
