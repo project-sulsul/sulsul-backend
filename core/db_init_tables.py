@@ -29,21 +29,17 @@ def scan_domain_models():
                 obj
                 for _, obj in inspect.getmembers(model)
                 if inspect.isclass(obj)
-                and issubclass(obj, Model)
-                and obj is not Model
-                and obj is not signals.Model
-                and obj is not BaseEntity
+                   and issubclass(obj, Model)
+                   and obj is not Model
+                   and obj is not signals.Model
+                   and obj is not BaseEntity
             ]
         )
     return models
 
 
-db.connect()
 
 from admin.model import Admin
-
-
-models = scan_domain_models()
 
 from core.domain.user.user_model import User
 
@@ -244,64 +240,107 @@ pairing_data = [
     {
         "type": "술",
         "subtype": "소주",
-        "name": "처음처럼",
-        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Ffc7ce2b5-5888-415f-bdbf-4f8b6968f77d.png",
-        "description": "처음처럼입니다",
+        "name": "참이슬",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Ff73cb312-52d4-4a6e-b62c-32fa0d62ea40.png",
+        "description": "참이슬입니다",
+        "order": 0
     },
     {
         "type": "술",
         "subtype": "소주",
-        "name": "참이슬",
-        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F03b22078-628b-4efe-88fd-1b687f5ec472.png",
-        "description": "참이슬입니다",
+        "name": "처음처럼",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F23399780-5931-4c8f-92eb-e701bf7875a0.png",
+        "description": "처음처럼입니다",
+        "order": 1
+    },
+    {
+        "type": "술",
+        "subtype": "소주",
+        "name": "진로",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F0464eab9-35a8-44d9-8169-30935821874b.png",
+        "description": "진로입니다",
+        "order": 2
     },
     {
         "type": "술",
         "subtype": "소주",
         "name": "좋은데이",
-        "image": None,
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F8b848226-e2e8-4204-99aa-9cf4f1aab186.png",
         "description": "좋은데이입니다",
+        "order": 3
     },
-    {"type": "술", "subtype": "소주", "name": "진로", "image": None, "description": "진로입니다"},
-    {"type": "술", "subtype": "소주", "name": "새로", "image": None, "description": "새로입니다"},
+    {
+        "type": "술",
+        "subtype": "소주",
+        "name": "새로",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F3b401b91-ad73-46cd-951d-4d11afc7cf47.png",
+        "description": "새로입니다",
+        "order": 4
+    },
     {
         "type": "술",
         "subtype": "맥주",
         "name": "카스",
-        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fe338c936-7565-4106-b43d-f85e11b4072c.png",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F7d65a3e2-4e24-497f-a57f-b4612091fb46.png",
         "description": "카스입니다",
+        "order": 5
     },
     {
         "type": "술",
         "subtype": "맥주",
         "name": "클라우드",
-        "image": None,
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fad89f34e-c0a8-448b-bb2e-5bbe620e5e0e.png",
         "description": "클라우드입니다",
+        "order": 6
     },
-    {"type": "술", "subtype": "맥주", "name": "테라", "image": None, "description": "테라입니다"},
+    {
+        "type": "술",
+        "subtype": "맥주",
+        "name": "테라",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fad1ac35f-d14a-47f3-8747-c0ddc8feb384.png",
+        "description": "테라입니다",
+        "order": 7
+    },
     {
         "type": "술",
         "subtype": "맥주",
         "name": "하이트",
-        "image": None,
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F0cd86be1-fdda-42d6-9585-70d73b60d74b.png",
         "description": "하이트입니다",
+        "order": 8
     },
-    {"type": "술", "subtype": "맥주", "name": "오비", "image": None, "description": "오비입니다"},
+    {
+        "type": "술",
+        "subtype": "맥주",
+        "name": "오비",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F6d99ce33-d78f-4e3d-9fbe-c49fb8a46431.png",
+        "description": "오비입니다",
+        "order": 9
+    },
     {
         "type": "술",
         "subtype": "하이볼",
         "name": "하이볼",
-        "image": None,
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F4ef6d21c-6599-46cd-9869-c875bc05edfa.png",
         "description": "하이볼입니다",
+        "order": 10
     },
     {
         "type": "술",
         "subtype": "막걸리",
         "name": "막걸리",
-        "image": None,
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa843352c-4289-4875-9601-e35cd85e72ec.png",
         "description": "막걸리입니다",
+        "order": 11
     },
-    {"type": "술", "subtype": "와인", "name": "와인", "image": None, "description": "와인입니다"},
+    {
+        "type": "술",
+        "subtype": "와인",
+        "name": "와인",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa843352c-4289-4875-9601-e35cd85e72ec.png",
+        "description": "와인입니다",
+        "order": 12
+    },
     {
         "type": "안주",
         "subtype": "패스트푸드",
@@ -503,7 +542,6 @@ combination_data = [
     {"alcohol": 12, "food": 17, "count": 159},
 ]
 
-
 """
 어드민 관련 더미데이터
 """
@@ -528,11 +566,15 @@ report_data = [
     for _ in range(num_reports)
 ]
 
-# 더미데이터 생성용. 더미데이터 생성을 하고 싶으면 주석을 푼다.
+# 더미데이터 생성용. 더미데이터 생성을 하고 싶으면 주석을 풀고 db_init_tables.py를 실행
+db.connect()
+
+# Feed의 FK때문에 선언 순서가 중요함. FeedLike -> Comment -> Feed 순
+models = [Admin, User, FeedLike, Comment, Feed, Pairing, Combination, Report]
+
 # db.drop_tables(models, cascade=True)
 # db.create_tables(models, safe=True)
-# db.create_tables([Admin], safe=True)
-#
+
 # User.bulk_create([User(**data) for data in user_data])
 # Feed.bulk_create([Feed(**data) for data in feed_data])
 # FeedLike.bulk_create([FeedLike(**data) for data in feed_like_data])
