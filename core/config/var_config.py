@@ -29,7 +29,7 @@ JWT_COOKIE_OPTIONS = {
     "samesite": "lax",
 }
 
-if IS_PROD:
+if IS_PROD or os.environ.get("IS_PROD") == 1:
     APPLE_CLIENT_ID = os.environ.get("APPLE_CLIENT_ID")
 else:
     from core.config.secrets import APPLE_CLIENT_ID
