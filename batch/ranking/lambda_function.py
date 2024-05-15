@@ -5,8 +5,8 @@ try:
     sys.path.append("/lambda")
     from pytz import timezone
     from datetime import datetime, timedelta
-    from playhouse.pool import PooledPostgresqlExtDatabase
 
+    from core.config.orm_config import db
     from core.domain.ranking.ranking_model import Ranking
     from core.dto.pairing_dto import PairingResponse
     from core.domain.pairing.pairing_query_function import (
@@ -25,15 +25,7 @@ try:
         end = start + timedelta(days=7)
         print(start)
         print(end)
-
-        db = PooledPostgresqlExtDatabase(
-            database="sulsul",
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-        )
-        db.set_time_zone("Asia/Seoul")
+        
         db.connect()
 
         # 술 랭킹
