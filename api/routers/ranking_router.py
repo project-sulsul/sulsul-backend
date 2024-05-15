@@ -12,7 +12,7 @@ from core.domain.ranking.ranking_query_function import (
     fetch_like_counts_group_by_combination,
     fetch_like_counts_group_by_alcohol,
 )
-from core.domain.feed.feed_model import Feed
+from core.domain.ranking.ranking_model import Ranking
 from core.domain.feed.feed_query_function import (
     fetch_related_feeds_by_classify_tags,
 )
@@ -40,28 +40,20 @@ router = APIRouter(
     description=GET_COMBINATION_RANKING_DESC,
 )
 async def get_combination_ranking(request: Request):
-    # TODO 현재는 라이브 쿼리로 가져오나 이후에는 배치를 통해 집계된 데이터 조회하도록 변경
-    data = []
-    pairing_ids = set()
-    for row in fetch_like_counts_group_by_combination(limit=10):
-        data.append(row.combined_ids)
-        pairing_ids.update(row.combined_ids)
-
-    pairings_dict = {
-        pairing.id: pairing
-        for pairing in fetch_pairings_by_multiple_ids(pairing_ids=pairing_ids)
-    }
-
-    ranking_response = CombinationRankingResponse()
-    for idx, pairing_ids in enumerate(data):
-        rank_response = CombinationRankResponse(rank=idx + 1)
-        for pairing_id in pairing_ids:
-            rank_response.pairings.append(
-                PairingResponse.from_orm(pairings_dict[pairing_id])
-            )
-        ranking_response.ranking.append(rank_response)
-
-    return ranking_response
+    ranking: Ranking = [
+        ranking for ranking in Ranking.select().order_by(Ranking.id.desc()).limit(1)
+    ][0]
+    response = CombinationRankingResponse(
+        start_date=ranking.start_date.strftime("%Y-%m-%d"),
+        end_date=ranking.end_date.strftime("%Y-%m-%d"),
+    )
+    for rank, combination in ranking.ranking["combination"].items():
+        rank_dto = CombinationRankResponse(
+            rank=rank,
+            pairings=[PairingResponse(**comb) for comb in combination],
+        )
+        response.ranking.append(rank_dto)
+    return response
 
 
 @router.get(
@@ -71,30 +63,22 @@ async def get_combination_ranking(request: Request):
     description=GET_ALCOHOL_RANKING_DESC,
 )
 async def get_alcohol_ranking(request: Request):
-    # 이번 주 기간(금~목)
-    # TODO 현재는 시간이 없음 이것도 배치로 뺴면서 테이블이랑 시간 필터 만들어야됨
-    # today = datetime.now(KST).replace(hour=0, minute=0, second=0, microsecond=0)
-    # start = today - timedelta(days=today.weekday() + 3)
-    # end = start + timedelta(days=7)
-
-    alcohol_ids = []
-    for row in fetch_like_counts_group_by_alcohol():
-        alcohol_ids.append(row.alcohol_id)
-
-    alcohols_dict = {
-        pairing.id: pairing for pairing in fetch_pairings_by_multiple_ids(alcohol_ids)
-    }
-
-    ranking_response = AlcoholRankingResponse()
-    for idx, alcohol_id in enumerate(alcohol_ids):
-        alcohol_response = PairingResponse.from_orm(alcohols_dict[alcohol_id])
-        ranking_response.ranking.append(
+    ranking: Ranking = [
+        ranking for ranking in Ranking.select().order_by(Ranking.id.desc()).limit(1)
+    ][0]
+    response = AlcoholRankingResponse(
+        start_date=ranking.start_date.strftime("%Y-%m-%d"),
+        end_date=ranking.end_date.strftime("%Y-%m-%d"),
+    )
+    for rank, alcohol in ranking.ranking["alcohol"].items():
+        response.ranking.append(
             AlcoholRankResponse(
-                rank=idx + 1,
-                alcohol=alcohol_response,
+                rank=rank,
+                alcohol=PairingResponse(**alcohol),
+                description=None,
             )
         )
-    return ranking_response
+    return response
 
 
 @router.get(
