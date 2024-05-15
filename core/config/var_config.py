@@ -5,7 +5,10 @@ from pytz import timezone
 # 실행 환경이 운영인지 개발인지 확인
 IS_PROD = (
     True
-    if os.environ.get("PYTHONPATH") == "/var/app/venv/staging-LQM1lest/bin"
+    if (
+        os.environ.get("PYTHONPATH") == "/var/app/venv/staging-LQM1lest/bin"
+        or os.environ.get("IS_PROD") == 1
+    )
     else False
 )
 
