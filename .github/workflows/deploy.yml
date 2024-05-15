@@ -80,8 +80,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        run: |
-          cd batch/ranking/
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -96,5 +94,6 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         run: |
+          cd batch/ranking/
           docker buildx build -t 998164501102.dkr.ecr.ap-northeast-2.amazonaws.com/sulsul-ranking-batch:latest --push .
           aws lambda update-function-code --function-name ranking --image-uri 998164501102.dkr.ecr.ap-northeast-2.amazonaws.com/sulsul-ranking-batch:latest
