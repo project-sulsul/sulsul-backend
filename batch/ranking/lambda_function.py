@@ -1,3 +1,8 @@
+import os
+current_path = os.getcwd()
+print("현재 작업 디렉토리:", current_path)
+
+
 import sys
 sys.path.append(".")
 sys.path.append("/lambda")
