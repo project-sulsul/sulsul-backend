@@ -1,4 +1,6 @@
 try:
+    import os
+    print(os.environ.__dict__)
     import sys
     sys.path.append(".")
     sys.path.append("/lambda")
