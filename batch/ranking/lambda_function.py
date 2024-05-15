@@ -1,3 +1,4 @@
+print("============================================================================")
 try:
     import sys
     sys.path.append(".")
@@ -8,7 +9,7 @@ try:
     print(os.getenv("IS_PROD"))
     from core.config.var_config import IS_PROD, KST
     print(IS_PROD)
-    
+
     from datetime import datetime, timedelta
 
     from core.config.orm_config import db
