@@ -1,14 +1,14 @@
 try:
-    # DEBUG
-    import os
-    print(os.getenv("IS_PROD"))
-    from core.config.var_config import IS_PROD
-    print(IS_PROD)
-
     import sys
     sys.path.append(".")
     sys.path.append("/lambda")
-    from pytz import timezone
+
+    # DEBUG
+    import os
+    print(os.getenv("IS_PROD"))
+    from core.config.var_config import IS_PROD, KST
+    print(IS_PROD)
+    
     from datetime import datetime, timedelta
 
     from core.config.orm_config import db
@@ -25,7 +25,7 @@ try:
 
     def lambda_handler(event, context):
 
-        today = datetime.now(tz=timezone("Asia/Seoul")).replace(hour=0, minute=0, second=0, microsecond=0)
+        today = datetime.now(KST).replace(hour=0, minute=0, second=0, microsecond=0)
         start = today - timedelta(days=today.weekday() + 3)
         end = start + timedelta(days=7)
         print(start)
