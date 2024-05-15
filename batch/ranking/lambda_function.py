@@ -8,7 +8,7 @@ try:
     import os
     print(os.getenv("IS_PROD"))
     from core.config.var_config import IS_PROD, KST
-    print(IS_PROD)
+    print(IS_PROD) 
 
     from datetime import datetime, timedelta
 
