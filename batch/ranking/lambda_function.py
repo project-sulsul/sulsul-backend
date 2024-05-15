@@ -1,38 +1,38 @@
 import os
-current_path = os.getcwd()
-print("현재 작업 디렉토리:", current_path)
+import sys
+sys.path.append(".")
+sys.path.append("/lambda")
+from pytz import timezone
+from datetime import datetime, timedelta
+from playhouse.pool import PooledPostgresqlExtDatabase
 
-
-try:
-    import sys
-    sys.path.append(".")
-    sys.path.append("/lambda")
-    from datetime import datetime, timedelta
-
-    from core.config.var_config import KST
-    from core.domain.ranking.ranking_model import Ranking
-    from core.config.orm_config import db
-    from core.dto.pairing_dto import PairingResponse
-    from core.domain.pairing.pairing_query_function import (
-        fetch_pairings_by_multiple_ids,
-    )
-    from core.domain.ranking.ranking_query_function import (
-        fetch_like_counts_group_by_alcohol,
-        fetch_like_counts_group_by_combination,
-    )
-except Exception as e:
-    import traceback
-    print(traceback.format_exc())
+from core.domain.ranking.ranking_model import Ranking
+from core.dto.pairing_dto import PairingResponse
+from core.domain.pairing.pairing_query_function import (
+    fetch_pairings_by_multiple_ids,
+)
+from core.domain.ranking.ranking_query_function import (
+    fetch_like_counts_group_by_alcohol,
+    fetch_like_counts_group_by_combination,
+)
 
 
 def lambda_handler(event, context):
 
-    today = datetime.now(KST).replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now(tz=timezone("Asia/Seoul")).replace(hour=0, minute=0, second=0, microsecond=0)
     start = today - timedelta(days=today.weekday() + 3)
     end = start + timedelta(days=7)
     print(start)
     print(end)
 
+    db = PooledPostgresqlExtDatabase(
+        database="sulsul",
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+    )
+    db.set_time_zone("Asia/Seoul")
     db.connect()
 
     # 술 랭킹
