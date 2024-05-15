@@ -1,5 +1,6 @@
 import sys
 sys.path.append(".")
+sys.path.append("/lambda")
 from datetime import datetime, timedelta
 
 from core.config.var_config import KST
