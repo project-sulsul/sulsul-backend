@@ -79,7 +79,7 @@ jobs:
 
     steps:
       - name: Deploy Ranking batch workflow to AWS Lambda
-      - run: |
+        run: |
           apk update -q && apk add --no-cache -q curl unzip git aws-cli python3 py3-pip
           python3 -m venv venv && . venv/bin/activate
           pip install awscli
