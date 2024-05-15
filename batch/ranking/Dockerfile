@@ -4,7 +4,7 @@ RUN mkdir -p /lambda
 COPY . /lambda
 WORKDIR /batch/ranking
 
-RUN pip install --no-cache-dir --upgrade -r /lambda/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
 
