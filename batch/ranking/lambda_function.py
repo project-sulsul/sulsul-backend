@@ -1,6 +1,10 @@
 try:
+    # DEBUG
     import os
-    print(os.environ.__dict__)
+    print(os.getenv("IS_PROD"))
+    from core.config.var_config import IS_PROD
+    print(IS_PROD)
+
     import sys
     sys.path.append(".")
     sys.path.append("/lambda")
