@@ -8,7 +8,11 @@ from google.auth import transport
 from google.oauth2 import id_token
 from jwt.algorithms import RSAAlgorithm
 
-from core.config.var_config import APPLE_CLIENT_ID
+from core.config.var_config import IS_PROD
+if IS_PROD:
+    from core.config.var_config import APPLE_CLIENT_ID
+else:
+    from core.config.secrets import APPLE_CLIENT_ID
 from core.dto.auth_dto import (
     GoogleCredentialsRequest,
     KakaoCredentialsRequest,
