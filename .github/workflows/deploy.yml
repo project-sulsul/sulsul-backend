@@ -78,6 +78,9 @@ jobs:
     runs-on: docker:24.0.5
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Deploy Ranking batch workflow to AWS Lambda
         run: |
           apk update -q && apk add --no-cache -q curl unzip git aws-cli python3 py3-pip
