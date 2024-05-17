@@ -101,7 +101,7 @@ async def classify_image_by_ai(image_url: str):
     responses=UNAUTHORIZED_RESPONSE,
 )
 async def get_all_my_feeds(
-    request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+        request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     my_feeds = fetch_my_feeds(get_login_user_id(request), next_feed_id, size)
     return CursorPageResponse.of_feeds(my_feeds)
@@ -115,7 +115,7 @@ async def get_all_my_feeds(
     responses=UNAUTHORIZED_RESPONSE,
 )
 async def get_all_liked_feeds_by_me(
-    request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+        request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     feeds_liked_by_me = fetch_feeds_liked_by_me(
         get_login_user_id(request), next_feed_id, size
@@ -130,9 +130,9 @@ async def get_all_liked_feeds_by_me(
     description=GET_RANDOM_FEEDS_DESC,
 )
 async def get_random_feeds(
-    request: Request,
-    exclude_feed_ids: str = "",  # separated by comma ex. 1,2,3
-    size: int = DEFAULT_PAGE_SIZE,
+        request: Request,
+        exclude_feed_ids: str = "",  # separated by comma ex. 1,2,3
+        size: int = DEFAULT_PAGE_SIZE,
 ):
     exclude_feed_ids = [int(i) for i in exclude_feed_ids.split(",") if i != ""]
     random_feeds = fetch_feeds_randomly(
@@ -170,7 +170,7 @@ async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool 
     # TODO 나중에 배치에서 만든 테이블에 쿼리하도록
     comb_ids_list = []
     for row in fetch_like_counts_group_by_combination(
-        order_by_popular=order_by_popular, limit=3
+            order_by_popular=order_by_popular, limit=3
     ):
         comb_ids_list.append(row.combined_ids)
     data = []
@@ -216,8 +216,8 @@ async def get_feeds_by_preferences(request: Request):
         for feed in Feed.select()
         .where(
             (
-                Feed.alcohol_pairing_ids.contains_any(alcohols)
-                | Feed.food_pairing_ids.contains_any(foods)
+                    Feed.alcohol_pairing_ids.contains_any(alcohols)
+                    | Feed.food_pairing_ids.contains_any(foods)
             ),
             Feed.is_deleted == False,
         )
@@ -228,7 +228,9 @@ async def get_feeds_by_preferences(request: Request):
     if len(feeds_by_preferences) < size:  # 만약 취향으로 가져온 피드 size보다 적으면 나머지는 랜덤피드로 채워넣는다
         feeds_by_preferences.extend(random_feeds[: size - len(feeds_by_preferences)])
 
-    return FeedByPreferenceListResponse.of(feeds_by_preferences)
+    none_filtered_feeds = [feed for feed in feeds_by_preferences if feed.id is not None]
+
+    return FeedByPreferenceListResponse.of(none_filtered_feeds)
 
 
 # TODO : 쿼리 최적화
@@ -299,7 +301,7 @@ async def get_feed_by_id(request: Request, feed_id: int):
     responses=NOT_FOUND_RESPONSE,
 )
 async def get_related_feeds(
-    request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
+        request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
     return FeedResponseBuilder.related_feeds(
         feeds=fetch_related_feeds_by_feed_id(feed_id, next_feed_id, size),
