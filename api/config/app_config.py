@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi_events.handlers.local import local_handler
 from fastapi_events.middleware import EventHandlerASGIMiddleware
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 from starlette.types import Message
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
@@ -90,39 +90,61 @@ async def request_response_logging_middleware(request: Request, call_next):
 
     req_body = await request.body()
     await set_body(request, req_body)
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+        res_body = b""
+        async for chunk in response.body_iterator:
+            res_body += chunk
 
-    res_body = b""
-    async for chunk in response.body_iterator:
-        res_body += chunk
+        message = f"""
+        ##################################################################
+        [{datetime.now()}] status_code: {response.status_code}
+        {request.method} {str(request.url)}
+        request : {req_body.decode()}
+        response : {res_body.decode()}
+        """
 
-    message = f"""
-    ##################################################################
-    [{datetime.now()}] status_code: {response.status_code}
-    {request.method} {str(request.url)}
-    request : {req_body.decode()}
-    response : {res_body.decode()}
-    """
+        if not str(response.status_code).startswith("2"):
+            channel = "#error-logs"
+        else:
+            channel = "#api-logs"
 
-    if str(response.status_code).startswith("4"):
-        channel = "#error-logs"
-    else:
-        channel = "#api-logs"
-
-    create_task(
-        send_slack_message(
-            channel=channel,
-            icon_emoji=":collision:",
-            sender_name="API 요청 알리미",
-            message=message,
+        create_task(
+            send_slack_message(
+                channel=channel,
+                icon_emoji=":collision:",
+                sender_name="API 요청 알리미",
+                message=message,
+            )
         )
-    )
-    return Response(
-        status_code=response.status_code,
-        headers=response.headers,
-        content=res_body.decode(),
-        media_type=response.media_type,
-    )
+        return Response(
+            status_code=response.status_code,
+            headers=response.headers,
+            content=res_body.decode(),
+            media_type=response.media_type,
+        )
+    except Exception as e:
+        message = f"""
+        ##################################################################
+        [{datetime.now()}] {request.method} {str(request.url)} - (예상치 못한 에러 발생) Exception: {e} - 
+        """
+        create_task(
+            send_slack_message(
+                channel="#error-logs",
+                icon_emoji=":collision:",
+                sender_name="예상치못한예외발생알리미",
+                message=message,
+            )
+        )
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Unexpected Error",
+                "message": str(e),
+                "detail": "예상치 못한 에러가 발생했습니다. 서버 관리자에게 문의해주세요.",
+            },
+            media_type="application/json",
+        )
 
 
 @app.on_event("startup")

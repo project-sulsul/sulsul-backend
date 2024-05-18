@@ -43,22 +43,21 @@ async def handle_unexpected_exceptions(
 ) -> JSONResponse:
     trace_info = traceback.format_exc()
 
-    if IS_PROD:
-        error_message = f"""
-        {datetime.now()} {request.method} {str(request.url)}[{exc.__class__.__name__}]
-        message - {str(exc)} 
-        #################### trace_info ####################
-        {trace_info}
-        """
-        logger.error(error_message)
-        create_task(
-            send_slack_message(
-                channel="#error-logs",
-                icon_emoji=":collision:",
-                sender_name="님들오류남빨리안고치면인생망함",
-                message=error_message + "<!channel>",
-            )
+    error_message = f"""
+    {datetime.now()} {request.method} {str(request.url)}[{exc.__class__.__name__}]
+    message - {str(exc)} 
+    #################### trace_info ####################
+    {trace_info}
+    """
+    logger.error(error_message)
+    create_task(
+        send_slack_message(
+            channel="#error-logs",
+            icon_emoji=":collision:",
+            sender_name="님들오류남빨리안고치면인생망함",
+            message=error_message + "<!channel>",
         )
+    )
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

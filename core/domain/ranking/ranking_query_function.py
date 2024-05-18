@@ -7,11 +7,11 @@ from core.domain.feed.feed_like_model import FeedLike
 
 
 def fetch_like_counts_group_by_combination(
-    order_by_popular: bool = True, 
-    limit: int = 3, 
-    start_date = datetime.now(),
-    end_date = datetime.now(),
-    execute = True,
+    order_by_popular: bool = True,
+    limit: int = 3,
+    start_date=datetime.now(),
+    end_date=datetime.now(),
+    execute=True,
 ):
     query = (
         Feed.select(
@@ -31,9 +31,9 @@ def fetch_like_counts_group_by_combination(
 
 def fetch_like_counts_group_by_alcohol(
     limit: int = 10,
-    start_date = datetime.now(),
-    end_date = datetime.now(),
-    execute = True,
+    start_date=datetime.now(),
+    end_date=datetime.now(),
+    execute=True,
 ):
     query = (
         Feed.select(
