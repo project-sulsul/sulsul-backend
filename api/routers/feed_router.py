@@ -47,6 +47,7 @@ from core.domain.ranking.ranking_query_function import (
     fetch_like_counts_group_by_combination,
 )
 from core.domain.user.user_model import User
+from core.domain.user.user_query_function import get_blocked_user_ids
 from core.dto.feed_dto import (
     FeedResponse,
     FeedUpdateRequest,
@@ -61,6 +62,7 @@ from core.dto.feed_dto import (
     PairingDto,
     FeedLikeResponse,
     FeedSearchListResponse,
+    RandomFeedDto,
 )
 from core.dto.page_dto import CursorPageResponse
 from core.util.auth_util import (
@@ -117,10 +119,16 @@ async def get_all_my_feeds(
 async def get_all_liked_feeds_by_me(
     request: Request, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
-    feeds_liked_by_me = fetch_feeds_liked_by_me(
-        get_login_user_id(request), next_feed_id, size
+    login_user_id = get_login_user_id(request)
+    feeds_liked_by_me: List[Feed] = fetch_feeds_liked_by_me(
+        login_user_id, next_feed_id, size
     )
-    return CursorPageResponse.of_feeds(feeds_liked_by_me)
+    blocked_user_ids = get_blocked_user_ids(login_user_id)
+    block_filtered_feeds = [
+        feed for feed in feeds_liked_by_me if feed.user not in blocked_user_ids
+    ]
+
+    return CursorPageResponse.of_feeds(block_filtered_feeds)
 
 
 @router.get(
@@ -135,9 +143,15 @@ async def get_random_feeds(
     size: int = DEFAULT_PAGE_SIZE,
 ):
     exclude_feed_ids = [int(i) for i in exclude_feed_ids.split(",") if i != ""]
-    random_feeds = fetch_feeds_randomly(
-        size, exclude_feed_ids, get_login_user_id(request)
+    login_user_id = get_login_user_id(request)
+    random_feeds: List[RandomFeedDto] = fetch_feeds_randomly(
+        size, exclude_feed_ids, login_user_id
     )
+    if login_user_id is not None:
+        blocked_user_ids = get_blocked_user_ids(login_user_id)
+        random_feeds = [
+            feed for feed in random_feeds if feed.user_id not in blocked_user_ids
+        ]
     return RandomFeedListResponse.of_query_dto(random_feeds)
 
 
@@ -228,9 +242,16 @@ async def get_feeds_by_preferences(request: Request):
     if len(feeds_by_preferences) < size:  # 만약 취향으로 가져온 피드 size보다 적으면 나머지는 랜덤피드로 채워넣는다
         feeds_by_preferences.extend(random_feeds[: size - len(feeds_by_preferences)])
 
-    none_filtered_feeds = [feed for feed in feeds_by_preferences if feed.id is not None]
+    none_filtered_feeds: List[Feed] = [
+        feed for feed in feeds_by_preferences if feed.id is not None
+    ]
 
-    return FeedByPreferenceListResponse.of(none_filtered_feeds)
+    blocked_user_ids = get_blocked_user_ids(login_user.id)
+    block_filtered_feeds = [
+        feed for feed in none_filtered_feeds if feed.user not in blocked_user_ids
+    ]
+
+    return FeedByPreferenceListResponse.of(block_filtered_feeds)
 
 
 # TODO : 쿼리 최적화
@@ -303,8 +324,19 @@ async def get_feed_by_id(request: Request, feed_id: int):
 async def get_related_feeds(
     request: Request, feed_id: int, next_feed_id: int = 0, size: int = DEFAULT_PAGE_SIZE
 ):
+    login_user_id = get_login_user_id(request)
+    related_feeds: List[Feed] = fetch_related_feeds_by_feed_id(
+        feed_id, next_feed_id, size
+    )
+
+    if login_user_id is not None:
+        blocked_user_ids = get_blocked_user_ids(login_user_id)
+        related_feeds = [
+            feed for feed in related_feeds if feed.user not in blocked_user_ids
+        ]
+
     return FeedResponseBuilder.related_feeds(
-        feeds=fetch_related_feeds_by_feed_id(feed_id, next_feed_id, size),
+        feeds=related_feeds,
         size=size,
         login_user=get_login_user_or_none(request),
     )

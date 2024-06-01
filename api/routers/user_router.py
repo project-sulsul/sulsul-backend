@@ -37,9 +37,9 @@ async def generate_random_nickname(request: Request):
     for nickname in nicknames:
         count = User.select().where(User.nickname == nickname).count()
         if (
-                count == 0
-                and not re.compile(r'[!@#$%^&*(),.?":{}|<>]').search(nickname)
-                and len(nickname) <= USER_NICKNAME_MAX_LENGTH
+            count == 0
+            and not re.compile(r'[!@#$%^&*(),.?":{}|<>]').search(nickname)
+            and len(nickname) <= USER_NICKNAME_MAX_LENGTH
         ):
             return NicknameResponse(nickname=nickname)
 
@@ -101,7 +101,7 @@ async def validate_user_nickname(request: Request, nickname: str):
     description=UPDATE_USER_NICKNAME_DESC,
 )
 async def update_user_nickname(
-        request: Request, user_id: int, form: UserNicknameUpdateRequest
+    request: Request, user_id: int, form: UserNicknameUpdateRequest
 ):
     login_user = User.get_by_id(request.state.token_info["id"])
     nickname = form.model_dump()["nickname"]
@@ -136,7 +136,7 @@ async def update_user_image(request: Request, user_id: int, image_url: str):
     description=UPDATE_USER_PREFERENCE_DESC,
 )
 async def update_user_preference(
-        request: Request, user_id: int, form: UserPreferenceUpdateRequest
+    request: Request, user_id: int, form: UserPreferenceUpdateRequest
 ):
     login_user = User.get_by_id(request.state.token_info["id"])
     preference = form.model_dump()

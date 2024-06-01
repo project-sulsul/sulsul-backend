@@ -2,8 +2,9 @@ from typing import List, Optional
 
 from core.domain.feed.feed_model import Feed
 from core.domain.feed.feed_query_function import fetch_feeds_likes_to_dict
+from core.domain.user.user_block_model import UserBlock
 from core.domain.user.user_model import User
-from core.dto.feed_dto import RelatedFeedResponse
+from core.dto.feed_dto import RelatedFeedResponse, RandomFeedDto
 from core.dto.page_dto import CursorPageResponse
 from core.util.logger import logger
 
