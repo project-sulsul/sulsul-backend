@@ -64,3 +64,7 @@ class UserAdminStatusUpdateRequest(BaseDTO):
 
 class UserAdminNicknameUpdateRequest(BaseDTO):
     nickname: str
+
+
+class UserBlockResponse(BaseDTO):
+    target_user_id: int

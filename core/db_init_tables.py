@@ -8,6 +8,7 @@ from playhouse import signals
 
 from core.config.orm_config import db
 from core.domain.base_entity import BaseEntity
+from core.domain.user.user_block_model import UserBlock
 
 
 def scan_domain_models():
@@ -569,7 +570,7 @@ report_data = [
 db.connect()
 
 # Feed의 FK때문에 선언 순서가 중요함. FeedLike -> Comment -> Feed 순
-models = [Admin, User, FeedLike, Comment, Feed, Pairing, Combination, Report]
+models = [Admin, User, FeedLike, Comment, Feed, Pairing, Combination, Report, UserBlock]
 
 # db.drop_tables(models, cascade=True)
 # db.create_tables(models, safe=True)
