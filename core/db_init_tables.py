@@ -337,7 +337,7 @@ pairing_data = [
         "type": "술",
         "subtype": "와인",
         "name": "와인",
-        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2Fa843352c-4289-4875-9601-e35cd85e72ec.png",
+        "image": "https://s3-ap-northeast-2.amazonaws.com/sulsul-s3/images%2F5c24b628-83aa-443c-8b10-0ae92deb9b44.png",
         "description": "와인입니다",
         "order": 12,
     },
