@@ -224,6 +224,7 @@ class PopularFeedDto(BaseModel):
     pairing_ids: List[int]
     images: List[str]
     like_count: int
+    score: float
     user_id: int
     user_nickname: str
     user_image: Optional[str]

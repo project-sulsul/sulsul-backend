@@ -155,6 +155,7 @@ def fetch_feeds_order_by_feed_like_and_cominations(
             Feed.created_at,
             Feed.updated_at,
             fn.COUNT(FeedLike.id).alias("like_count"),
+            Feed.score,
             User.id.alias("user_id"),
             User.nickname.alias("user_nickname"),
             User.image.alias("user_image"),
