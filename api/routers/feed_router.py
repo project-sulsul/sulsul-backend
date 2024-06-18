@@ -191,7 +191,7 @@ async def get_feeds_order_by_feed_like(request: Request, order_by_popular: bool 
     for idx, comb_ids in enumerate(comb_ids_list):
         data.append(
             PopularFeedListDto(
-                title=f"{idx + 1}번쨰",
+                title=f"{idx + 1}번째",
                 feeds=[
                     row
                     for row in fetch_feeds_order_by_feed_like_and_cominations(
